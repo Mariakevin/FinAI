@@ -4,9 +4,12 @@ import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Landmark, User, BarChart, Receipt, Settings } from 'lucide-react';
+import { ArrowRight, Landmark, User, BarChart, Receipt, Settings, LogIn } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <Layout>
       <div className="space-y-8 animate-fade-in">
@@ -17,6 +20,23 @@ const Index = () => {
           <p className="text-gray-600 mt-4 max-w-xl mx-auto">
             Easily track your finances, analyze spending patterns, and get AI-powered insights to better manage your money.
           </p>
+          
+          {!isAuthenticated && (
+            <div className="mt-8 flex justify-center gap-4">
+              <Link to="/login">
+                <Button size="lg">
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/register">
+                <Button size="lg" variant="outline">
+                  <User className="mr-2 h-4 w-4" />
+                  Create Account
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -28,9 +48,10 @@ const Index = () => {
               <div className="flex-1">
                 <h3 className="text-xl font-medium mb-2">Dashboard</h3>
                 <p className="text-gray-600 mb-4">Get a quick overview of your finances with summaries and visual charts.</p>
-                <Link to="/dashboard">
+                <Link to={isAuthenticated ? "/dashboard" : "/login"}>
                   <Button className="mt-2">
-                    View Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+                    {isAuthenticated ? "View Dashboard" : "Sign in to continue"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>
@@ -45,9 +66,10 @@ const Index = () => {
               <div className="flex-1">
                 <h3 className="text-xl font-medium mb-2">Transactions</h3>
                 <p className="text-gray-600 mb-4">Record and manage your income and expenses with easy categorization.</p>
-                <Link to="/transactions">
+                <Link to={isAuthenticated ? "/transactions" : "/login"}>
                   <Button className="mt-2" variant="secondary">
-                    Manage Transactions <ArrowRight className="ml-2 h-4 w-4" />
+                    {isAuthenticated ? "Manage Transactions" : "Sign in to continue"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>
@@ -62,9 +84,10 @@ const Index = () => {
               <div className="flex-1">
                 <h3 className="text-xl font-medium mb-2">Analytics</h3>
                 <p className="text-gray-600 mb-4">Visualize your spending patterns and get insights to optimize your budget.</p>
-                <Link to="/analytics">
+                <Link to={isAuthenticated ? "/analytics" : "/login"}>
                   <Button className="mt-2" variant="outline">
-                    View Analytics <ArrowRight className="ml-2 h-4 w-4" />
+                    {isAuthenticated ? "View Analytics" : "Sign in to continue"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>
@@ -79,9 +102,10 @@ const Index = () => {
               <div className="flex-1">
                 <h3 className="text-xl font-medium mb-2">Profile</h3>
                 <p className="text-gray-600 mb-4">Manage your personal information and account preferences.</p>
-                <Link to="/profile">
+                <Link to={isAuthenticated ? "/profile" : "/login"}>
                   <Button className="mt-2" variant="outline">
-                    View Profile <ArrowRight className="ml-2 h-4 w-4" />
+                    {isAuthenticated ? "View Profile" : "Sign in to continue"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>

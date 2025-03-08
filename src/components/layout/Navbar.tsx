@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
@@ -9,13 +9,19 @@ import {
   Settings, 
   Menu, 
   X,
-  User
+  User,
+  LogOut,
+  LogIn
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const [mounted, setMounted] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
   
   useEffect(() => {
     setMounted(true);
@@ -26,9 +32,14 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   if (!mounted) return null;
   
-  const routes = [
+  const authenticatedRoutes = [
     {
       name: 'Dashboard',
       path: '/dashboard',
@@ -55,6 +66,21 @@ const Navbar = () => {
       icon: <Settings className="w-5 h-5" />,
     },
   ];
+  
+  const unauthenticatedRoutes = [
+    {
+      name: 'Login',
+      path: '/login',
+      icon: <LogIn className="w-5 h-5" />,
+    },
+    {
+      name: 'Register',
+      path: '/register',
+      icon: <User className="w-5 h-5" />,
+    },
+  ];
+  
+  const routes = isAuthenticated ? authenticatedRoutes : unauthenticatedRoutes;
 
   return (
     <>
@@ -89,6 +115,17 @@ const Navbar = () => {
                   <span>{route.name}</span>
                 </Link>
               ))}
+              
+              {isAuthenticated && (
+                <Button 
+                  variant="ghost" 
+                  className="ml-2 text-gray-700 hover:text-red-600 hover:bg-red-50"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-5 h-5 mr-2" />
+                  <span>Logout</span>
+                </Button>
+              )}
             </div>
 
             <button
@@ -154,6 +191,16 @@ const Navbar = () => {
               <span>{route.name}</span>
             </Link>
           ))}
+          
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="w-full px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 text-sm font-medium text-red-600 hover:bg-red-50"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
       </div>
     </>
