@@ -21,7 +21,7 @@ export const useTransactions = () => {
           const parsedData = JSON.parse(storedData);
           setTransactions(parsedData);
         } else {
-          // Initialize with empty array instead of sample data
+          // Initialize with empty array
           setTransactions([]);
         }
       } catch (error) {
