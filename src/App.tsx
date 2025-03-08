@@ -9,6 +9,7 @@ import Dashboard from '@/pages/Dashboard';
 import Transactions from '@/pages/Transactions';
 import Analytics from '@/pages/Analytics';
 import Settings from '@/pages/Settings';
+import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
 
 import './App.css';
@@ -26,6 +27,7 @@ function App() {
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster position="top-right" />

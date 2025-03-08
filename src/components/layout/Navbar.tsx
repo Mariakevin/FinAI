@@ -8,7 +8,8 @@ import {
   BarChart, 
   Settings, 
   Menu, 
-  X 
+  X,
+  User
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -30,7 +31,7 @@ const Navbar = () => {
   const routes = [
     {
       name: 'Dashboard',
-      path: '/',
+      path: '/dashboard',
       icon: <LayoutDashboard className="w-5 h-5" />,
     },
     {
@@ -42,6 +43,11 @@ const Navbar = () => {
       name: 'Analytics',
       path: '/analytics',
       icon: <BarChart className="w-5 h-5" />,
+    },
+    {
+      name: 'Profile',
+      path: '/profile',
+      icon: <User className="w-5 h-5" />,
     },
     {
       name: 'Settings',
