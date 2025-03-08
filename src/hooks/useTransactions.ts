@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Transaction, generateSampleTransactions } from '@/lib/finance';
+import { Transaction } from '@/lib/finance';
 import { toast } from 'sonner';
 
 const STORAGE_KEY = 'finwise_transactions';
@@ -21,10 +21,8 @@ export const useTransactions = () => {
           const parsedData = JSON.parse(storedData);
           setTransactions(parsedData);
         } else {
-          // Generate and store sample data if nothing exists
-          const sampleData = generateSampleTransactions();
-          setTransactions(sampleData);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleData));
+          // Initialize with empty array instead of sample data
+          setTransactions([]);
         }
       } catch (error) {
         console.error('Error loading transactions:', error);
@@ -42,7 +40,7 @@ export const useTransactions = () => {
 
   // Save transactions to localStorage whenever they change
   useEffect(() => {
-    if (!isLoading && transactions.length > 0) {
+    if (!isLoading) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
     }
   }, [transactions, isLoading]);
@@ -73,6 +71,11 @@ export const useTransactions = () => {
   const deleteTransaction = (id: string) => {
     setTransactions(prev => prev.filter(transaction => transaction.id !== id));
     toast.success('Transaction deleted successfully');
+  };
+
+  // Clear all transactions
+  const clearAllTransactions = () => {
+    setTransactions([]);
   };
 
   // Calculate total balance
@@ -106,6 +109,7 @@ export const useTransactions = () => {
     addTransaction,
     updateTransaction,
     deleteTransaction,
+    clearAllTransactions,
     getBalance,
     getTotalIncome,
     getTotalExpenses,

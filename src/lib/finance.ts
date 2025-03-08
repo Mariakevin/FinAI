@@ -36,18 +36,18 @@ export const CATEGORIES = {
 
 // Helper functions
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
     minimumFractionDigits: 2,
   }).format(amount);
 };
 
 export const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
+  return new Intl.DateTimeFormat('en-IN', {
     day: 'numeric',
+    month: 'short',
     year: 'numeric',
   }).format(date);
 };
@@ -174,7 +174,7 @@ export const getMonthlyTotals = (transactions: Transaction[], months = 6) => {
   // Generate the last X months
   for (let i = months - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const monthYear = d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+    const monthYear = d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
     labels.push(monthYear);
     
     // Month boundaries for filtering
@@ -202,123 +202,5 @@ export const getMonthlyTotals = (transactions: Transaction[], months = 6) => {
   return { labels, incomeData, expenseData };
 };
 
-// Sample data generator
-export const generateSampleTransactions = (): Transaction[] => {
-  const transactions: Transaction[] = [];
-  const now = new Date();
-  const categories = Object.keys(CATEGORIES);
-  
-  // Create some income transactions
-  for (let i = 5; i >= 0; i--) {
-    const date = new Date(now.getFullYear(), now.getMonth() - i, 15);
-    
-    transactions.push({
-      id: generateID(),
-      amount: 3000 + Math.random() * 500,
-      description: 'Monthly Salary',
-      category: 'Salary',
-      date: date.toISOString(),
-      type: 'income'
-    });
-    
-    // Some months have additional income
-    if (Math.random() > 0.7) {
-      const bonusDate = new Date(date);
-      bonusDate.setDate(date.getDate() + Math.floor(Math.random() * 5));
-      
-      transactions.push({
-        id: generateID(),
-        amount: 100 + Math.random() * 400,
-        description: 'Freelance Work',
-        category: 'Other',
-        date: bonusDate.toISOString(),
-        type: 'income'
-      });
-    }
-  }
-  
-  // Create expense transactions
-  const expenseDescriptions = [
-    'Restaurant Dinner',
-    'Grocery Shopping',
-    'Gas Station',
-    'Netflix Subscription',
-    'Amazon Purchase',
-    'Utility Bill',
-    'Phone Bill',
-    'Coffee Shop',
-    'Public Transport',
-    'Gym Membership',
-    'Book Store',
-    'Home Depot',
-    'Pharmacy',
-    'Doctor Visit',
-    'Movie Tickets',
-    'Parking Fee',
-    'Hair Salon',
-    'Online Course',
-  ];
-  
-  // Generate 40-60 expense transactions
-  const numTransactions = 40 + Math.floor(Math.random() * 20);
-  
-  for (let i = 0; i < numTransactions; i++) {
-    const monthOffset = Math.floor(Math.random() * 6); // 0-5 months ago
-    const dayOfMonth = 1 + Math.floor(Math.random() * 28);
-    const date = new Date(now.getFullYear(), now.getMonth() - monthOffset, dayOfMonth);
-    
-    const descriptionIndex = Math.floor(Math.random() * expenseDescriptions.length);
-    const description = expenseDescriptions[descriptionIndex];
-    
-    // Make expense amount depend somewhat on the description
-    let amount;
-    if (description.includes('Bill') || description.includes('Subscription')) {
-      amount = 20 + Math.random() * 80;
-    } else if (description.includes('Shopping') || description.includes('Amazon')) {
-      amount = 50 + Math.random() * 150;
-    } else if (description.includes('Restaurant')) {
-      amount = 40 + Math.random() * 100;
-    } else {
-      amount = 10 + Math.random() * 90;
-    }
-    
-    // Determine category (this would be done by AI in a real app)
-    let category = 'Other';
-    for (const [keyword, mappedCategory] of Object.entries({
-      'Restaurant': 'Food & Dining',
-      'Grocery': 'Food & Dining',
-      'Coffee': 'Food & Dining',
-      'Netflix': 'Entertainment',
-      'Movie': 'Entertainment',
-      'Amazon': 'Shopping',
-      'Bill': 'Bills & Utilities',
-      'Gas': 'Transportation',
-      'Transport': 'Transportation',
-      'Parking': 'Transportation',
-      'Gym': 'Health & Fitness',
-      'Doctor': 'Health & Fitness',
-      'Pharmacy': 'Health & Fitness',
-      'Book': 'Education',
-      'Course': 'Education',
-    })) {
-      if (description.includes(keyword)) {
-        category = mappedCategory;
-        break;
-      }
-    }
-    
-    transactions.push({
-      id: generateID(),
-      amount,
-      description,
-      category,
-      date: date.toISOString(),
-      type: 'expense'
-    });
-  }
-  
-  // Sort by date, newest first
-  return transactions.sort((a, b) => 
-    new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
-};
+// We've removed the generateSampleTransactions function since we won't use predefined data anymore
+
