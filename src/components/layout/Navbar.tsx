@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -11,7 +10,9 @@ import {
   X,
   User,
   LogOut,
-  LogIn
+  LogIn,
+  Calculator,
+  Bot
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,6 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    // Close mobile menu when route changes
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
@@ -49,6 +49,16 @@ const Navbar = () => {
       name: 'Transactions',
       path: '/transactions',
       icon: <Receipt className="w-5 h-5" />,
+    },
+    {
+      name: 'Budget',
+      path: '/budget',
+      icon: <Calculator className="w-5 h-5" />,
+    },
+    {
+      name: 'AI Insights',
+      path: '/ai-insights',
+      icon: <Bot className="w-5 h-5" />,
     },
     {
       name: 'Analytics',
@@ -84,7 +94,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Desktop Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 h-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
           <div className="flex justify-between items-center h-full">
@@ -138,7 +147,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       <div
         className={cn(
           "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity md:hidden",
