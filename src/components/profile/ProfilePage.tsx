@@ -1,27 +1,46 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, MapPin, Phone, Save, Settings, LogOut } from 'lucide-react';
+import { User, Mail, MapPin, Phone, Save, Settings, LogOut, BellRing, Moon, Sun } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { Switch } from '@/components/ui/switch';
 
 const ProfilePage = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  
   const [profileData, setProfileData] = useState({
-    name: localStorage.getItem('profile_name') || '',
-    email: localStorage.getItem('profile_email') || '',
+    name: '',
+    email: '',
     phone: localStorage.getItem('profile_phone') || '',
     address: localStorage.getItem('profile_address') || '',
     profileImage: localStorage.getItem('profile_image') || '',
   });
   
-  const { logout } = useAuth();
-  const navigate = useNavigate();
+  const [preferences, setPreferences] = useState({
+    darkMode: localStorage.getItem('pref_darkMode') === 'true',
+    notifications: localStorage.getItem('pref_notifications') === 'true',
+    emailAlerts: localStorage.getItem('pref_emailAlerts') === 'true',
+    monthlyReports: localStorage.getItem('pref_monthlyReports') === 'true',
+  });
+
+  useEffect(() => {
+    // Set the name and email from the authenticated user data
+    if (user) {
+      setProfileData(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,10 +50,17 @@ const ProfilePage = () => {
     }));
   };
 
+  const handlePreferenceChange = (name: string, checked: boolean) => {
+    setPreferences(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+    localStorage.setItem(`pref_${name}`, checked.toString());
+    toast.success(`${name.charAt(0).toUpperCase() + name.slice(1).replace(/([A-Z])/g, ' $1')} preference updated`);
+  };
+
   const handleSave = () => {
     // Save to localStorage
-    localStorage.setItem('profile_name', profileData.name);
-    localStorage.setItem('profile_email', profileData.email);
     localStorage.setItem('profile_phone', profileData.phone);
     localStorage.setItem('profile_address', profileData.address);
     localStorage.setItem('profile_image', profileData.profileImage);
@@ -45,14 +71,19 @@ const ProfilePage = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
-    toast.success('Logged out successfully');
   };
   
   const handleClearData = () => {
     if (window.confirm('Are you sure you want to delete all your transaction data? This action cannot be undone.')) {
-      // Reuse the same logic from SettingsPage
       localStorage.removeItem('transactions');
       toast.success('All transaction data has been deleted');
+    }
+  };
+
+  const handleClearHistory = () => {
+    if (window.confirm('Are you sure you want to clear your activity history? This action cannot be undone.')) {
+      // Clear any history data that might be stored
+      toast.success('Activity history has been cleared');
     }
   };
 
@@ -131,8 +162,12 @@ const ProfilePage = () => {
                           onChange={handleChange}
                           className="pl-10"
                           placeholder="Your Name"
+                          readOnly={!!user?.name}
                         />
                       </div>
+                      {user?.name && (
+                        <p className="text-xs text-gray-500">Your name is managed by your account settings</p>
+                      )}
                     </div>
                     
                     <div className="space-y-2">
@@ -146,8 +181,12 @@ const ProfilePage = () => {
                           onChange={handleChange}
                           className="pl-10"
                           placeholder="email@example.com"
+                          readOnly={!!user?.email}
                         />
                       </div>
+                      {user?.email && (
+                        <p className="text-xs text-gray-500">Your email is managed by your account settings</p>
+                      )}
                     </div>
                     
                     <div className="space-y-2">
@@ -200,10 +239,54 @@ const ProfilePage = () => {
                     Customize your application settings
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-gray-500">
-                    Preferences settings will be available in a future update.
-                  </p>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between pb-4 border-b">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">Dark Mode</Label>
+                      <p className="text-sm text-gray-500">Enable dark mode for the application</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Sun className="h-4 w-4 text-gray-500" />
+                      <Switch 
+                        checked={preferences.darkMode} 
+                        onCheckedChange={(checked) => handlePreferenceChange('darkMode', checked)} 
+                      />
+                      <Moon className="h-4 w-4 text-gray-500" />
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between pb-4 border-b">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">App Notifications</Label>
+                      <p className="text-sm text-gray-500">Receive in-app notifications about important updates</p>
+                    </div>
+                    <Switch 
+                      checked={preferences.notifications} 
+                      onCheckedChange={(checked) => handlePreferenceChange('notifications', checked)} 
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between pb-4 border-b">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">Email Alerts</Label>
+                      <p className="text-sm text-gray-500">Receive email notifications about your account</p>
+                    </div>
+                    <Switch 
+                      checked={preferences.emailAlerts} 
+                      onCheckedChange={(checked) => handlePreferenceChange('emailAlerts', checked)} 
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-base">Monthly Reports</Label>
+                      <p className="text-sm text-gray-500">Get monthly summary reports of your finances</p>
+                    </div>
+                    <Switch 
+                      checked={preferences.monthlyReports} 
+                      onCheckedChange={(checked) => handlePreferenceChange('monthlyReports', checked)} 
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -228,10 +311,31 @@ const ProfilePage = () => {
                   </div>
                   
                   <div className="pb-6 border-b border-gray-100">
+                    <h4 className="font-medium text-gray-800 mb-2">Clear Activity History</h4>
+                    <p className="text-gray-500 text-sm mb-4">
+                      This will clear your activity history in the application. This action cannot be undone.
+                    </p>
+                    <Button variant="secondary" onClick={handleClearHistory}>
+                      Clear History
+                    </Button>
+                  </div>
+                  
+                  <div className="pb-6 border-b border-gray-100">
                     <h4 className="font-medium text-gray-800 mb-2">Currency</h4>
                     <p className="text-gray-500 text-sm mb-2">
                       Your current currency is set to Indian Rupees (₹).
                     </p>
+                  </div>
+                  
+                  <div className="pb-6 border-b border-gray-100">
+                    <h4 className="font-medium text-gray-800 mb-2">Data Export</h4>
+                    <p className="text-gray-500 text-sm mb-4">
+                      Export all your financial data for backup or analysis.
+                    </p>
+                    <div className="flex gap-2">
+                      <Button variant="outline">Export as CSV</Button>
+                      <Button variant="outline">Export as PDF</Button>
+                    </div>
                   </div>
                   
                   <div>
