@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
   Receipt, 
-  BarChart, 
   Settings, 
   Menu, 
   X,
@@ -59,11 +58,6 @@ const Navbar = () => {
       name: 'AI Insights',
       path: '/ai-insights',
       icon: <Bot className="w-5 h-5" />,
-    },
-    {
-      name: 'Analytics',
-      path: '/analytics',
-      icon: <BarChart className="w-5 h-5" />,
     },
     {
       name: 'Profile',

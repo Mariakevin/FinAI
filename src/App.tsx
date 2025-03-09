@@ -10,7 +10,6 @@ import Dashboard from '@/pages/Dashboard';
 import Transactions from '@/pages/Transactions';
 import Budget from '@/pages/Budget';
 import AiInsights from '@/pages/AiInsights';
-import Analytics from '@/pages/Analytics';
 import Settings from '@/pages/Settings';
 import Profile from '@/pages/Profile';
 import NotFound from '@/pages/NotFound';
@@ -42,9 +41,8 @@ function AppRoutes() {
       <Route path="/transactions" element={<ProtectedRoute><Transactions /></ProtectedRoute>} />
       <Route path="/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
       <Route path="/ai-insights" element={<ProtectedRoute><AiInsights /></ProtectedRoute>} />
-      <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
