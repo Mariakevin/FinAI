@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { formatCurrency } from '@/lib/finance';
 import { PieChart, BarChart3, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 // Sample budget data - in a real app, this would be stored in a database
 const INITIAL_BUDGETS = [
@@ -93,7 +94,10 @@ const BudgetPage = () => {
                   <Progress 
                     value={percentage} 
                     className="h-2" 
-                    indicatorClassName={percentage >= 90 ? "bg-red-500" : ""}
+                    // Use cn() to conditionally apply classes based on percentage
+                    style={{ 
+                      "--progress-background": percentage >= 90 ? "#ef4444" : undefined 
+                    } as React.CSSProperties}
                   />
                 </div>
               );

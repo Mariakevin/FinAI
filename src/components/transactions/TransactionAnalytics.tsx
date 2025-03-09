@@ -9,6 +9,13 @@ interface TransactionAnalyticsProps {
   isLoading: boolean;
 }
 
+// Interface for monthly data
+interface MonthlyData {
+  income: number;
+  expense: number;
+  name: string; // Added name property to the interface
+}
+
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
@@ -31,7 +38,7 @@ const TransactionAnalytics = ({ transactions, isLoading }: TransactionAnalyticsP
   
   // Group transactions by month
   const monthlyData = React.useMemo(() => {
-    const months: Record<string, { income: number; expense: number }> = {};
+    const months: Record<string, MonthlyData> = {};
     
     transactions.forEach(transaction => {
       const date = new Date(transaction.date);
