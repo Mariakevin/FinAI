@@ -60,14 +60,9 @@ const Navbar = () => {
       icon: <Bot className="w-5 h-5" />,
     },
     {
-      name: 'Profile',
+      name: '',
       path: '/profile',
       icon: <User className="w-5 h-5" />,
-    },
-    {
-      name: 'Settings',
-      path: '/settings',
-      icon: <Settings className="w-5 h-5" />,
     },
   ];
   
@@ -118,17 +113,6 @@ const Navbar = () => {
                   <span>{route.name}</span>
                 </Link>
               ))}
-              
-              {isAuthenticated && (
-                <Button 
-                  variant="ghost" 
-                  className="ml-2 text-gray-700 hover:text-red-600 hover:bg-red-50"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="w-5 h-5 mr-2" />
-                  <span>Logout</span>
-                </Button>
-              )}
             </div>
 
             <button
@@ -193,16 +177,6 @@ const Navbar = () => {
               <span>{route.name}</span>
             </Link>
           ))}
-          
-          {isAuthenticated && (
-            <button
-              onClick={handleLogout}
-              className="w-full px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 text-sm font-medium text-red-600 hover:bg-red-50"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
-            </button>
-          )}
         </div>
       </div>
     </>

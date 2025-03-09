@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, MapPin, Phone, Save } from 'lucide-react';
+import { User, Mail, MapPin, Phone, Save, Settings, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
   const [profileData, setProfileData] = useState({
@@ -17,6 +19,9 @@ const ProfilePage = () => {
     address: localStorage.getItem('profile_address') || '',
     profileImage: localStorage.getItem('profile_image') || '',
   });
+  
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,10 +41,34 @@ const ProfilePage = () => {
     
     toast.success('Profile information updated successfully');
   };
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+    toast.success('Logged out successfully');
+  };
+  
+  const handleClearData = () => {
+    if (window.confirm('Are you sure you want to delete all your transaction data? This action cannot be undone.')) {
+      // Reuse the same logic from SettingsPage
+      localStorage.removeItem('transactions');
+      toast.success('All transaction data has been deleted');
+    }
+  };
 
   return (
     <div className="container mx-auto max-w-4xl py-6">
-      <h1 className="text-3xl font-bold mb-6">Profile</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Profile</h1>
+        <Button 
+          variant="destructive"
+          onClick={handleLogout}
+          className="flex items-center gap-2"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
+      </div>
       
       <div className="flex flex-col md:flex-row gap-6">
         <div className="w-full md:w-1/3">
@@ -78,6 +107,7 @@ const ProfilePage = () => {
             <TabsList className="mb-4">
               <TabsTrigger value="personal">Personal Information</TabsTrigger>
               <TabsTrigger value="preferences">Preferences</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             
             <TabsContent value="personal">
@@ -174,6 +204,43 @@ const ProfilePage = () => {
                   <p className="text-gray-500">
                     Preferences settings will be available in a future update.
                   </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="settings">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Settings</CardTitle>
+                  <CardDescription>
+                    Manage your account and application settings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="pb-6 border-b border-gray-100">
+                    <h4 className="font-medium text-gray-800 mb-2">Clear Transaction Data</h4>
+                    <p className="text-gray-500 text-sm mb-4">
+                      This will permanently delete all your transaction data. This action cannot be undone.
+                    </p>
+                    <Button variant="destructive" onClick={handleClearData}>
+                      Clear All Data
+                    </Button>
+                  </div>
+                  
+                  <div className="pb-6 border-b border-gray-100">
+                    <h4 className="font-medium text-gray-800 mb-2">Currency</h4>
+                    <p className="text-gray-500 text-sm mb-2">
+                      Your current currency is set to Indian Rupees (₹).
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium text-gray-800 mb-2">About</h4>
+                    <p className="text-gray-500 text-sm">
+                      FinWise - Personal Finance Tracker<br />
+                      Version 1.0.0
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
