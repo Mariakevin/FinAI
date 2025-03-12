@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Transaction } from '@/lib/finance';
 import { toast } from 'sonner';
@@ -169,9 +168,14 @@ export const useTransactions = () => {
     toast.success('Transaction deleted successfully');
   };
 
-  // Clear all transactions
+  // Update the clearAllTransactions function
   const clearAllTransactions = () => {
+    // Clear state
     setTransactions([]);
+    // Clear localStorage
+    localStorage.removeItem(STORAGE_KEY);
+    // Show success message
+    toast.success('All transactions have been cleared');
   };
 
   // Calculate total balance
