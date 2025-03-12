@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -110,8 +109,8 @@ const ProfilePage = () => {
 
   const exportTransactionsAsCSV = () => {
     try {
-      // Get transactions from localStorage
-      const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+      // Get transactions from localStorage using the correct key
+      const transactions = JSON.parse(localStorage.getItem('finwise_transactions') || '[]');
       
       if (transactions.length === 0) {
         toast.error('No transactions found to export');
@@ -140,22 +139,23 @@ const ProfilePage = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.setAttribute('href', url);
-      link.setAttribute('download', 'finwise_transactions.csv');
+      link.setAttribute('download', `finwise_transactions_${new Date().toISOString().split('T')[0]}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(url);
       
-      toast.success('CSV file downloaded successfully');
+      toast.success('Transactions exported successfully as CSV');
     } catch (error) {
       console.error('Error exporting CSV:', error);
-      toast.error('Failed to export CSV file');
+      toast.error('Failed to export transactions');
     }
   };
 
   const exportTransactionsAsPDF = () => {
     try {
-      // Get transactions from localStorage
-      const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+      // Get transactions from localStorage using the correct key
+      const transactions = JSON.parse(localStorage.getItem('finwise_transactions') || '[]');
       
       if (transactions.length === 0) {
         toast.error('No transactions found to export');
@@ -169,11 +169,11 @@ const ProfilePage = () => {
         return;
       }
 
-      // Generate HTML content for the PDF
+      // Generate HTML content for the PDF with transaction data
       printWindow.document.write(`
         <html>
           <head>
-            <title>FinWise Transactions</title>
+            <title>FinWise Transactions - ${new Date().toLocaleDateString()}</title>
             <style>
               body { font-family: Arial, sans-serif; padding: 20px; }
               h1 { color: #333; text-align: center; }
@@ -181,11 +181,12 @@ const ProfilePage = () => {
               th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
               th { background-color: #f2f2f2; }
               tr:nth-child(even) { background-color: #f9f9f9; }
+              .total { margin-top: 20px; text-align: right; font-weight: bold; }
               .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
             </style>
           </head>
           <body>
-            <h1>FinWise Transactions</h1>
+            <h1>FinWise Transactions Report</h1>
             <p>Generated on: ${new Date().toLocaleDateString()}</p>
             <table>
               <thead>
@@ -200,15 +201,25 @@ const ProfilePage = () => {
               <tbody>
                 ${transactions.map((t: any) => `
                   <tr>
-                    <td>${t.date}</td>
+                    <td>${new Date(t.date).toLocaleDateString()}</td>
                     <td>${t.description}</td>
-                    <td>${t.type === 'expense' ? '-' : ''}${t.amount}</td>
+                    <td>${t.type === 'expense' ? '-' : '+'}₹${t.amount.toLocaleString()}</td>
                     <td>${t.category}</td>
-                    <td>${t.type}</td>
+                    <td>${t.type.charAt(0).toUpperCase() + t.type.slice(1)}</td>
                   </tr>
                 `).join('')}
               </tbody>
             </table>
+            <div class="total">
+              <p>Total Income: ₹${transactions
+                .filter((t: any) => t.type === 'income')
+                .reduce((sum: number, t: any) => sum + t.amount, 0)
+                .toLocaleString()}</p>
+              <p>Total Expenses: ₹${transactions
+                .filter((t: any) => t.type === 'expense')
+                .reduce((sum: number, t: any) => sum + t.amount, 0)
+                .toLocaleString()}</p>
+            </div>
             <div class="footer">
               <p>FinWise - Personal Finance Tracker</p>
             </div>
@@ -222,11 +233,11 @@ const ProfilePage = () => {
       setTimeout(() => {
         printWindow.print();
         printWindow.close();
-        toast.success('PDF export initiated');
+        toast.success('Transactions exported successfully as PDF');
       }, 500);
     } catch (error) {
       console.error('Error exporting PDF:', error);
-      toast.error('Failed to export PDF file');
+      toast.error('Failed to export transactions');
     }
   };
 
