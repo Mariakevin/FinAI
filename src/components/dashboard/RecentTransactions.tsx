@@ -2,7 +2,7 @@
 import React from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Transaction, formatCurrency, formatDate } from '@/lib/finance';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface RecentTransactionsProps {
@@ -73,7 +73,21 @@ const RecentTransactions = ({ transactions, isLoading }: RecentTransactionsProps
                       <span>{formatDate(transaction.date)}</span>
                       <span>•</span>
                       <span className="bg-gray-100 px-2 py-0.5 rounded-full">{transaction.category}</span>
+                      {transaction.upiId && (
+                        <>
+                          <span>•</span>
+                          <span className="flex items-center">
+                            <CreditCard className="w-3 h-3 mr-1" />
+                            UPI
+                          </span>
+                        </>
+                      )}
                     </div>
+                    {transaction.payee && (
+                      <div className="text-xs text-gray-500 mt-0.5">
+                        Payee: {transaction.payee}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className={`font-medium ${

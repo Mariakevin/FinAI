@@ -4,10 +4,22 @@ import { Transaction } from '@/lib/finance';
 import { toast } from 'sonner';
 
 const STORAGE_KEY = 'finwise_transactions';
+const UPI_STORAGE_KEY = 'finwise_upi_id';
 
 export const useTransactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [connectedUpiId, setConnectedUpiId] = useState<string | null>(null);
+  const [isUpiConnected, setIsUpiConnected] = useState(false);
+
+  // Load UPI ID from localStorage on component mount
+  useEffect(() => {
+    const storedUpiId = localStorage.getItem(UPI_STORAGE_KEY);
+    if (storedUpiId) {
+      setConnectedUpiId(storedUpiId);
+      setIsUpiConnected(true);
+    }
+  }, []);
 
   // Load transactions from localStorage on component mount
   useEffect(() => {
@@ -44,6 +56,90 @@ export const useTransactions = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
     }
   }, [transactions, isLoading]);
+
+  // Connect/disconnect UPI ID
+  const connectUpiId = (upiId: string) => {
+    if (upiId) {
+      localStorage.setItem(UPI_STORAGE_KEY, upiId);
+      setConnectedUpiId(upiId);
+      setIsUpiConnected(true);
+      
+      // Simulate adding some UPI transactions
+      if (upiId) {
+        const upiTransactions = generateSampleUpiTransactions(upiId);
+        setTransactions(prev => [...upiTransactions, ...prev]);
+      }
+    } else {
+      localStorage.removeItem(UPI_STORAGE_KEY);
+      setConnectedUpiId(null);
+      setIsUpiConnected(false);
+      
+      // Remove UPI transactions
+      setTransactions(prev => prev.filter(t => !t.upiId));
+    }
+  };
+
+  // Generate sample UPI transactions for demo
+  const generateSampleUpiTransactions = (upiId: string): Transaction[] => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const lastWeek = new Date(today);
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    
+    return [
+      {
+        id: 'upi-' + Math.random().toString(36).substring(2, 9),
+        amount: 3500,
+        description: 'Grocery Store Payment',
+        category: 'Food & Dining',
+        date: yesterday.toISOString(),
+        type: 'expense',
+        upiId,
+        payee: 'grocerystore@upi'
+      },
+      {
+        id: 'upi-' + Math.random().toString(36).substring(2, 9),
+        amount: 799,
+        description: 'Movie Tickets',
+        category: 'Entertainment',
+        date: today.toISOString(),
+        type: 'expense',
+        upiId,
+        payee: 'moviebooking@upi'
+      },
+      {
+        id: 'upi-' + Math.random().toString(36).substring(2, 9),
+        amount: 1200,
+        description: 'Electric Bill',
+        category: 'Bills & Utilities',
+        date: lastWeek.toISOString(),
+        type: 'expense',
+        upiId,
+        payee: 'electricbill@upi'
+      },
+      {
+        id: 'upi-' + Math.random().toString(36).substring(2, 9),
+        amount: 500,
+        description: 'Friend Payment',
+        category: 'Personal',
+        date: yesterday.toISOString(),
+        type: 'expense',
+        upiId,
+        payee: 'friend@upi'
+      },
+      {
+        id: 'upi-' + Math.random().toString(36).substring(2, 9),
+        amount: 20000,
+        description: 'Salary Credit',
+        category: 'Salary',
+        date: lastWeek.toISOString(),
+        type: 'income',
+        upiId,
+        payee: 'company@upi'
+      }
+    ] as Transaction[];
+  };
 
   // Add a new transaction
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
@@ -103,6 +199,11 @@ export const useTransactions = () => {
       .reduce((total, transaction) => total + transaction.amount, 0);
   };
 
+  // Get UPI transactions only
+  const getUpiTransactions = () => {
+    return transactions.filter(transaction => transaction.upiId);
+  };
+
   return {
     transactions,
     isLoading,
@@ -113,5 +214,9 @@ export const useTransactions = () => {
     getBalance,
     getTotalIncome,
     getTotalExpenses,
+    connectUpiId,
+    isUpiConnected,
+    connectedUpiId,
+    getUpiTransactions
   };
 };

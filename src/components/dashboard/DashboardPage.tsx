@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import FinanceSummary from './FinanceSummary';
 import BalanceChart from './BalanceChart';
 import RecentTransactions from './RecentTransactions';
+import UpiIntegration from './UpiIntegration';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +16,10 @@ const DashboardPage = () => {
     isLoading, 
     getBalance, 
     getTotalIncome, 
-    getTotalExpenses 
+    getTotalExpenses,
+    connectUpiId,
+    isUpiConnected,
+    connectedUpiId
   } = useTransactions();
   
   const isMobile = useIsMobile();
@@ -91,7 +95,12 @@ const DashboardPage = () => {
             </CardContent>
           </Card>
         </div>
-        <div className={`${isMobile ? '' : 'col-span-3'}`}>
+        <div className={`${isMobile ? '' : 'col-span-3'} space-y-6`}>
+          <UpiIntegration 
+            onUpiConnect={connectUpiId}
+            isConnected={isUpiConnected}
+            connectedUpiId={connectedUpiId}
+          />
           <RecentTransactions 
             transactions={transactions}
             isLoading={isLoading}

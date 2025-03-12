@@ -8,6 +8,8 @@ export type Transaction = {
   category: string;
   date: string;
   type: 'income' | 'expense';
+  upiId?: string;
+  payee?: string;
 };
 
 export type CategoryWithTotal = {
