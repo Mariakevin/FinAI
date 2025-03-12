@@ -1,12 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, MapPin, Phone, Save, Settings, LogOut, BellRing, Moon, Sun } from 'lucide-react';
+import { User, Mail, MapPin, Phone, Save, LogOut, BellRing, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import { Switch } from '@/components/ui/switch';
 const ProfilePage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [profileData, setProfileData] = useState({
     name: '',
@@ -25,7 +26,6 @@ const ProfilePage = () => {
   });
   
   const [preferences, setPreferences] = useState({
-    darkMode: localStorage.getItem('pref_darkMode') === 'true',
     notifications: localStorage.getItem('pref_notifications') === 'true',
     emailAlerts: localStorage.getItem('pref_emailAlerts') === 'true',
     monthlyReports: localStorage.getItem('pref_monthlyReports') === 'true',
@@ -87,6 +87,149 @@ const ProfilePage = () => {
     }
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageUrl = reader.result as string;
+        setProfileData(prev => ({
+          ...prev,
+          profileImage: imageUrl
+        }));
+        localStorage.setItem('profile_image', imageUrl);
+        toast.success('Profile picture uploaded successfully');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  const exportTransactionsAsCSV = () => {
+    try {
+      // Get transactions from localStorage
+      const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+      
+      if (transactions.length === 0) {
+        toast.error('No transactions found to export');
+        return;
+      }
+      
+      // Convert transactions to CSV format
+      const headers = ['Date', 'Description', 'Amount', 'Category', 'Type'];
+      const csvRows = [headers.join(',')];
+      
+      transactions.forEach((transaction: any) => {
+        const row = [
+          transaction.date,
+          `"${transaction.description.replace(/"/g, '""')}"`, // Escape quotes in description
+          transaction.amount,
+          transaction.category,
+          transaction.type
+        ];
+        csvRows.push(row.join(','));
+      });
+      
+      const csvContent = csvRows.join('\n');
+      
+      // Create a blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'finwise_transactions.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success('CSV file downloaded successfully');
+    } catch (error) {
+      console.error('Error exporting CSV:', error);
+      toast.error('Failed to export CSV file');
+    }
+  };
+
+  const exportTransactionsAsPDF = () => {
+    try {
+      // Get transactions from localStorage
+      const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+      
+      if (transactions.length === 0) {
+        toast.error('No transactions found to export');
+        return;
+      }
+
+      // Create a new window to generate PDF content
+      const printWindow = window.open('', '', 'height=600,width=800');
+      if (!printWindow) {
+        toast.error('Pop-up blocked. Please allow pop-ups to export PDF.');
+        return;
+      }
+
+      // Generate HTML content for the PDF
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>FinWise Transactions</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              h1 { color: #333; text-align: center; }
+              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              th { background-color: #f2f2f2; }
+              tr:nth-child(even) { background-color: #f9f9f9; }
+              .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+            </style>
+          </head>
+          <body>
+            <h1>FinWise Transactions</h1>
+            <p>Generated on: ${new Date().toLocaleDateString()}</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Category</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${transactions.map((t: any) => `
+                  <tr>
+                    <td>${t.date}</td>
+                    <td>${t.description}</td>
+                    <td>${t.type === 'expense' ? '-' : ''}${t.amount}</td>
+                    <td>${t.category}</td>
+                    <td>${t.type}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+            <div class="footer">
+              <p>FinWise - Personal Finance Tracker</p>
+            </div>
+          </body>
+        </html>
+      `);
+      
+      // Print the window as PDF
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+        toast.success('PDF export initiated');
+      }, 500);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      toast.error('Failed to export PDF file');
+    }
+  };
+
   return (
     <div className="container mx-auto max-w-4xl py-6">
       <div className="flex justify-between items-center mb-6">
@@ -105,12 +248,24 @@ const ProfilePage = () => {
         <div className="w-full md:w-1/3">
           <Card>
             <CardContent className="pt-6 flex flex-col items-center">
-              <Avatar className="h-24 w-24 mb-4">
-                <AvatarImage src={profileData.profileImage || ''} />
-                <AvatarFallback className="bg-blue-100 text-blue-600 text-xl">
-                  {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative group">
+                <Avatar className="h-24 w-24 mb-4 cursor-pointer" onClick={triggerFileInput}>
+                  <AvatarImage src={profileData.profileImage || ''} />
+                  <AvatarFallback className="bg-blue-100 text-blue-600 text-xl">
+                    {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
+                  </AvatarFallback>
+                  <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Upload className="h-6 w-6 text-white" />
+                  </div>
+                </Avatar>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </div>
               
               <h2 className="text-xl font-semibold">{profileData.name || 'Your Name'}</h2>
               <p className="text-gray-500 flex items-center gap-1 mt-1">
@@ -118,17 +273,9 @@ const ProfilePage = () => {
                 {profileData.email || 'email@example.com'}
               </p>
               
-              <div className="mt-6 w-full">
-                <Label htmlFor="profileImage">Profile Image URL</Label>
-                <Input 
-                  id="profileImage"
-                  name="profileImage"
-                  value={profileData.profileImage}
-                  onChange={handleChange}
-                  placeholder="https://example.com/profile.jpg"
-                  className="mt-1"
-                />
-              </div>
+              <p className="text-xs text-gray-500 mt-2 text-center">
+                Click on the avatar to upload a new profile picture
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -242,21 +389,6 @@ const ProfilePage = () => {
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Dark Mode</Label>
-                      <p className="text-sm text-gray-500">Enable dark mode for the application</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Sun className="h-4 w-4 text-gray-500" />
-                      <Switch 
-                        checked={preferences.darkMode} 
-                        onCheckedChange={(checked) => handlePreferenceChange('darkMode', checked)} 
-                      />
-                      <Moon className="h-4 w-4 text-gray-500" />
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pb-4 border-b">
-                    <div className="space-y-0.5">
                       <Label className="text-base">App Notifications</Label>
                       <p className="text-sm text-gray-500">Receive in-app notifications about important updates</p>
                     </div>
@@ -333,8 +465,8 @@ const ProfilePage = () => {
                       Export all your financial data for backup or analysis.
                     </p>
                     <div className="flex gap-2">
-                      <Button variant="outline">Export as CSV</Button>
-                      <Button variant="outline">Export as PDF</Button>
+                      <Button variant="outline" onClick={exportTransactionsAsCSV}>Export as CSV</Button>
+                      <Button variant="outline" onClick={exportTransactionsAsPDF}>Export as PDF</Button>
                     </div>
                   </div>
                   
