@@ -222,7 +222,9 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       </header>
 
       <main className={`flex-1 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-700 ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-        {children}
+        <div className="w-full max-w-md">
+          {children}
+        </div>
       </main>
       
       <footer className={`relative z-10 py-4 text-center text-sm text-gray-500 transition-all duration-700 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
