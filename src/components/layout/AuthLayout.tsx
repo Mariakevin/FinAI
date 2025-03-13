@@ -1,5 +1,5 @@
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 interface AuthLayoutProps {
@@ -11,51 +11,61 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Update mouse position for parallax effect
+  // Generate random decorative elements only once using useMemo
+  const decorativeElements = useMemo(() => 
+    Array.from({ length: 3 }, (_, i) => ({
+      id: i,
+      size: Math.random() * 8 + 3, // Reduced size range 3-11rem
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      hue: Math.floor(Math.random() * 60) + 200, // Blue to purple hues
+      delay: i * 0.3,
+      duration: Math.random() * 15 + 15, // Animation duration 15-30s
+    })),
+  []);
+
+  // Update mouse position for parallax effect with throttling
   useEffect(() => {
+    let lastUpdateTime = 0;
+    const THROTTLE_DELAY = 50; // Throttle to 50ms
+    
     const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastUpdateTime < THROTTLE_DELAY) return;
+      
+      lastUpdateTime = now;
       setMousePosition({
         x: e.clientX / window.innerWidth,
         y: e.clientY / window.innerHeight,
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     
     // Set loaded state for initial animations
-    setTimeout(() => setIsLoaded(true), 100);
+    const timer = setTimeout(() => setIsLoaded(true), 100);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(timer);
     };
   }, []);
 
-  // Calculate transform values for parallax effect
+  // Use hardware-accelerated properties and optimize the transform calculation
   const calculateTransform = (factor: number) => {
     const x = (mousePosition.x - 0.5) * factor;
     const y = (mousePosition.y - 0.5) * factor;
-    return `translate(${x}rem, ${y}rem)`;
+    return `translate3d(${x}rem, ${y}rem, 0)`;
   };
-
-  // Generate random decorative elements
-  const decorativeElements = Array.from({ length: 5 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 10 + 3, // Size between 3-13rem
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    hue: Math.floor(Math.random() * 60) + 200, // Blue to purple hues
-    delay: i * 0.3,
-    duration: Math.random() * 20 + 15, // Animation duration 15-35s
-  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col overflow-hidden">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 z-0">
+      {/* Reduced number of animated background elements */}
+      <div className="fixed inset-0 z-0 will-change-transform">
         {decorativeElements.map((el) => (
           <div
             key={el.id}
-            className="absolute rounded-full opacity-10 animate-pulse-light"
+            className="absolute rounded-full opacity-10 animate-pulse-light will-change-transform"
             style={{
               width: `${el.size}rem`,
               height: `${el.size}rem`,
@@ -65,33 +75,31 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
               animationDelay: `${el.delay}s`,
               animationDuration: `${el.duration}s`,
               transform: calculateTransform(el.id + 2),
-              transition: 'transform 0.2s ease-out',
+              transition: 'transform 0.3s ease-out',
             }}
           />
         ))}
       </div>
       
-      {/* Main decorative elements with parallax effect */}
+      {/* Main decorative elements with parallax effect - reduced for better performance */}
       <div 
-        className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-br from-blue-200/30 to-purple-300/30 rounded-bl-full blur-md"
+        className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-br from-blue-200/30 to-purple-300/30 rounded-bl-full blur-md will-change-transform"
         style={{ 
-          transform: calculateTransform(20),
-          transition: 'transform 0.2s ease-out',
+          transform: calculateTransform(10), // Reduced factor from 20 to 10
+          transition: 'transform 0.3s ease-out',
         }}
       />
       <div 
-        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-indigo-200/30 to-blue-300/30 rounded-tr-full blur-md"
+        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-indigo-200/30 to-blue-300/30 rounded-tr-full blur-md will-change-transform"
         style={{ 
-          transform: calculateTransform(15),
-          transition: 'transform 0.2s ease-out',
+          transform: calculateTransform(8), // Reduced factor from 15 to 8
+          transition: 'transform 0.3s ease-out',
         }}
       />
       
-      {/* Additional animated decorative elements */}
-      <div className="absolute top-1/4 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-blue-400/10 to-purple-300/10 animate-pulse-light" 
-           style={{ animationDuration: '7s' }} />
-      <div className="absolute bottom-1/4 right-10 w-32 h-32 rounded-full bg-gradient-to-r from-indigo-400/10 to-blue-300/10 animate-pulse-light"
-           style={{ animationDuration: '9s' }} />
+      {/* Reduced additional animated decorative elements */}
+      <div className="absolute top-1/4 left-10 w-20 h-20 rounded-full bg-gradient-to-r from-blue-400/10 to-purple-300/10 animate-pulse-light will-change-transform" 
+           style={{ animationDuration: '15s' }} /> {/* Slowed down animation */}
       
       <header className={`relative z-10 py-6 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
