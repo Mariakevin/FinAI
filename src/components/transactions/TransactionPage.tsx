@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import TransactionList from './TransactionList';
 import TransactionForm from './TransactionForm';
@@ -12,12 +11,20 @@ import {
   List, 
   TableProperties, 
   Download,
+  FileJson,
+  FileText,
   SlidersHorizontal
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
-import { exportTransactionsToCSV } from '@/lib/export';
+import { exportTransactions, ExportFormat } from '@/lib/export';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const TransactionPage = () => {
   const { 
@@ -36,10 +43,9 @@ const TransactionPage = () => {
     setShowForm(false);
   };
   
-  const handleExportTransactions = () => {
+  const handleExportTransactions = (format: ExportFormat) => {
     try {
-      exportTransactionsToCSV(transactions);
-      toast.success('Transactions exported successfully');
+      exportTransactions(transactions, format);
     } catch (error) {
       toast.error('Failed to export transactions');
       console.error('Export error:', error);
@@ -55,15 +61,32 @@ const TransactionPage = () => {
         </div>
         
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="hidden md:flex"
-            onClick={handleExportTransactions}
-          >
-            <Download className="h-4 w-4 mr-1" />
-            Export
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="hidden md:flex"
+              >
+                <Download className="h-4 w-4 mr-1" />
+                Export
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => handleExportTransactions('csv')}>
+                <FileText className="h-4 w-4 mr-2" />
+                <span>Export as CSV</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportTransactions('json')}>
+                <FileJson className="h-4 w-4 mr-2" />
+                <span>Export as JSON</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportTransactions('pdf')}>
+                <FileText className="h-4 w-4 mr-2" />
+                <span>Export as HTML (for PDF)</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <div className="bg-gray-100 rounded-md p-1 flex">
             <Button 
