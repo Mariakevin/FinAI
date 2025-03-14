@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Transaction, formatCurrency, getCategoryTotals } from '@/lib/finance';
 import GlassCard from '@/components/ui/GlassCard';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
@@ -34,33 +34,44 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const TransactionAnalytics = ({ transactions, isLoading }: TransactionAnalyticsProps) => {
-  const categoryData = getCategoryTotals(transactions);
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   
-  // Group transactions by month
-  const monthlyData = React.useMemo(() => {
-    const months: Record<string, MonthlyData> = {};
-    
-    transactions.forEach(transaction => {
-      const date = new Date(transaction.date);
-      const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
-      const monthName = date.toLocaleString('default', { month: 'short' });
+  // Update data when transactions change
+  useEffect(() => {
+    if (transactions.length > 0) {
+      // Update category data
+      setCategoryData(getCategoryTotals(transactions));
       
-      if (!months[monthKey]) {
-        months[monthKey] = { 
-          income: 0, 
-          expense: 0,
-          name: monthName
-        };
-      }
+      // Update monthly data
+      const months: Record<string, MonthlyData> = {};
       
-      if (transaction.type === 'income') {
-        months[monthKey].income += transaction.amount;
-      } else {
-        months[monthKey].expense += transaction.amount;
-      }
-    });
-    
-    return Object.values(months);
+      transactions.forEach(transaction => {
+        const date = new Date(transaction.date);
+        const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+        const monthName = date.toLocaleString('default', { month: 'short' });
+        
+        if (!months[monthKey]) {
+          months[monthKey] = { 
+            income: 0, 
+            expense: 0,
+            name: monthName
+          };
+        }
+        
+        if (transaction.type === 'income') {
+          months[monthKey].income += transaction.amount;
+        } else {
+          months[monthKey].expense += transaction.amount;
+        }
+      });
+      
+      setMonthlyData(Object.values(months));
+    } else {
+      // Reset data when no transactions
+      setCategoryData([]);
+      setMonthlyData([]);
+    }
   }, [transactions]);
   
   if (isLoading) {

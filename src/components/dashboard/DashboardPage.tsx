@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FinanceSummary from './FinanceSummary';
 import BalanceChart from './BalanceChart';
 import RecentTransactions from './RecentTransactions';
@@ -24,6 +24,19 @@ const DashboardPage = () => {
   
   const isMobile = useIsMobile();
   const [activeChartView, setActiveChartView] = useState('overview');
+  const [refreshKey, setRefreshKey] = useState(0);
+  
+  // Force a refresh of chart components when UPI connection status changes
+  useEffect(() => {
+    setRefreshKey(prev => prev + 1);
+  }, [isUpiConnected]);
+  
+  // Handle UPI connection/disconnection with refresh
+  const handleUpiConnect = (upiId: string) => {
+    connectUpiId(upiId);
+    // We'll set a small timeout to ensure transactions are updated before refresh
+    setTimeout(() => setRefreshKey(prev => prev + 1), 100);
+  };
   
   return (
     <div className="space-y-8">
@@ -75,6 +88,7 @@ const DashboardPage = () => {
         income={getTotalIncome()}
         expenses={getTotalExpenses()}
         isLoading={isLoading}
+        key={`summary-${refreshKey}`}
       />
       
       <div className={`grid ${isMobile ? 'grid-cols-1 gap-8' : 'grid-cols-7 gap-6'}`}>
@@ -91,19 +105,21 @@ const DashboardPage = () => {
                 transactions={transactions}
                 isLoading={isLoading}
                 chartView={activeChartView}
+                key={`chart-${refreshKey}`}
               />
             </CardContent>
           </Card>
         </div>
         <div className={`${isMobile ? '' : 'col-span-3'} space-y-6`}>
           <UpiIntegration 
-            onUpiConnect={connectUpiId}
+            onUpiConnect={handleUpiConnect}
             isConnected={isUpiConnected}
             connectedUpiId={connectedUpiId}
           />
           <RecentTransactions 
             transactions={transactions}
             isLoading={isLoading}
+            key={`transactions-${refreshKey}`}
           />
         </div>
       </div>

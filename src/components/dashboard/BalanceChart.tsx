@@ -75,6 +75,7 @@ const BalanceChart = ({ transactions, isLoading, chartView }: BalanceChartProps)
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const isMobile = useIsMobile();
   
+  // Reset chart data when transactions array changes
   useEffect(() => {
     if (transactions.length > 0) {
       // For line/area/bar charts
@@ -92,6 +93,10 @@ const BalanceChart = ({ transactions, isLoading, chartView }: BalanceChartProps)
       // For category pie chart
       const categories = getCategoryTotals(transactions);
       setCategoryData(categories);
+    } else {
+      // Clear chart data when no transactions exist
+      setChartData([]);
+      setCategoryData([]);
     }
   }, [transactions]);
   
