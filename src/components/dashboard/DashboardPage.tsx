@@ -26,16 +26,23 @@ const DashboardPage = () => {
   const [activeChartView, setActiveChartView] = useState('overview');
   const [refreshKey, setRefreshKey] = useState(0);
   
-  // Force a refresh of chart components when UPI connection status changes
+  // Force a refresh of chart components when transactions or UPI connection status changes
   useEffect(() => {
     setRefreshKey(prev => prev + 1);
-  }, [isUpiConnected]);
+  }, [isUpiConnected, transactions.length]);
   
   // Handle UPI connection/disconnection with refresh
   const handleUpiConnect = (upiId: string) => {
     connectUpiId(upiId);
     // We'll set a small timeout to ensure transactions are updated before refresh
     setTimeout(() => setRefreshKey(prev => prev + 1), 100);
+  };
+
+  // Handle chart view change with refresh to ensure proper rendering
+  const handleChartViewChange = (view: string) => {
+    setActiveChartView(view);
+    // Small delay to ensure view change takes effect
+    setTimeout(() => setRefreshKey(prev => prev + 1), 50);
   };
   
   return (
@@ -48,34 +55,37 @@ const DashboardPage = () => {
         
         <div className="flex items-center gap-2 bg-gray-100/70 p-1 rounded-lg">
           <button 
-            onClick={() => setActiveChartView('overview')}
+            onClick={() => handleChartViewChange('overview')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium ${
               activeChartView === 'overview' 
                 ? 'bg-white shadow-sm text-blue-600' 
                 : 'text-gray-600 hover:bg-gray-200/50'
             }`}
+            aria-label="Overview chart"
           >
             <LineChart className="w-4 h-4" />
             <span>Overview</span>
           </button>
           <button 
-            onClick={() => setActiveChartView('monthly')}
+            onClick={() => handleChartViewChange('monthly')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium ${
               activeChartView === 'monthly' 
                 ? 'bg-white shadow-sm text-blue-600' 
                 : 'text-gray-600 hover:bg-gray-200/50'
             }`}
+            aria-label="Monthly chart"
           >
             <BarChartBig className="w-4 h-4" />
             <span>Monthly</span>
           </button>
           <button 
-            onClick={() => setActiveChartView('category')}
+            onClick={() => handleChartViewChange('category')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium ${
               activeChartView === 'category' 
                 ? 'bg-white shadow-sm text-blue-600' 
                 : 'text-gray-600 hover:bg-gray-200/50'
             }`}
+            aria-label="Categories chart"
           >
             <PieChart className="w-4 h-4" />
             <span>Categories</span>
@@ -105,7 +115,7 @@ const DashboardPage = () => {
                 transactions={transactions}
                 isLoading={isLoading}
                 chartView={activeChartView}
-                key={`chart-${refreshKey}`}
+                key={`chart-${activeChartView}-${refreshKey}`}
               />
             </CardContent>
           </Card>
