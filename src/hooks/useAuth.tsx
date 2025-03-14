@@ -31,17 +31,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const storedUser = localStorage.getItem(STORAGE_KEY);
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          console.log('User loaded from storage:', parsedUser);
+        } else {
+          console.log('No user found in storage');
         }
       } catch (error) {
         console.error('Error loading user:', error);
+        // Clear potentially corrupt data
+        localStorage.removeItem(STORAGE_KEY);
       } finally {
         setIsLoading(false);
       }
     };
 
-    const timer = setTimeout(loadUser, 500);
-    return () => clearTimeout(timer);
+    loadUser();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -67,9 +72,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           
           localStorage.setItem(STORAGE_KEY, JSON.stringify(userSession));
           setUser(userSession);
+          console.log('Login successful:', userSession);
           toast.success('Login successful!');
           return true;
         } else {
+          console.log('Invalid credentials. Users in storage:', users);
           toast.error('Invalid email or password');
           return false;
         }
@@ -94,10 +101,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       if (name && email && password) {
         // Get existing users
-        const users = JSON.parse(localStorage.getItem('finwise_users') || '[]');
+        let users = [];
+        try {
+          const storedUsers = localStorage.getItem('finwise_users');
+          users = storedUsers ? JSON.parse(storedUsers) : [];
+          if (!Array.isArray(users)) users = [];
+        } catch (e) {
+          console.error('Error parsing stored users, resetting:', e);
+          users = [];
+        }
         
         // Check if email already exists
         if (users.some((u: any) => u.email === email)) {
+          console.log('Email already registered');
           toast.error('Email already registered');
           return false;
         }
@@ -113,6 +129,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Save to "database"
         users.push(newUser);
         localStorage.setItem('finwise_users', JSON.stringify(users));
+        console.log('User registered and saved to storage:', newUser);
+        console.log('All users:', users);
         
         // Create user session without password
         const userSession = {
@@ -142,6 +160,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     localStorage.removeItem(STORAGE_KEY);
     setUser(null);
+    console.log('User logged out');
     toast.success('Logged out successfully');
   };
 
