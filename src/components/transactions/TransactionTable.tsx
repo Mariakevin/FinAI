@@ -1,40 +1,50 @@
 
 import React, { useState } from 'react';
-import GlassCard from '@/components/ui/GlassCard';
-import TransactionItem from './TransactionItem';
-import { Transaction } from '@/lib/finance';
-import { Search, Filter, CalendarRange } from 'lucide-react';
+import { Transaction, formatCurrency, formatDate, CATEGORIES } from '@/lib/finance';
+import { Search, Filter, CalendarRange, ArrowUpDown, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from '@/components/ui/pagination';
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
-interface TransactionListProps {
+interface TransactionTableProps {
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
   isLoading: boolean;
   showFilters?: boolean;
 }
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 15;
 
-const TransactionList = ({ 
+const TransactionTable = ({ 
   transactions, 
   onDeleteTransaction, 
   isLoading,
   showFilters = true
-}: TransactionListProps) => {
+}: TransactionTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState<'date' | 'amount' | 'description'>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   
   // Get all unique categories from transactions
   const categories = [...new Set(transactions.map(t => t.category))].sort();
@@ -71,10 +81,27 @@ const TransactionList = ({
     return matchesSearch && matchesType && matchesCategory && matchesDate;
   });
   
+  // Sort transactions
+  const sortedTransactions = [...filteredTransactions].sort((a, b) => {
+    if (sortField === 'date') {
+      return sortDirection === 'asc' 
+        ? new Date(a.date).getTime() - new Date(b.date).getTime()
+        : new Date(b.date).getTime() - new Date(a.date).getTime();
+    } else if (sortField === 'amount') {
+      return sortDirection === 'asc' 
+        ? a.amount - b.amount
+        : b.amount - a.amount;
+    } else {
+      return sortDirection === 'asc'
+        ? a.description.localeCompare(b.description)
+        : b.description.localeCompare(a.description);
+    }
+  });
+  
   // Pagination logic
-  const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(sortedTransactions.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedTransactions = filteredTransactions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedTransactions = sortedTransactions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   
   // Handle page change
   const handlePageChange = (page: number) => {
@@ -82,8 +109,21 @@ const TransactionList = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
+  // Handle sort
+  const handleSort = (field: 'date' | 'amount' | 'description') => {
+    if (sortField === field) {
+      // Toggle direction if same field
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Set new field and default to descending
+      setSortField(field);
+      setSortDirection('desc');
+    }
+  };
+  
   // Generate pagination items
   const generatePaginationItems = () => {
+    // Similar pagination logic as in TransactionList
     const items = [];
     
     // For small number of pages, show all
@@ -166,24 +206,9 @@ const TransactionList = ({
   
   if (isLoading) {
     return (
-      <div className="py-4">
-        <div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-4" />
+      <div className="p-4">
         <div className="h-10 w-full bg-gray-100 rounded animate-pulse mb-6" />
-        
-        {Array.from({ length: 5 }).map((_, index) => (
-          <div key={index} className="py-4 border-b border-gray-100 last:border-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
-                <div>
-                  <div className="h-5 w-48 bg-gray-200 rounded animate-pulse mb-2" />
-                  <div className="h-3 w-32 bg-gray-100 rounded animate-pulse" />
-                </div>
-              </div>
-              <div className="h-6 w-24 bg-gray-200 rounded animate-pulse" />
-            </div>
-          </div>
-        ))}
+        <div className="h-[300px] w-full bg-gray-50 rounded animate-pulse" />
       </div>
     );
   }
@@ -263,20 +288,104 @@ const TransactionList = ({
         </div>
       )}
       
-      <div className="divide-y divide-gray-100">
-        {paginatedTransactions.length === 0 ? (
-          <div className="py-8 text-center">
-            <p className="text-gray-500">No transactions found</p>
-          </div>
-        ) : (
-          paginatedTransactions.map(transaction => (
-            <TransactionItem 
-              key={transaction.id} 
-              transaction={transaction} 
-              onDelete={onDeleteTransaction}
-            />
-          ))
-        )}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('date')}
+              >
+                <div className="flex items-center">
+                  Date
+                  {sortField === 'date' && (
+                    <ArrowUpDown className={cn(
+                      "ml-1 h-4 w-4 transition-transform",
+                      sortDirection === 'asc' ? 'rotate-0' : 'rotate-180'
+                    )} />
+                  )}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('description')}
+              >
+                <div className="flex items-center">
+                  Description
+                  {sortField === 'description' && (
+                    <ArrowUpDown className={cn(
+                      "ml-1 h-4 w-4 transition-transform",
+                      sortDirection === 'asc' ? 'rotate-0' : 'rotate-180'
+                    )} />
+                  )}
+                </div>
+              </TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead 
+                className="text-right cursor-pointer hover:bg-muted/50"
+                onClick={() => handleSort('amount')}
+              >
+                <div className="flex items-center justify-end">
+                  Amount
+                  {sortField === 'amount' && (
+                    <ArrowUpDown className={cn(
+                      "ml-1 h-4 w-4 transition-transform",
+                      sortDirection === 'asc' ? 'rotate-0' : 'rotate-180'
+                    )} />
+                  )}
+                </div>
+              </TableHead>
+              <TableHead className="w-[50px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paginatedTransactions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  No transactions found
+                </TableCell>
+              </TableRow>
+            ) : (
+              paginatedTransactions.map(transaction => {
+                const categoryColor = CATEGORIES[transaction.category as keyof typeof CATEGORIES] || CATEGORIES['Other'];
+                
+                return (
+                  <TableRow key={transaction.id} className="group">
+                    <TableCell className="font-medium">{formatDate(transaction.date)}</TableCell>
+                    <TableCell>{transaction.description}</TableCell>
+                    <TableCell>
+                      <div 
+                        className="inline-flex px-2 py-1 rounded-full text-xs" 
+                        style={{ 
+                          backgroundColor: `${categoryColor}15`, 
+                          color: categoryColor 
+                        }}
+                      >
+                        {transaction.category}
+                      </div>
+                    </TableCell>
+                    <TableCell className={cn(
+                      "text-right font-medium",
+                      transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
+                    )}>
+                      {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDeleteTransaction(transaction.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
       </div>
       
       {filteredTransactions.length > ITEMS_PER_PAGE && (
@@ -306,4 +415,4 @@ const TransactionList = ({
   );
 };
 
-export default TransactionList;
+export default TransactionTable;
