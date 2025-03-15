@@ -6,7 +6,9 @@ import SettingsPage from '@/components/settings/SettingsPage';
 const Settings = () => {
   return (
     <Layout>
-      <SettingsPage />
+      <div className="container mx-auto px-4 py-8">
+        <SettingsPage />
+      </div>
     </Layout>
   );
 };

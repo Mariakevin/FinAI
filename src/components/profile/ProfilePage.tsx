@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -5,14 +6,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, MapPin, Phone, Save, LogOut, BellRing, Upload } from 'lucide-react';
+import { User, Mail, MapPin, Phone, Save, LogOut, Upload, BellRing, Settings, Shield, UserCog } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { Switch } from '@/components/ui/switch';
+import { useTransactions } from '@/hooks/useTransactions';
 
 const ProfilePage = () => {
   const { user, logout } = useAuth();
+  const { clearAllTransactions } = useTransactions();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -74,7 +77,7 @@ const ProfilePage = () => {
   
   const handleClearData = () => {
     if (window.confirm('Are you sure you want to delete all your transaction data? This action cannot be undone.')) {
-      localStorage.removeItem('transactions');
+      clearAllTransactions();
       toast.success('All transaction data has been deleted');
     }
   };
@@ -107,148 +110,16 @@ const ProfilePage = () => {
     fileInputRef.current?.click();
   };
 
-  const exportTransactionsAsCSV = () => {
-    try {
-      // Get transactions from localStorage using the correct key
-      const transactions = JSON.parse(localStorage.getItem('finwise_transactions') || '[]');
-      
-      if (transactions.length === 0) {
-        toast.error('No transactions found to export');
-        return;
-      }
-      
-      // Convert transactions to CSV format
-      const headers = ['Date', 'Description', 'Amount', 'Category', 'Type'];
-      const csvRows = [headers.join(',')];
-      
-      transactions.forEach((transaction: any) => {
-        const row = [
-          transaction.date,
-          `"${transaction.description.replace(/"/g, '""')}"`, // Escape quotes in description
-          transaction.amount,
-          transaction.category,
-          transaction.type
-        ];
-        csvRows.push(row.join(','));
-      });
-      
-      const csvContent = csvRows.join('\n');
-      
-      // Create a blob and download
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', `finwise_transactions_${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      toast.success('Transactions exported successfully as CSV');
-    } catch (error) {
-      console.error('Error exporting CSV:', error);
-      toast.error('Failed to export transactions');
-    }
-  };
-
-  const exportTransactionsAsPDF = () => {
-    try {
-      // Get transactions from localStorage using the correct key
-      const transactions = JSON.parse(localStorage.getItem('finwise_transactions') || '[]');
-      
-      if (transactions.length === 0) {
-        toast.error('No transactions found to export');
-        return;
-      }
-
-      // Create a new window to generate PDF content
-      const printWindow = window.open('', '', 'height=600,width=800');
-      if (!printWindow) {
-        toast.error('Pop-up blocked. Please allow pop-ups to export PDF.');
-        return;
-      }
-
-      // Generate HTML content for the PDF with transaction data
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>FinWise Transactions - ${new Date().toLocaleDateString()}</title>
-            <style>
-              body { font-family: Arial, sans-serif; padding: 20px; }
-              h1 { color: #333; text-align: center; }
-              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-              th { background-color: #f2f2f2; }
-              tr:nth-child(even) { background-color: #f9f9f9; }
-              .total { margin-top: 20px; text-align: right; font-weight: bold; }
-              .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
-            </style>
-          </head>
-          <body>
-            <h1>FinWise Transactions Report</h1>
-            <p>Generated on: ${new Date().toLocaleDateString()}</p>
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th>Amount</th>
-                  <th>Category</th>
-                  <th>Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${transactions.map((t: any) => `
-                  <tr>
-                    <td>${new Date(t.date).toLocaleDateString()}</td>
-                    <td>${t.description}</td>
-                    <td>${t.type === 'expense' ? '-' : '+'}₹${t.amount.toLocaleString()}</td>
-                    <td>${t.category}</td>
-                    <td>${t.type.charAt(0).toUpperCase() + t.type.slice(1)}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-            <div class="total">
-              <p>Total Income: ₹${transactions
-                .filter((t: any) => t.type === 'income')
-                .reduce((sum: number, t: any) => sum + t.amount, 0)
-                .toLocaleString()}</p>
-              <p>Total Expenses: ₹${transactions
-                .filter((t: any) => t.type === 'expense')
-                .reduce((sum: number, t: any) => sum + t.amount, 0)
-                .toLocaleString()}</p>
-            </div>
-            <div class="footer">
-              <p>FinWise - Personal Finance Tracker</p>
-            </div>
-          </body>
-        </html>
-      `);
-      
-      // Print the window as PDF
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-        toast.success('Transactions exported successfully as PDF');
-      }, 500);
-    } catch (error) {
-      console.error('Error exporting PDF:', error);
-      toast.error('Failed to export transactions');
-    }
-  };
-
   return (
-    <div className="container mx-auto max-w-4xl py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Profile</h1>
+    <div className="container mx-auto max-w-4xl py-6 animate-fade-in">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">
+          My Profile
+        </h1>
         <Button 
-          variant="destructive"
+          variant="outline"
           onClick={handleLogout}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-300"
         >
           <LogOut className="h-4 w-4" />
           Logout
@@ -257,16 +128,16 @@ const ProfilePage = () => {
       
       <div className="flex flex-col md:flex-row gap-6">
         <div className="w-full md:w-1/3">
-          <Card>
-            <CardContent className="pt-6 flex flex-col items-center">
-              <div className="relative group">
-                <Avatar className="h-24 w-24 mb-4 cursor-pointer" onClick={triggerFileInput}>
+          <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-0">
+            <CardContent className="pt-6 pb-6 flex flex-col items-center">
+              <div className="relative group transition-transform duration-300 hover:scale-105">
+                <Avatar className="h-28 w-28 mb-6 cursor-pointer border-4 border-white shadow-lg" onClick={triggerFileInput}>
                   <AvatarImage src={profileData.profileImage || ''} />
-                  <AvatarFallback className="bg-blue-100 text-blue-600 text-xl">
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-2xl text-white">
                     {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
                   </AvatarFallback>
                   <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Upload className="h-6 w-6 text-white" />
+                    <Upload className="h-8 w-8 text-white" />
                   </div>
                 </Avatar>
                 <input 
@@ -278,13 +149,29 @@ const ProfilePage = () => {
                 />
               </div>
               
-              <h2 className="text-xl font-semibold">{profileData.name || 'Your Name'}</h2>
-              <p className="text-gray-500 flex items-center gap-1 mt-1">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-1">{profileData.name || 'Your Name'}</h2>
+              <p className="text-gray-500 flex items-center gap-2 mb-4">
                 <Mail className="h-4 w-4" />
                 {profileData.email || 'email@example.com'}
               </p>
               
-              <p className="text-xs text-gray-500 mt-2 text-center">
+              <div className="w-full space-y-3 mt-2">
+                {profileData.phone && (
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <Phone className="h-4 w-4 mr-2 text-gray-400" />
+                    {profileData.phone}
+                  </div>
+                )}
+                
+                {profileData.address && (
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <MapPin className="h-4 w-4 mr-2 text-gray-400" />
+                    {profileData.address}
+                  </div>
+                )}
+              </div>
+              
+              <p className="text-xs text-gray-400 mt-5 text-center">
                 Click on the avatar to upload a new profile picture
               </p>
             </CardContent>
@@ -292,25 +179,37 @@ const ProfilePage = () => {
         </div>
         
         <div className="w-full md:w-2/3">
-          <Tabs defaultValue="personal">
-            <TabsList className="mb-4">
-              <TabsTrigger value="personal">Personal Information</TabsTrigger>
-              <TabsTrigger value="preferences">Preferences</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
+          <Tabs defaultValue="personal" className="animate-scale-in">
+            <TabsList className="mb-6 grid grid-cols-3 gap-2 bg-muted/50 p-1 rounded-lg">
+              <TabsTrigger value="personal" className="flex items-center gap-2">
+                <UserCog className="h-4 w-4" />
+                <span>Personal Info</span>
+              </TabsTrigger>
+              <TabsTrigger value="preferences" className="flex items-center gap-2">
+                <BellRing className="h-4 w-4" />
+                <span>Preferences</span>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
+              </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="personal">
-              <Card>
+            <TabsContent value="personal" className="animate-slide-up">
+              <Card className="border-0 shadow-md">
                 <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-blue-500" />
+                    Personal Information
+                  </CardTitle>
                   <CardDescription>
-                    Update your personal details
+                    Update your personal details and contact information
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
+                      <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
                         <Input 
@@ -318,7 +217,7 @@ const ProfilePage = () => {
                           name="name"
                           value={profileData.name}
                           onChange={handleChange}
-                          className="pl-10"
+                          className="pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200"
                           placeholder="Your Name"
                           readOnly={!!user?.name}
                         />
@@ -329,7 +228,7 @@ const ProfilePage = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
                         <Input 
@@ -337,7 +236,7 @@ const ProfilePage = () => {
                           name="email"
                           value={profileData.email}
                           onChange={handleChange}
-                          className="pl-10"
+                          className="pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200"
                           placeholder="email@example.com"
                           readOnly={!!user?.email}
                         />
@@ -348,7 +247,7 @@ const ProfilePage = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
                         <Input 
@@ -356,14 +255,14 @@ const ProfilePage = () => {
                           name="phone"
                           value={profileData.phone}
                           onChange={handleChange}
-                          className="pl-10"
+                          className="pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200"
                           placeholder="Your Phone"
                         />
                       </div>
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="address">Address</Label>
+                      <Label htmlFor="address" className="text-sm font-medium">Address</Label>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
                         <Input 
@@ -371,7 +270,7 @@ const ProfilePage = () => {
                           name="address"
                           value={profileData.address}
                           onChange={handleChange}
-                          className="pl-10"
+                          className="pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200"
                           placeholder="Your Address"
                         />
                       </div>
@@ -380,7 +279,7 @@ const ProfilePage = () => {
                   
                   <Button 
                     onClick={handleSave}
-                    className="w-full md:w-auto mt-4"
+                    className="mt-4 btn-hover-effect w-full md:w-auto"
                   >
                     <Save className="mr-2 h-4 w-4" />
                     Save Changes
@@ -389,101 +288,100 @@ const ProfilePage = () => {
               </Card>
             </TabsContent>
             
-            <TabsContent value="preferences">
-              <Card>
+            <TabsContent value="preferences" className="animate-slide-up">
+              <Card className="border-0 shadow-md">
                 <CardHeader>
-                  <CardTitle>Preferences</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <BellRing className="h-5 w-5 text-blue-500" />
+                    Notification Preferences
+                  </CardTitle>
                   <CardDescription>
-                    Customize your application settings
+                    Customize your notification and alert settings
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between pb-4 border-b">
+                  <div className="flex items-center justify-between py-4 border-b border-gray-100 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
                     <div className="space-y-0.5">
-                      <Label className="text-base">App Notifications</Label>
+                      <Label className="text-base font-medium">App Notifications</Label>
                       <p className="text-sm text-gray-500">Receive in-app notifications about important updates</p>
                     </div>
                     <Switch 
                       checked={preferences.notifications} 
                       onCheckedChange={(checked) => handlePreferenceChange('notifications', checked)} 
+                      className="data-[state=checked]:bg-blue-600"
                     />
                   </div>
                   
-                  <div className="flex items-center justify-between pb-4 border-b">
+                  <div className="flex items-center justify-between py-4 border-b border-gray-100 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Email Alerts</Label>
+                      <Label className="text-base font-medium">Email Alerts</Label>
                       <p className="text-sm text-gray-500">Receive email notifications about your account</p>
                     </div>
                     <Switch 
                       checked={preferences.emailAlerts} 
                       onCheckedChange={(checked) => handlePreferenceChange('emailAlerts', checked)} 
+                      className="data-[state=checked]:bg-blue-600"
                     />
                   </div>
                   
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between py-4 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
                     <div className="space-y-0.5">
-                      <Label className="text-base">Monthly Reports</Label>
+                      <Label className="text-base font-medium">Monthly Reports</Label>
                       <p className="text-sm text-gray-500">Get monthly summary reports of your finances</p>
                     </div>
                     <Switch 
                       checked={preferences.monthlyReports} 
                       onCheckedChange={(checked) => handlePreferenceChange('monthlyReports', checked)} 
+                      className="data-[state=checked]:bg-blue-600"
                     />
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
             
-            <TabsContent value="settings">
-              <Card>
+            <TabsContent value="settings" className="animate-slide-up">
+              <Card className="border-0 shadow-md">
                 <CardHeader>
-                  <CardTitle>Settings</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5 text-blue-500" />
+                    Account Settings
+                  </CardTitle>
                   <CardDescription>
-                    Manage your account and application settings
+                    Manage your account settings and data
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="pb-6 border-b border-gray-100">
-                    <h4 className="font-medium text-gray-800 mb-2">Clear Transaction Data</h4>
-                    <p className="text-gray-500 text-sm mb-4">
-                      This will permanently delete all your transaction data. This action cannot be undone.
+                  <div className="p-4 bg-red-50 rounded-lg border border-red-100">
+                    <h4 className="font-medium text-red-800 mb-2 flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Data Management
+                    </h4>
+                    <p className="text-red-600 text-sm mb-4">
+                      These actions permanently delete your data and cannot be undone.
                     </p>
-                    <Button variant="destructive" onClick={handleClearData}>
-                      Clear All Data
-                    </Button>
-                  </div>
-                  
-                  <div className="pb-6 border-b border-gray-100">
-                    <h4 className="font-medium text-gray-800 mb-2">Clear Activity History</h4>
-                    <p className="text-gray-500 text-sm mb-4">
-                      This will clear your activity history in the application. This action cannot be undone.
-                    </p>
-                    <Button variant="secondary" onClick={handleClearHistory}>
-                      Clear History
-                    </Button>
-                  </div>
-                  
-                  <div className="pb-6 border-b border-gray-100">
-                    <h4 className="font-medium text-gray-800 mb-2">Currency</h4>
-                    <p className="text-gray-500 text-sm mb-2">
-                      Your current currency is set to Indian Rupees (₹).
-                    </p>
-                  </div>
-                  
-                  <div className="pb-6 border-b border-gray-100">
-                    <h4 className="font-medium text-gray-800 mb-2">Data Export</h4>
-                    <p className="text-gray-500 text-sm mb-4">
-                      Export all your financial data for backup or analysis.
-                    </p>
-                    <div className="flex gap-2">
-                      <Button variant="outline" onClick={exportTransactionsAsCSV}>Export as CSV</Button>
-                      <Button variant="outline" onClick={exportTransactionsAsPDF}>Export as PDF</Button>
+                    <div className="space-y-3">
+                      <Button variant="outline" onClick={handleClearData} 
+                        className="w-full sm:w-auto border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700">
+                        Clear All Transaction Data
+                      </Button>
+                      
+                      <Button variant="outline" onClick={handleClearHistory} 
+                        className="w-full sm:w-auto border-gray-200 text-gray-700 hover:bg-gray-100">
+                        Clear Activity History
+                      </Button>
                     </div>
                   </div>
                   
-                  <div>
-                    <h4 className="font-medium text-gray-800 mb-2">About</h4>
-                    <p className="text-gray-500 text-sm">
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium text-gray-800 mb-2">Currency Setting</h4>
+                    <p className="text-gray-600 text-sm mb-0">
+                      Your current currency is set to <span className="font-medium">Indian Rupees (₹)</span>
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <h4 className="font-medium text-blue-800 mb-2">About FinWise</h4>
+                    <p className="text-blue-600 text-sm">
                       FinWise - Personal Finance Tracker<br />
                       Version 1.0.0
                     </p>
