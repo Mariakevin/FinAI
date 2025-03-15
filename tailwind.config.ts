@@ -22,6 +22,9 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      rotate: {
+        '25': '25deg',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
