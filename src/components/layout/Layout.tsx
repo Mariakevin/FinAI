@@ -13,12 +13,12 @@ const Layout = ({ children }: LayoutProps) => {
   const pageKey = location.pathname;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-50/30 to-white">
       <Navbar />
-      <main className="pt-24 pb-16 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto animate-fade-in">
+      <main className="pt-20 pb-12 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto animate-fade-in">
         <div 
           className={cn(
-            "animate-scale-in transition-all duration-300"
+            "animate-scale-in transition-all duration-300 rounded-xl"
           )}
           key={pageKey}
         >
