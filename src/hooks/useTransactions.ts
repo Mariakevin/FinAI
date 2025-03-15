@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Transaction } from '@/lib/finance';
 import { toast } from 'sonner';
@@ -65,8 +66,8 @@ export const useTransactions = () => {
       
       // Simulate adding some UPI transactions
       if (upiId) {
-        const upiTransactions = generateSampleUpiTransactions(upiId);
-        setTransactions(prev => [...upiTransactions, ...prev]);
+        const upiTransactions = generateUpiTransactions(upiId);
+        setTransactions(prev => [...upiTransactions, ...prev.filter(t => !t.upiId)]);
       }
     } else {
       localStorage.removeItem(UPI_STORAGE_KEY);
@@ -78,66 +79,182 @@ export const useTransactions = () => {
     }
   };
 
-  // Generate sample UPI transactions for demo
-  const generateSampleUpiTransactions = (upiId: string): Transaction[] => {
+  // Generate different UPI transactions based on the UPI ID
+  const generateUpiTransactions = (upiId: string): Transaction[] => {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     const lastWeek = new Date(today);
     lastWeek.setDate(lastWeek.getDate() - 7);
     
-    return [
-      {
-        id: 'upi-' + Math.random().toString(36).substring(2, 9),
-        amount: 3500,
-        description: 'Grocery Store Payment',
-        category: 'Food & Dining',
-        date: yesterday.toISOString(),
-        type: 'expense',
-        upiId,
-        payee: 'grocerystore@upi'
-      },
-      {
-        id: 'upi-' + Math.random().toString(36).substring(2, 9),
-        amount: 799,
-        description: 'Movie Tickets',
-        category: 'Entertainment',
-        date: today.toISOString(),
-        type: 'expense',
-        upiId,
-        payee: 'moviebooking@upi'
-      },
-      {
-        id: 'upi-' + Math.random().toString(36).substring(2, 9),
-        amount: 1200,
-        description: 'Electric Bill',
-        category: 'Bills & Utilities',
-        date: lastWeek.toISOString(),
-        type: 'expense',
-        upiId,
-        payee: 'electricbill@upi'
-      },
-      {
-        id: 'upi-' + Math.random().toString(36).substring(2, 9),
-        amount: 500,
-        description: 'Friend Payment',
-        category: 'Personal',
-        date: yesterday.toISOString(),
-        type: 'expense',
-        upiId,
-        payee: 'friend@upi'
-      },
-      {
-        id: 'upi-' + Math.random().toString(36).substring(2, 9),
-        amount: 20000,
-        description: 'Salary Credit',
-        category: 'Salary',
-        date: lastWeek.toISOString(),
-        type: 'income',
-        upiId,
-        payee: 'company@upi'
-      }
-    ] as Transaction[];
+    // Different transactions for different UPI IDs
+    if (upiId.includes('hdfc') || upiId.includes('bank')) {
+      return [
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 7500,
+          description: 'Rent Payment',
+          category: 'Housing',
+          date: yesterday.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'landlord@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 2800,
+          description: 'Car Insurance',
+          category: 'Insurance',
+          date: today.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'insurance@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 35000,
+          description: 'Salary Credit',
+          category: 'Salary',
+          date: lastWeek.toISOString(),
+          type: 'income',
+          upiId,
+          payee: 'employer@upi'
+        }
+      ] as Transaction[];
+    } 
+    else if (upiId.includes('paytm') || upiId.includes('gpay')) {
+      return [
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 1200,
+          description: 'Online Shopping',
+          category: 'Shopping',
+          date: yesterday.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'ecommerce@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 599,
+          description: 'Food Delivery',
+          category: 'Food & Dining',
+          date: today.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'foodapp@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 850,
+          description: 'Mobile Recharge',
+          category: 'Bills & Utilities',
+          date: lastWeek.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'telecom@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 5000,
+          description: 'Friend Payment',
+          category: 'Personal',
+          date: yesterday.toISOString(),
+          type: 'income',
+          upiId,
+          payee: 'friend@upi'
+        }
+      ] as Transaction[];
+    }
+    else if (upiId.includes('business') || upiId.includes('corp')) {
+      return [
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 15000,
+          description: 'Office Supplies',
+          category: 'Business Expenses',
+          date: yesterday.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'officesupplies@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 8500,
+          description: 'Business Travel',
+          category: 'Travel',
+          date: today.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'travelagency@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 25000,
+          description: 'Client Payment',
+          category: 'Business Income',
+          date: lastWeek.toISOString(),
+          type: 'income',
+          upiId,
+          payee: 'client@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 42000,
+          description: 'Consulting Fee',
+          category: 'Business Income',
+          date: yesterday.toISOString(),
+          type: 'income',
+          upiId,
+          payee: 'client2@upi'
+        }
+      ] as Transaction[];
+    }
+    else {
+      // Default transactions for other UPI IDs
+      return [
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 3500,
+          description: 'Grocery Store Payment',
+          category: 'Food & Dining',
+          date: yesterday.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'grocerystore@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 799,
+          description: 'Movie Tickets',
+          category: 'Entertainment',
+          date: today.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'moviebooking@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 1200,
+          description: 'Electric Bill',
+          category: 'Bills & Utilities',
+          date: lastWeek.toISOString(),
+          type: 'expense',
+          upiId,
+          payee: 'electricbill@upi'
+        },
+        {
+          id: 'upi-' + Math.random().toString(36).substring(2, 9),
+          amount: 20000,
+          description: 'Salary Credit',
+          category: 'Salary',
+          date: lastWeek.toISOString(),
+          type: 'income',
+          upiId,
+          payee: 'company@upi'
+        }
+      ] as Transaction[];
+    }
   };
 
   // Add a new transaction

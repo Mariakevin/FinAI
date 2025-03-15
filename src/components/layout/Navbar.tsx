@@ -5,15 +5,14 @@ import { cn } from '@/lib/utils';
 import { 
   LayoutDashboard, 
   Receipt, 
-  Settings, 
-  Menu, 
-  X,
   User,
   LogOut,
   LogIn,
   Calculator,
   Bot,
-  HelpCircle
+  HelpCircle,
+  Menu,
+  X
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -97,18 +96,13 @@ const Navbar = () => {
   
   const routes = isAuthenticated ? authenticatedRoutes : unauthenticatedRoutes;
   
-  // User menu items
+  // User menu items (removed Settings, only kept Profile)
   const userMenuItems = [
     {
       name: 'Profile',
       path: '/profile',
       icon: <User className="w-5 h-5" />,
-    },
-    {
-      name: 'Settings',
-      path: '/settings',
-      icon: <Settings className="w-5 h-5" />,
-    },
+    }
   ];
 
   return (
@@ -295,3 +289,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
