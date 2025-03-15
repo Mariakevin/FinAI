@@ -1,16 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 import GlassCard from '@/components/ui/GlassCard';
 import { Progress } from '@/components/ui/progress';
 import { formatCurrency } from '@/lib/finance';
-import { PieChart, BarChart3, Plus, Pencil, Save, X, DollarSign, PieChart as PieChartIcon } from 'lucide-react';
+import { PieChart as PieChartIcon, BarChart3, Plus, Pencil, Save, X, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 // Type definitions
 interface Budget {
@@ -338,7 +337,7 @@ const BudgetPage = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
                       <GlassCard className="flex flex-col">
                         <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                          <PieChart className="h-5 w-5 text-blue-600 mr-2" />
+                          <PieChartIcon className="h-5 w-5 text-blue-600 mr-2" />
                           Budget vs. Spending
                         </h3>
                         <div className="flex-1 flex items-center justify-center">
