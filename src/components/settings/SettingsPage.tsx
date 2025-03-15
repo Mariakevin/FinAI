@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,8 @@ import {
   Sun, 
   Info, 
   AlertCircle,
-  ChevronRight
+  ChevronRight,
+  Settings
 } from 'lucide-react';
 import {
   Accordion,
