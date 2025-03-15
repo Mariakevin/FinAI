@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     
-    --primary: 210 100% 50%;
+    --primary: 224 76% 48%;
     --primary-foreground: 210 40% 98%;
     
     --secondary: 210 40% 96.1%;
@@ -40,8 +40,27 @@
     @apply border-border;
   }
   
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
   body {
     @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
   }
 }
 
@@ -222,4 +241,38 @@
 
 .caption {
   @apply text-xs text-muted-foreground;
+}
+
+/* Modern card styling */
+.card-modern {
+  @apply bg-white rounded-xl shadow-sm border border-gray-100/80 overflow-hidden transition-all duration-200 hover:shadow-md;
+}
+
+/* Button with hovering animation */
+.btn-hover-effect {
+  @apply relative overflow-hidden transition-all duration-300;
+}
+
+.btn-hover-effect:after {
+  content: '';
+  @apply absolute bg-white/20 w-12 h-[200%] top-[-50%] left-[-100px] transform rotate-25 transition-all duration-1000;
+}
+
+.btn-hover-effect:hover:after {
+  @apply left-[100%];
+}
+
+/* Interactive elements */
+.interactive-element {
+  @apply transition-all duration-200 hover:scale-[1.02] active:scale-[0.98];
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  @apply rounded-xl overflow-hidden border border-gray-100 shadow-sm transition-shadow duration-200 hover:shadow-md;
+}
+
+/* Category/Tag pill */
+.category-pill {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors;
 }
