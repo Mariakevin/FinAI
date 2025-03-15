@@ -6,6 +6,8 @@ interface User {
   id: string;
   email: string;
   name: string;
+  photoUrl?: string;
+  provider?: 'email' | 'google';
 }
 
 interface AuthContextType {
@@ -13,6 +15,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
+  loginWithGoogle: () => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -67,7 +70,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const userSession = {
             id: foundUser.id,
             email: foundUser.email,
-            name: foundUser.name
+            name: foundUser.name,
+            provider: 'email'
           };
           
           localStorage.setItem(STORAGE_KEY, JSON.stringify(userSession));
@@ -87,6 +91,62 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error('Login error:', error);
       toast.error('Login failed. Please try again.');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginWithGoogle = async (): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      // Simulate Google OAuth flow with a delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Generate a mock Google user
+      const googleUser = {
+        id: `google_${Math.random().toString(36).substring(2, 9)}`,
+        name: 'Google User',
+        email: `user${Math.floor(Math.random() * 10000)}@gmail.com`,
+        photoUrl: 'https://placehold.co/200x200',
+        provider: 'google' as const
+      };
+      
+      // Get existing users
+      let users = [];
+      try {
+        const storedUsers = localStorage.getItem('finwise_users');
+        users = storedUsers ? JSON.parse(storedUsers) : [];
+        if (!Array.isArray(users)) users = [];
+      } catch (e) {
+        console.error('Error parsing stored users, resetting:', e);
+        users = [];
+      }
+      
+      // Check if Google user exists, if not create one
+      const existingUser = users.find((u: any) => u.email === googleUser.email);
+      
+      if (!existingUser) {
+        // Create new user without password (OAuth)
+        users.push({
+          ...googleUser,
+          password: null // No password for OAuth users
+        });
+        
+        localStorage.setItem('finwise_users', JSON.stringify(users));
+        console.log('Google user registered and saved to storage:', googleUser);
+      }
+      
+      // Create user session
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(googleUser));
+      setUser(googleUser);
+      
+      toast.success('Google login successful!');
+      return true;
+      
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error('Google login failed. Please try again.');
       return false;
     } finally {
       setIsLoading(false);
@@ -123,7 +183,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           id: Math.random().toString(36).substring(2, 9),
           name,
           email,
-          password
+          password,
+          provider: 'email' as const
         };
         
         // Save to "database"
@@ -136,7 +197,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const userSession = {
           id: newUser.id,
           email: newUser.email,
-          name: newUser.name
+          name: newUser.name,
+          provider: 'email' as const
         };
         
         localStorage.setItem(STORAGE_KEY, JSON.stringify(userSession));
@@ -169,7 +231,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       user, 
       isLoading, 
       login, 
-      register, 
+      register,
+      loginWithGoogle,
       logout,
       isAuthenticated: !!user 
     }}>

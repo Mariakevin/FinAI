@@ -1,7 +1,7 @@
 
 import React, { ReactNode, useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { CreditCard, Coins, PiggyBank, DollarSign, Landmark } from 'lucide-react';
+import { CreditCard, Coins, PiggyBank, DollarSign, Landmark, ChartBar, TrendingUp } from 'lucide-react';
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -18,33 +18,37 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
     <Coins size={24} className="text-indigo-400/20" />,
     <PiggyBank size={24} className="text-purple-400/20" />,
     <DollarSign size={24} className="text-green-400/20" />,
-    <Landmark size={24} className="text-blue-500/20" />
+    <Landmark size={24} className="text-blue-500/20" />,
+    <ChartBar size={24} className="text-indigo-500/20" />,
+    <TrendingUp size={24} className="text-purple-500/20" />
   ], []);
 
-  // Generate random decorative elements only once using useMemo
+  // Generate random decorative elements with enhanced colors
   const decorativeElements = useMemo(() => 
-    Array.from({ length: 3 }, (_, i) => ({
+    Array.from({ length: 5 }, (_, i) => ({
       id: i,
-      size: Math.random() * 8 + 3, // Reduced size range 3-11rem
+      size: Math.random() * 10 + 5, // Increased size range 5-15rem
       x: Math.random() * 100,
       y: Math.random() * 100,
-      hue: Math.floor(Math.random() * 60) + 200, // Blue to purple hues
-      delay: i * 0.3,
-      duration: Math.random() * 15 + 15, // Animation duration 15-30s
+      hue: Math.floor(Math.random() * 60) + 200, // Enhanced blue to purple hues
+      saturation: Math.floor(Math.random() * 20) + 70, // Higher saturation
+      lightness: Math.floor(Math.random() * 15) + 75, // Brighter colors
+      delay: i * 0.5,
+      duration: Math.random() * 20 + 20, // Animation duration 20-40s
     })),
   []);
 
   // Generate financial floating elements
   const floatingElements = useMemo(() => 
-    Array.from({ length: 10 }, (_, i) => ({
+    Array.from({ length: 15 }, (_, i) => ({
       id: i,
       icon: financialIcons[i % financialIcons.length],
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 0.5 + 0.8, // Scale factor
+      size: Math.random() * 0.7 + 0.9, // Scale factor
       speed: Math.random() * 30 + 40, // Animation duration 40-70s
       delay: i * 0.7,
-      opacity: Math.random() * 0.2 + 0.1, // Low opacity for subtle effect
+      opacity: Math.random() * 0.3 + 0.1, // Increased opacity for better visibility
     })),
   [financialIcons]);
 
@@ -84,27 +88,29 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col overflow-hidden">
-      {/* Reduced number of animated background elements */}
+      {/* Enhanced animated background elements */}
       <div className="fixed inset-0 z-0 will-change-transform">
+        {/* Colorful gradient orbs */}
         {decorativeElements.map((el) => (
           <div
             key={el.id}
-            className="absolute rounded-full opacity-10 animate-pulse-light will-change-transform hardware-accelerated"
+            className="absolute rounded-full opacity-20 animate-pulse-light will-change-transform hardware-accelerated"
             style={{
               width: `${el.size}rem`,
               height: `${el.size}rem`,
               left: `${el.x}%`,
               top: `${el.y}%`,
-              background: `radial-gradient(circle, hsl(${el.hue}, 80%, 80%), transparent 70%)`,
+              background: `radial-gradient(circle, hsl(${el.hue}, ${el.saturation}%, ${el.lightness}%) 30%, transparent 70%)`,
               animationDelay: `${el.delay}s`,
               animationDuration: `${el.duration}s`,
-              transform: calculateTransform(el.id + 2),
-              transition: 'transform 0.3s ease-out',
+              transform: calculateTransform(el.id + 3),
+              transition: 'transform 0.4s ease-out',
+              filter: 'blur(20px)',
             }}
           />
         ))}
         
-        {/* Financial floating icons */}
+        {/* Enhanced financial floating icons */}
         {floatingElements.map((el) => (
           <div
             key={`icon-${el.id}`}
@@ -123,46 +129,54 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         ))}
       </div>
       
-      {/* Digital graph patterns */}
+      {/* Digital graph patterns - enhanced with more financial elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
         <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {/* Stock chart line patterns */}
+          {/* Stock chart line patterns - more complex patterns */}
           <polyline 
-            points="0,50 10,48 20,52 30,45 40,55 50,40 60,60 70,35 80,55 90,30 100,40" 
+            points="0,50 5,48 10,45 15,52 20,48 25,55 30,45 35,42 40,55 45,40 50,60 55,45 60,60 65,48 70,35 75,55 80,42 85,50 90,30 95,35 100,40" 
             fill="none" 
             stroke="currentColor" 
             strokeWidth="0.2" 
-            className="text-blue-600"
+            className="text-blue-500"
             strokeDasharray="0.5,0.5"
           />
           <polyline 
-            points="0,60 15,65 30,55 45,70 60,50 75,65 90,45 100,55" 
+            points="0,60 10,65 20,55 30,68 40,60 50,50 60,58 70,45 80,60 90,45 100,55" 
             fill="none" 
             stroke="currentColor" 
             strokeWidth="0.2" 
-            className="text-indigo-600"
+            className="text-indigo-500"
+            strokeDasharray="0.5,0.5"
+          />
+          <polyline 
+            points="0,65 10,60 20,70 30,65 40,72 50,68 60,75 70,65 80,70 90,65 100,70" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="0.2" 
+            className="text-purple-400"
             strokeDasharray="0.5,0.5"
           />
           
-          {/* Grid pattern */}
-          {Array.from({ length: 10 }).map((_, i) => (
+          {/* Grid pattern - finer grid */}
+          {Array.from({ length: 20 }).map((_, i) => (
             <line 
               key={`h-${i}`} 
               x1="0" 
-              y1={i * 10} 
+              y1={i * 5} 
               x2="100" 
-              y2={i * 10} 
+              y2={i * 5} 
               stroke="currentColor" 
               strokeWidth="0.1" 
               className="text-gray-600"
             />
           ))}
-          {Array.from({ length: 10 }).map((_, i) => (
+          {Array.from({ length: 20 }).map((_, i) => (
             <line 
               key={`v-${i}`} 
-              x1={i * 10} 
+              x1={i * 5} 
               y1="0" 
-              x2={i * 10} 
+              x2={i * 5} 
               y2="100" 
               stroke="currentColor" 
               strokeWidth="0.1" 
@@ -172,36 +186,36 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         </svg>
       </div>
       
-      {/* Main decorative elements with parallax effect - reduced for better performance */}
+      {/* Main decorative elements with enhanced parallax effect */}
       <div 
-        className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-br from-blue-200/30 to-purple-300/30 rounded-bl-full blur-md will-change-transform hardware-accelerated"
+        className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-br from-blue-300/30 to-purple-400/30 rounded-bl-full blur-xl will-change-transform hardware-accelerated"
         style={{ 
-          transform: calculateTransform(10), // Reduced factor from 20 to 10
-          transition: 'transform 0.3s ease-out',
+          transform: calculateTransform(15),
+          transition: 'transform 0.5s ease-out',
         }}
       />
       <div 
-        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-indigo-200/30 to-blue-300/30 rounded-tr-full blur-md will-change-transform hardware-accelerated"
+        className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-indigo-300/30 to-blue-400/30 rounded-tr-full blur-xl will-change-transform hardware-accelerated"
         style={{ 
-          transform: calculateTransform(8), // Reduced factor from 15 to 8
-          transition: 'transform 0.3s ease-out',
+          transform: calculateTransform(12),
+          transition: 'transform 0.5s ease-out',
         }}
       />
       
-      {/* Currency-like particle effect */}
-      <div className="absolute inset-0 z-0 opacity-10">
-        {Array.from({ length: 5 }).map((_, i) => (
+      {/* Enhanced currency-like particle effect */}
+      <div className="absolute inset-0 z-0 opacity-15">
+        {Array.from({ length: 8 }).map((_, i) => (
           <div 
             key={`currency-${i}`}
-            className="absolute w-8 h-8 rounded-full bg-blue-400/30 animate-float hardware-accelerated"
+            className="absolute w-8 h-8 rounded-full bg-blue-400/40 animate-float hardware-accelerated"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDuration: `${Math.random() * 10 + 15}s`,
+              animationDuration: `${Math.random() * 15 + 15}s`,
               animationDelay: `${i * 2}s`,
             }}
           >
-            <div className="absolute inset-0 flex items-center justify-center text-blue-600/50 font-bold text-xs">
+            <div className="absolute inset-0 flex items-center justify-center text-blue-600/60 font-bold text-xs">
               $
             </div>
           </div>
