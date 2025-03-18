@@ -103,13 +103,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Simulate Google OAuth flow with a delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Generate a mock Google user
-      const googleUser = {
+      // Generate a mock Google user with properly typed provider
+      const googleUser: User = {
         id: `google_${Math.random().toString(36).substring(2, 9)}`,
         name: 'Google User',
         email: `user${Math.floor(Math.random() * 10000)}@gmail.com`,
         photoUrl: 'https://placehold.co/200x200',
-        provider: 'google' as const
+        provider: 'google' // Explicitly typed as 'google' literal
       };
       
       // Get existing users
