@@ -67,11 +67,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         if (foundUser && foundUser.password === password) {
           // Create user session without password
-          const userSession = {
+          const userSession: User = {
             id: foundUser.id,
             email: foundUser.email,
             name: foundUser.name,
-            provider: 'email'
+            provider: 'email' as const
           };
           
           localStorage.setItem(STORAGE_KEY, JSON.stringify(userSession));
