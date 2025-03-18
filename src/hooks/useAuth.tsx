@@ -15,7 +15,6 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
-  loginWithGoogle: () => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -97,62 +96,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const loginWithGoogle = async (): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      // Simulate Google OAuth flow with a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Generate a mock Google user with properly typed provider
-      const googleUser: User = {
-        id: `google_${Math.random().toString(36).substring(2, 9)}`,
-        name: 'Google User',
-        email: `user${Math.floor(Math.random() * 10000)}@gmail.com`,
-        photoUrl: 'https://placehold.co/200x200',
-        provider: 'google' // Explicitly typed as 'google' literal
-      };
-      
-      // Get existing users
-      let users = [];
-      try {
-        const storedUsers = localStorage.getItem('finwise_users');
-        users = storedUsers ? JSON.parse(storedUsers) : [];
-        if (!Array.isArray(users)) users = [];
-      } catch (e) {
-        console.error('Error parsing stored users, resetting:', e);
-        users = [];
-      }
-      
-      // Check if Google user exists, if not create one
-      const existingUser = users.find((u: any) => u.email === googleUser.email);
-      
-      if (!existingUser) {
-        // Create new user without password (OAuth)
-        users.push({
-          ...googleUser,
-          password: null // No password for OAuth users
-        });
-        
-        localStorage.setItem('finwise_users', JSON.stringify(users));
-        console.log('Google user registered and saved to storage:', googleUser);
-      }
-      
-      // Create user session
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(googleUser));
-      setUser(googleUser);
-      
-      toast.success('Google login successful!');
-      return true;
-      
-    } catch (error) {
-      console.error('Google login error:', error);
-      toast.error('Google login failed. Please try again.');
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
@@ -194,7 +137,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log('All users:', users);
         
         // Create user session without password
-        const userSession = {
+        const userSession: User = {
           id: newUser.id,
           email: newUser.email,
           name: newUser.name,
@@ -232,7 +175,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isLoading, 
       login, 
       register,
-      loginWithGoogle,
       logout,
       isAuthenticated: !!user 
     }}>
