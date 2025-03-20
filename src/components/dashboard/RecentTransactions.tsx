@@ -2,15 +2,17 @@
 import React from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Transaction, formatCurrency, formatDate } from '@/lib/finance';
-import { ArrowUpRight, ArrowDownRight, CreditCard } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, CreditCard, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
   isLoading: boolean;
+  isReadOnly?: boolean;
 }
 
-const RecentTransactions = ({ transactions, isLoading }: RecentTransactionsProps) => {
+const RecentTransactions = ({ transactions, isLoading, isReadOnly = false }: RecentTransactionsProps) => {
   const navigate = useNavigate();
   const recentTransactions = transactions.slice(0, 5);
   
@@ -37,12 +39,25 @@ const RecentTransactions = ({ transactions, isLoading }: RecentTransactionsProps
     <GlassCard>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Recent Transactions</h3>
-        <button 
-          onClick={() => navigate('/transactions')}
-          className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          View all
-        </button>
+        <div className="flex gap-2">
+          {isReadOnly && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-blue-600"
+              onClick={() => navigate('/login')}
+            >
+              <LogIn className="h-4 w-4 mr-1" />
+              Sign in
+            </Button>
+          )}
+          <button 
+            onClick={() => navigate('/transactions')}
+            className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            View all
+          </button>
+        </div>
       </div>
       
       {recentTransactions.length === 0 ? (

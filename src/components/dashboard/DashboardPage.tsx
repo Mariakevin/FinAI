@@ -5,12 +5,14 @@ import BalanceChart from './BalanceChart';
 import RecentTransactions from './RecentTransactions';
 import UpiIntegration from './UpiIntegration';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LineChart, BarChartBig, PieChart, TrendingUp, Wallet, LayoutDashboard } from 'lucide-react';
+import { LineChart, BarChartBig, PieChart, TrendingUp, Wallet, LayoutDashboard, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const DashboardPage = () => {
   const { 
@@ -24,6 +26,7 @@ const DashboardPage = () => {
     connectedUpiId
   } = useTransactions();
   
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [activeChartView, setActiveChartView] = useState('overview');
@@ -36,6 +39,12 @@ const DashboardPage = () => {
   
   // Handle UPI connection/disconnection with refresh
   const handleUpiConnect = (upiId: string) => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to connect UPI');
+      navigate('/login');
+      return;
+    }
+    
     connectUpiId(upiId);
     // We'll set a small timeout to ensure transactions are updated before refresh
     setTimeout(() => setRefreshKey(prev => prev + 1), 100);
@@ -53,7 +62,14 @@ const DashboardPage = () => {
     {
       title: 'Add Transaction',
       icon: <TrendingUp className="h-5 w-5" />,
-      onClick: () => navigate('/transactions'),
+      onClick: () => {
+        if (!isAuthenticated) {
+          toast.error('Please sign in to add transactions');
+          navigate('/login');
+          return;
+        }
+        navigate('/transactions');
+      },
       color: 'bg-green-50 text-green-600'
     },
     {
@@ -72,10 +88,22 @@ const DashboardPage = () => {
             <LayoutDashboard className="h-6 w-6 text-blue-600" />
             Dashboard
           </h1>
-          <p className="text-gray-500 mt-1">Welcome back! Here's your financial overview.</p>
+          <p className="text-gray-500 mt-1">Welcome! Here's your financial overview.</p>
         </div>
         
         <div className="flex flex-wrap gap-2">
+          {!isAuthenticated && (
+            <Button 
+              onClick={() => navigate('/login')}
+              variant="outline"
+              size="sm"
+              className="bg-blue-50 text-blue-600 border-none shadow-sm hover:shadow-md transition-all duration-200"
+            >
+              <LogIn className="h-5 w-5 mr-1" />
+              Sign in to edit
+            </Button>
+          )}
+          
           {quickActions.map((action, index) => (
             <Button 
               key={index} 
@@ -137,6 +165,7 @@ const DashboardPage = () => {
             transactions={transactions}
             isLoading={isLoading}
             key={`transactions-${refreshKey}`}
+            isReadOnly={!isAuthenticated}
           />
         </div>
         <div className={`${isMobile ? '' : 'col-span-3'}`}>
@@ -144,6 +173,7 @@ const DashboardPage = () => {
             onUpiConnect={handleUpiConnect}
             isConnected={isUpiConnected}
             connectedUpiId={connectedUpiId}
+            isReadOnly={!isAuthenticated}
           />
         </div>
       </div>

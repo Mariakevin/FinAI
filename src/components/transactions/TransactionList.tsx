@@ -20,6 +20,7 @@ interface TransactionListProps {
   onDeleteTransaction: (id: string) => void;
   isLoading: boolean;
   showFilters?: boolean;
+  isReadOnly?: boolean;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -28,7 +29,8 @@ const TransactionList = ({
   transactions, 
   onDeleteTransaction, 
   isLoading,
-  showFilters = true
+  showFilters = true,
+  isReadOnly = false
 }: TransactionListProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -274,6 +276,7 @@ const TransactionList = ({
               key={transaction.id} 
               transaction={transaction} 
               onDelete={onDeleteTransaction}
+              isReadOnly={isReadOnly}
             />
           ))
         )}

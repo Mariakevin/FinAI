@@ -7,9 +7,10 @@ import { cn } from '@/lib/utils';
 interface TransactionItemProps {
   transaction: Transaction;
   onDelete: (id: string) => void;
+  isReadOnly?: boolean;
 }
 
-const TransactionItem = ({ transaction, onDelete }: TransactionItemProps) => {
+const TransactionItem = ({ transaction, onDelete, isReadOnly = false }: TransactionItemProps) => {
   const { id, description, amount, category, date, type } = transaction;
   
   const categoryColor = CATEGORIES[category as keyof typeof CATEGORIES] || CATEGORIES['Other'];
@@ -55,13 +56,15 @@ const TransactionItem = ({ transaction, onDelete }: TransactionItemProps) => {
             {type === 'income' ? '+' : '-'}{formatCurrency(amount)}
           </div>
           
-          <button
-            onClick={() => onDelete(id)}
-            className="text-gray-400 hover:text-red-500 transition-colors p-1"
-            aria-label="Delete transaction"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+          {!isReadOnly && (
+            <button
+              onClick={() => onDelete(id)}
+              className="text-gray-400 hover:text-red-500 transition-colors p-1"
+              aria-label="Delete transaction"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>

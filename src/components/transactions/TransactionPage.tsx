@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import TransactionList from './TransactionList';
 import TransactionForm from './TransactionForm';
 import TransactionAnalytics from './TransactionAnalytics';
 import TransactionTable from './TransactionTable';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { 
   PlusCircle, 
@@ -13,12 +15,14 @@ import {
   Download,
   FileJson,
   FileText,
-  SlidersHorizontal
+  SlidersHorizontal,
+  LogIn
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { exportTransactions, ExportFormat } from '@/lib/export';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,22 +38,47 @@ const TransactionPage = () => {
     deleteTransaction 
   } = useTransactions();
   
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
   const [showForm, setShowForm] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'table'>('list');
   const [showFilters, setShowFilters] = useState(false);
   
   const handleAddTransaction = (newTransaction: any) => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to add transactions');
+      navigate('/login');
+      return;
+    }
+    
     addTransaction(newTransaction);
     setShowForm(false);
   };
   
   const handleExportTransactions = (format: ExportFormat) => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to export transactions');
+      navigate('/login');
+      return;
+    }
+    
     try {
       exportTransactions(transactions, format);
     } catch (error) {
       toast.error('Failed to export transactions');
       console.error('Export error:', error);
     }
+  };
+
+  const handleDeleteTransaction = (id: string) => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to delete transactions');
+      navigate('/login');
+      return;
+    }
+    
+    deleteTransaction(id);
   };
   
   return (
@@ -61,12 +90,25 @@ const TransactionPage = () => {
         </div>
         
         <div className="flex gap-2">
+          {!isAuthenticated && (
+            <Button
+              onClick={() => navigate('/login')}
+              variant="outline"
+              size="sm"
+              className="bg-blue-50 text-blue-600 border-none"
+            >
+              <LogIn className="h-4 w-4 mr-1" />
+              Sign in to edit
+            </Button>
+          )}
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="outline" 
                 size="sm" 
                 className="hidden md:flex"
+                disabled={!isAuthenticated}
               >
                 <Download className="h-4 w-4 mr-1" />
                 Export
@@ -110,7 +152,14 @@ const TransactionPage = () => {
           </div>
           
           <Button 
-            onClick={() => setShowForm(!showForm)} 
+            onClick={() => {
+              if (!isAuthenticated) {
+                toast.error('Please sign in to add transactions');
+                navigate('/login');
+                return;
+              }
+              setShowForm(!showForm);
+            }} 
             className="flex items-center gap-2"
           >
             {showForm ? (
@@ -164,16 +213,18 @@ const TransactionPage = () => {
                 {viewMode === 'list' ? (
                   <TransactionList 
                     transactions={transactions}
-                    onDeleteTransaction={deleteTransaction}
+                    onDeleteTransaction={handleDeleteTransaction}
                     isLoading={isLoading}
                     showFilters={showFilters}
+                    isReadOnly={!isAuthenticated}
                   />
                 ) : (
                   <TransactionTable 
                     transactions={transactions}
-                    onDeleteTransaction={deleteTransaction}
+                    onDeleteTransaction={handleDeleteTransaction}
                     isLoading={isLoading}
                     showFilters={showFilters}
+                    isReadOnly={!isAuthenticated}
                   />
                 )}
               </TabsContent>
@@ -182,16 +233,18 @@ const TransactionPage = () => {
                 {viewMode === 'list' ? (
                   <TransactionList 
                     transactions={transactions.filter(t => t.type === 'income')}
-                    onDeleteTransaction={deleteTransaction}
+                    onDeleteTransaction={handleDeleteTransaction}
                     isLoading={isLoading}
                     showFilters={showFilters}
+                    isReadOnly={!isAuthenticated}
                   />
                 ) : (
                   <TransactionTable 
                     transactions={transactions.filter(t => t.type === 'income')}
-                    onDeleteTransaction={deleteTransaction}
+                    onDeleteTransaction={handleDeleteTransaction}
                     isLoading={isLoading}
                     showFilters={showFilters}
+                    isReadOnly={!isAuthenticated}
                   />
                 )}
               </TabsContent>
@@ -200,16 +253,18 @@ const TransactionPage = () => {
                 {viewMode === 'list' ? (
                   <TransactionList 
                     transactions={transactions.filter(t => t.type === 'expense')}
-                    onDeleteTransaction={deleteTransaction}
+                    onDeleteTransaction={handleDeleteTransaction}
                     isLoading={isLoading}
                     showFilters={showFilters}
+                    isReadOnly={!isAuthenticated}
                   />
                 ) : (
                   <TransactionTable 
                     transactions={transactions.filter(t => t.type === 'expense')}
-                    onDeleteTransaction={deleteTransaction}
+                    onDeleteTransaction={handleDeleteTransaction}
                     isLoading={isLoading}
                     showFilters={showFilters}
+                    isReadOnly={!isAuthenticated}
                   />
                 )}
               </TabsContent>

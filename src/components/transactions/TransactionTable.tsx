@@ -28,6 +28,7 @@ interface TransactionTableProps {
   onDeleteTransaction: (id: string) => void;
   isLoading: boolean;
   showFilters?: boolean;
+  isReadOnly?: boolean;
 }
 
 const ITEMS_PER_PAGE = 15;
@@ -36,7 +37,8 @@ const TransactionTable = ({
   transactions, 
   onDeleteTransaction, 
   isLoading,
-  showFilters = true
+  showFilters = true,
+  isReadOnly = false
 }: TransactionTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -335,13 +337,13 @@ const TransactionTable = ({
                   )}
                 </div>
               </TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              {!isReadOnly && <TableHead className="w-[50px]"></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedTransactions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={isReadOnly ? 4 : 5} className="text-center py-8 text-muted-foreground">
                   No transactions found
                 </TableCell>
               </TableRow>
@@ -370,16 +372,18 @@ const TransactionTable = ({
                     )}>
                       {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
                     </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onDeleteTransaction(transaction.id)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
-                      </Button>
-                    </TableCell>
+                    {!isReadOnly && (
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onDeleteTransaction(transaction.id)}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })

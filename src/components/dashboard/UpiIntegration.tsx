@@ -5,20 +5,34 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ArrowRightCircle } from 'lucide-react';
+import { ArrowRightCircle, LogIn } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface UpiIntegrationProps {
   onUpiConnect: (upiId: string) => void;
   isConnected: boolean;
   connectedUpiId: string | null;
+  isReadOnly?: boolean;
 }
 
-const UpiIntegration = ({ onUpiConnect, isConnected, connectedUpiId }: UpiIntegrationProps) => {
+const UpiIntegration = ({ 
+  onUpiConnect, 
+  isConnected, 
+  connectedUpiId,
+  isReadOnly = false
+}: UpiIntegrationProps) => {
   const [upiId, setUpiId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleConnect = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isReadOnly) {
+      toast.error('Please sign in to connect UPI ID');
+      navigate('/login');
+      return;
+    }
     
     if (!upiId.includes('@')) {
       toast.error('Please enter a valid UPI ID (example: name@upi)');
@@ -36,6 +50,12 @@ const UpiIntegration = ({ onUpiConnect, isConnected, connectedUpiId }: UpiIntegr
   };
 
   const handleDisconnect = () => {
+    if (isReadOnly) {
+      toast.error('Please sign in to disconnect UPI ID');
+      navigate('/login');
+      return;
+    }
+    
     onUpiConnect('');
     toast.success('UPI ID disconnected');
   };
@@ -57,37 +77,63 @@ const UpiIntegration = ({ onUpiConnect, isConnected, connectedUpiId }: UpiIntegr
                 <p className="text-md font-semibold">{connectedUpiId}</p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleDisconnect}
-              className="w-full"
-            >
-              Disconnect UPI ID
-            </Button>
+            {isReadOnly ? (
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/login')}
+                className="w-full"
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign in to manage UPI
+              </Button>
+            ) : (
+              <Button 
+                variant="outline" 
+                onClick={handleDisconnect}
+                className="w-full"
+              >
+                Disconnect UPI ID
+              </Button>
+            )}
           </div>
         ) : (
-          <form onSubmit={handleConnect} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="upi-id">Enter your UPI ID</Label>
-              <Input
-                id="upi-id"
-                value={upiId}
-                onChange={(e) => setUpiId(e.target.value)}
-                placeholder="example@upi"
-                required
-              />
-              <p className="text-xs text-gray-500">
-                Connect your UPI ID to track all your UPI transactions in one place
+          isReadOnly ? (
+            <div className="space-y-4">
+              <p className="text-sm text-gray-500">
+                Connect your UPI ID to track all your UPI transactions in one place.
               </p>
+              <Button 
+                onClick={() => navigate('/login')} 
+                className="w-full"
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign in to connect UPI
+              </Button>
             </div>
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Connecting...' : 'Connect UPI ID'}
-            </Button>
-          </form>
+          ) : (
+            <form onSubmit={handleConnect} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="upi-id">Enter your UPI ID</Label>
+                <Input
+                  id="upi-id"
+                  value={upiId}
+                  onChange={(e) => setUpiId(e.target.value)}
+                  placeholder="example@upi"
+                  required
+                />
+                <p className="text-xs text-gray-500">
+                  Connect your UPI ID to track all your UPI transactions in one place
+                </p>
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Connecting...' : 'Connect UPI ID'}
+              </Button>
+            </form>
+          )
         )}
       </CardContent>
     </Card>
