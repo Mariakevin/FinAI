@@ -82,7 +82,7 @@ const TransactionPage = () => {
   };
   
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pt-2">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
@@ -114,7 +114,7 @@ const TransactionPage = () => {
                 Export
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-white">
               <DropdownMenuItem onClick={() => handleExportTransactions('csv')}>
                 <FileText className="h-4 w-4 mr-2" />
                 <span>Export as CSV</span>
