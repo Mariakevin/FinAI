@@ -84,14 +84,11 @@ const LoginPage = () => {
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-              <PasswordField
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <PasswordField
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </CardContent>
           
           <CardFooter>

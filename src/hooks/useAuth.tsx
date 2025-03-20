@@ -16,9 +16,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   register: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  requestPasswordReset: (email: string) => Promise<boolean>;
-  resetPassword: (token: string, newPassword: string) => Promise<boolean>;
   isAuthenticated: boolean;
+  canEdit: (resourceOwnerId?: string) => boolean;
 }
 
 const STORAGE_KEY = 'finwise_user';
@@ -203,70 +202,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const requestPasswordReset = async (email: string): Promise<boolean> => {
-    if (!email) {
-      toast.error('Please enter your email address');
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      toast.error('Please enter a valid email address');
-      return false;
-    }
-
-    // Check if the email exists
-    if (!checkEmailExists(email)) {
-      // For security, don't reveal that the email doesn't exist
-      await new Promise(resolve => setTimeout(resolve, 800));
-      toast.success('If your email exists in our system, you will receive reset instructions');
-      return true;
-    }
-
-    // In a real app, this would send an email with a reset link
-    // For this demo, we'll just simulate success
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Store the reset token in localStorage (in a real app, this would be handled by a backend)
-    const resetToken = Math.random().toString(36).substring(2, 15);
-    const resets = JSON.parse(localStorage.getItem('finwise_password_resets') || '{}');
-    resets[email.toLowerCase()] = {
-      token: resetToken,
-      expires: new Date(Date.now() + 3600000).toISOString() // 1 hour from now
-    };
-    localStorage.setItem('finwise_password_resets', JSON.stringify(resets));
-    
-    console.log(`Password reset requested for: ${email}, token: ${resetToken}`);
-    toast.success('Password reset instructions sent to your email');
-    return true;
-  };
-
-  const resetPassword = async (token: string, newPassword: string): Promise<boolean> => {
-    // In a real app, this would validate the token against a backend
-    // For this demo, we'll just simulate the process
-    if (!token || !newPassword) {
-      toast.error('Invalid request');
-      return false;
-    }
-
-    if (newPassword.length < 8) {
-      toast.error('Password must be at least 8 characters');
-      return false;
-    }
-
-    // Simulate a delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // In a real app, this would actually update the user's password in the database
-    toast.success('Password has been reset successfully');
-    return true;
-  };
-
   const logout = () => {
     localStorage.removeItem(STORAGE_KEY);
     setUser(null);
     console.log('User logged out');
     toast.success('Logged out successfully');
+  };
+
+  // Function to determine if user can edit a resource
+  const canEdit = (resourceOwnerId?: string): boolean => {
+    // If not authenticated, can't edit anything
+    if (!user) return false;
+    
+    // If no resource owner specified, just check if authenticated
+    if (!resourceOwnerId) return true;
+    
+    // Check if current user is the owner of the resource
+    return user.id === resourceOwnerId;
   };
 
   return (
@@ -276,9 +228,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       login, 
       register,
       logout,
-      requestPasswordReset,
-      resetPassword,
-      isAuthenticated: !!user 
+      isAuthenticated: !!user,
+      canEdit
     }}>
       {children}
     </AuthContext.Provider>
