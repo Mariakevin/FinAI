@@ -1,112 +1,113 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, MeshWobbleMaterial, MeshDistortMaterial, Float, Sparkles, useTexture } from '@react-three/drei';
+import { OrbitControls, Float, Sparkles, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
-import { MathUtils } from 'three';
 
 const FinancialObjects = () => {
   const coinRef = useRef<THREE.Mesh>(null);
-  const creditCardRef = useRef<THREE.Mesh>(null);
-  const graphRef = useRef<THREE.Mesh>(null);
+  const cardRef = useRef<THREE.Mesh>(null);
+  const chartRef = useRef<THREE.Group>(null);
 
-  // Subtle animation for the objects
+  // Subtle animation
   useFrame((state) => {
+    const time = state.clock.getElapsedTime();
+    
     if (coinRef.current) {
-      coinRef.current.rotation.y += 0.01;
-      coinRef.current.position.y = MathUtils.lerp(
-        coinRef.current.position.y,
-        Math.sin(state.clock.getElapsedTime() * 0.5) * 0.2,
-        0.02
-      );
+      coinRef.current.rotation.y = time * 0.3;
     }
     
-    if (creditCardRef.current) {
-      creditCardRef.current.rotation.y += 0.005;
-      creditCardRef.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.3) * 0.1;
+    if (cardRef.current) {
+      cardRef.current.position.y = Math.sin(time * 0.5) * 0.1;
+      cardRef.current.rotation.z = Math.sin(time * 0.3) * 0.05;
     }
     
-    if (graphRef.current) {
-      graphRef.current.rotation.y += 0.007;
-      graphRef.current.position.y = MathUtils.lerp(
-        graphRef.current.position.y,
-        Math.sin(state.clock.getElapsedTime() * 0.3 + 1) * 0.2,
-        0.02
-      );
+    if (chartRef.current) {
+      chartRef.current.rotation.y = time * 0.2;
+      chartRef.current.position.y = Math.sin(time * 0.4) * 0.1;
     }
   });
 
   return (
     <>
-      {/* Coin */}
-      <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+      {/* Golden Coin */}
+      <Float speed={1.5} rotationIntensity={0} floatIntensity={1}>
         <mesh ref={coinRef} position={[-2, 0, 0]}>
           <cylinderGeometry args={[1, 1, 0.2, 32]} />
-          <MeshWobbleMaterial 
+          <meshStandardMaterial 
             color="#FFD700" 
-            factor={0.1} 
-            speed={1} 
-            metalness={1} 
-            roughness={0.3}
+            metalness={0.8} 
+            roughness={0.2}
+            emissive="#FF9500"
+            emissiveIntensity={0.2}
           />
         </mesh>
       </Float>
 
       {/* Credit Card */}
-      <Float speed={1.5} rotationIntensity={0.4} floatIntensity={0.4}>
-        <mesh ref={creditCardRef} position={[0, 0, 0]} rotation={[0.2, 0, 0]}>
+      <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.8}>
+        <mesh ref={cardRef} position={[0, 0, 0]} rotation={[0.1, 0, 0]}>
           <boxGeometry args={[2.5, 1.5, 0.05]} />
           <MeshDistortMaterial 
-            color="#5046e5" 
-            speed={2} 
-            distort={0.2} 
-            metalness={0.8} 
+            color="#8B5CF6" 
+            speed={1.5} 
+            distort={0.15} 
+            metalness={0.7} 
             roughness={0.2}
           />
         </mesh>
       </Float>
 
-      {/* Graph/Chart */}
-      <Float speed={2.5} rotationIntensity={0.3} floatIntensity={0.3}>
-        <mesh ref={graphRef} position={[2, 0, 0]}>
-          <group rotation={[0, 0, 0]}>
-            {/* Base */}
-            <mesh position={[0, -0.5, 0]}>
-              <boxGeometry args={[1.6, 0.1, 1]} />
-              <meshStandardMaterial color="#e0e0e0" />
+      {/* Growth Chart */}
+      <Float speed={2} rotationIntensity={0.2} floatIntensity={0.6}>
+        <group ref={chartRef} position={[2, 0, 0]}>
+          <mesh position={[0, 0, 0]}>
+            <boxGeometry args={[1.8, 0.1, 1]} />
+            <meshStandardMaterial color="#f1f5f9" />
+          </mesh>
+          
+          {/* Chart Bars */}
+          {[
+            { position: [-0.7, 0.2, 0], height: 0.4, color: "#4ADE80" },
+            { position: [-0.35, 0.35, 0], height: 0.7, color: "#818CF8" },
+            { position: [0, 0.4, 0], height: 0.8, color: "#F472B6" },
+            { position: [0.35, 0.5, 0], height: 1, color: "#60A5FA" },
+            { position: [0.7, 0.65, 0], height: 1.3, color: "#6366F1" },
+          ].map((bar, index) => (
+            <mesh 
+              key={index}
+              position={[bar.position[0], bar.position[1], bar.position[2]]}
+            >
+              <boxGeometry args={[0.2, bar.height, 0.2]} />
+              <meshStandardMaterial 
+                color={bar.color} 
+                emissive={bar.color}
+                emissiveIntensity={0.3}
+                metalness={0.3} 
+                roughness={0.4}
+              />
             </mesh>
-            
-            {/* Bars */}
-            <mesh position={[-0.6, -0.2, 0]}>
-              <boxGeometry args={[0.2, 0.5, 0.2]} />
-              <meshStandardMaterial color="#4CAF50" />
-            </mesh>
-            
-            <mesh position={[-0.2, 0, 0]}>
-              <boxGeometry args={[0.2, 0.9, 0.2]} />
-              <meshStandardMaterial color="#2196F3" />
-            </mesh>
-            
-            <mesh position={[0.2, -0.1, 0]}>
-              <boxGeometry args={[0.2, 0.7, 0.2]} />
-              <meshStandardMaterial color="#9C27B0" />
-            </mesh>
-            
-            <mesh position={[0.6, 0.1, 0]}>
-              <boxGeometry args={[0.2, 1.1, 0.2]} />
-              <meshStandardMaterial color="#FF9800" />
-            </mesh>
-          </group>
-        </mesh>
+          ))}
+        </group>
       </Float>
 
-      {/* Sparkles */}
+      {/* Ambient Particles */}
       <Sparkles 
-        count={50} 
+        count={30} 
         scale={10} 
-        size={2} 
-        speed={0.3} 
-        color="#5046e5" 
+        size={1} 
+        speed={0.2} 
+        color="#8B5CF6" 
+        opacity={0.5}
+      />
+      
+      <Sparkles 
+        count={20} 
+        scale={10} 
+        size={1.5} 
+        speed={0.1} 
+        color="#60A5FA" 
+        opacity={0.3}
       />
     </>
   );
@@ -116,13 +117,15 @@ const FinancialScene = () => {
   return (
     <div className="w-full h-full">
       <Canvas 
-        camera={{ position: [0, 0, 10], fov: 40 }}
+        camera={{ position: [0, 0, 8], fov: 45 }}
         dpr={[1, 2]}
-        className="bg-gradient-to-b from-blue-50 to-indigo-50"
+        className="bg-gradient-to-b from-purple-50 to-indigo-50"
       >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        <pointLight position={[-10, -10, -10]} color="#5046e5" intensity={0.5} />
+        <color attach="background" args={['#f5f3ff']} />
+        <fog attach="fog" args={['#f5f3ff', 5, 15]} />
+        <ambientLight intensity={0.4} />
+        <directionalLight position={[10, 10, 5]} intensity={0.7} color="#ffffff" />
+        <directionalLight position={[-5, 5, -5]} intensity={0.5} color="#8B5CF6" />
         
         <FinancialObjects />
         
@@ -130,9 +133,9 @@ const FinancialScene = () => {
           enableZoom={false} 
           enablePan={false}
           autoRotate
-          autoRotateSpeed={0.5}
-          rotateSpeed={0.2}
-          maxPolarAngle={Math.PI / 2} 
+          autoRotateSpeed={0.3}
+          rotateSpeed={0.1}
+          maxPolarAngle={Math.PI / 2.2} 
           minPolarAngle={Math.PI / 3}
         />
       </Canvas>
