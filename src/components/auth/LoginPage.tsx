@@ -8,12 +8,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ArrowRight, Mail, CreditCard } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordField } from '@/components/auth/PasswordField';
+import { toast } from 'sonner';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
+  const { login, requestPasswordReset } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,22 +24,39 @@ const LoginPage = () => {
     setIsSubmitting(true);
     
     try {
-      const success = await login(email, password);
-      if (success) {
-        navigate('/dashboard');
+      if (isForgotPassword) {
+        const success = await requestPasswordReset(email);
+        if (success) {
+          setResetEmailSent(true);
+          toast.success("Password reset instructions sent to your email");
+        }
+      } else {
+        const success = await login(email, password);
+        if (success) {
+          navigate('/dashboard');
+        }
       }
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const toggleForgotPassword = () => {
+    setIsForgotPassword(!isForgotPassword);
+    setResetEmailSent(false);
+  };
+
   return (
     <div className="w-full max-w-md mx-auto animate-fade-in">
       <div className="text-center mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-          Welcome back
+          {isForgotPassword ? 'Reset Password' : 'Welcome back'}
         </h1>
-        <p className="mt-2 text-gray-600">Access your financial dashboard</p>
+        <p className="mt-2 text-gray-600">
+          {isForgotPassword 
+            ? 'Enter your email to reset your password' 
+            : 'Access your financial dashboard'}
+        </p>
       </div>
 
       <Card className="overflow-hidden border-0 shadow-lg relative">
@@ -53,9 +73,13 @@ const LoginPage = () => {
               <CreditCard className="h-6 w-6 text-blue-600" />
             </div>
           </div>
-          <CardTitle className="text-xl font-bold text-center">Sign In</CardTitle>
+          <CardTitle className="text-xl font-bold text-center">
+            {isForgotPassword ? 'Reset Password' : 'Sign In'}
+          </CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials below
+            {isForgotPassword 
+              ? 'We\'ll send you instructions via email' 
+              : 'Enter your credentials below'}
           </CardDescription>
         </CardHeader>
         
@@ -79,38 +103,82 @@ const LoginPage = () => {
               </div>
             </div>
             
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                <Link to="#" className="text-xs font-medium text-blue-600 hover:text-blue-500 transition-colors">
-                  Forgot password?
-                </Link>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                  <button 
+                    type="button" 
+                    className="text-xs font-medium text-blue-600 hover:text-blue-500 transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleForgotPassword();
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+                <PasswordField
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
-              <PasswordField
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            )}
           </CardContent>
           
           <CardFooter>
             <div className="w-full space-y-4">
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md transition-all duration-300 will-change-transform"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Signing in...' : 'Sign in'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              
-              <p className="text-center text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
-                  Create an account
-                </Link>
-              </p>
+              {resetEmailSent ? (
+                <div className="text-center space-y-4">
+                  <p className="text-green-600">Check your email for reset instructions</p>
+                  <Button 
+                    type="button" 
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md transition-all duration-300 will-change-transform"
+                    onClick={() => {
+                      setIsForgotPassword(false);
+                      setResetEmailSent(false);
+                    }}
+                  >
+                    Back to login
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md transition-all duration-300 will-change-transform"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting 
+                      ? (isForgotPassword ? 'Sending...' : 'Signing in...') 
+                      : (isForgotPassword ? 'Send reset instructions' : 'Sign in')}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                  
+                  {isForgotPassword ? (
+                    <p className="text-center text-sm text-gray-600">
+                      <button 
+                        type="button" 
+                        className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          toggleForgotPassword();
+                        }}
+                      >
+                        Back to login
+                      </button>
+                    </p>
+                  ) : (
+                    <p className="text-center text-sm text-gray-600">
+                      Don't have an account?{' '}
+                      <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                        Create an account
+                      </Link>
+                    </p>
+                  )}
+                </>
+              )}
             </div>
           </CardFooter>
         </form>

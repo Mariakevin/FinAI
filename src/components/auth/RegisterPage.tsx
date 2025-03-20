@@ -5,19 +5,41 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Lock, Mail, Shield } from 'lucide-react';
+import { ArrowRight, Mail, Shield } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordField } from '@/components/auth/PasswordField';
+import { toast } from 'sonner';
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const validateEmail = (email: string) => {
+    setEmailError('');
+    if (!email) return false;
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    return true;
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    if (newEmail) validateEmail(newEmail);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateEmail(email)) return;
+    
     setIsSubmitting(true);
     
     try {
@@ -39,7 +61,7 @@ const RegisterPage = () => {
         <p className="mt-2 text-gray-600">Start your financial journey today</p>
       </div>
 
-      <Card className="overflow-hidden border-0 shadow-lg relative">
+      <Card className="overflow-hidden border-0 shadow-lg relative will-change-transform">
         {/* Gradient border at top */}
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600" />
         
@@ -72,11 +94,17 @@ const RegisterPage = () => {
                   type="email"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                  onChange={handleEmailChange}
+                  onBlur={() => validateEmail(email)}
+                  className={`pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                    emailError ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                  }`}
                   required
                 />
               </div>
+              {emailError && (
+                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+              )}
             </div>
             
             <PasswordField
