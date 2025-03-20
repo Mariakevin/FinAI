@@ -2,6 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, MeshWobbleMaterial, MeshDistortMaterial, Float, Sparkles, useTexture } from '@react-three/drei';
+import * as THREE from 'three';
 import { MathUtils } from 'three';
 
 const FinancialObjects = () => {
