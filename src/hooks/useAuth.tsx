@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { toast } from 'sonner';
 
@@ -14,7 +13,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -96,13 +95,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  const register = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
       // Simulating a register delay
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      if (name && email && password) {
+      if (email && password) {
         // Get existing users
         let users = [];
         try {
@@ -120,6 +119,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           toast.error('Email already registered');
           return false;
         }
+        
+        // Generate a username from email
+        const name = email.split('@')[0];
         
         // Create new user
         const newUser = {
