@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LineChart, BarChartBig, PieChart, TrendingUp, Wallet, LayoutDashboard, LogIn } from 'lucide-react';
+import { LineChart, BarChartBig, PieChart, TrendingUp, Wallet, LayoutDashboard, LogIn, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -77,15 +77,21 @@ const DashboardPage = () => {
       icon: <Wallet className="h-5 w-5" />,
       onClick: () => navigate('/budget'),
       color: 'bg-blue-50 text-blue-600'
+    },
+    {
+      title: 'AI Insights',
+      icon: <Sparkles className="h-5 w-5" />,
+      onClick: () => navigate('/ai-insights'),
+      color: 'bg-purple-50 text-purple-600'
     }
   ];
   
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 pb-8 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <LayoutDashboard className="h-6 w-6 text-blue-600" />
+            <LayoutDashboard className="h-6 w-6 text-purple-600" />
             Dashboard
           </h1>
           <p className="text-gray-500 mt-1">Welcome! Here's your financial overview.</p>
@@ -110,7 +116,7 @@ const DashboardPage = () => {
               variant="outline" 
               size="sm"
               onClick={action.onClick}
-              className={`${action.color} border-none shadow-sm hover:shadow-md transition-all duration-200`}
+              className={`${action.color} border-none shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105`}
             >
               {action.icon}
               <span className="ml-1">{action.title}</span>
@@ -127,7 +133,7 @@ const DashboardPage = () => {
         key={`summary-${refreshKey}`}
       />
       
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+      <div className="bg-white p-4 rounded-xl shadow-md border border-gray-100/80 hover:shadow-lg transition-all duration-300">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h2 className="text-lg font-semibold text-gray-800">Financial Overview</h2>
           

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 import GlassCard from '@/components/ui/GlassCard';
@@ -19,10 +18,8 @@ const AiInsightsPage = () => {
   const [tips, setTips] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   
-  // Check if we need to generate insights automatically
   useEffect(() => {
     if (transactions.length > 0 && !insights && !loading) {
-      // Only auto-generate for the first tab on initial load
       generateContent('insights');
     }
   }, [transactions]);
@@ -37,7 +34,6 @@ const AiInsightsPage = () => {
     setActiveTab(type);
     
     try {
-      // Create a summary of the user's financial data
       const totalIncome = transactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
@@ -46,7 +42,6 @@ const AiInsightsPage = () => {
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
         
-      // Get top 5 expense categories
       const categories: Record<string, number> = {};
       transactions
         .filter(t => t.type === 'expense')
@@ -59,7 +54,6 @@ const AiInsightsPage = () => {
         .slice(0, 5)
         .map(([category, amount]) => ({ category, amount }));
         
-      // Create a financial summary
       const financialSummary = {
         totalIncome: formatCurrency(totalIncome),
         totalExpenses: formatCurrency(totalExpenses),
@@ -70,7 +64,6 @@ const AiInsightsPage = () => {
         transactionCount: transactions.length,
       };
       
-      // Prepare the prompt based on the type of content requested
       let prompt = '';
       
       if (type === 'insights') {
@@ -91,11 +84,8 @@ const AiInsightsPage = () => {
           Format your response in bullet points and keep it concise.`;
       }
       
-      // In a real application, this would be a call to the Gemini API
-      // For this demo, we'll simulate the response
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Simulate response based on type
       let response = '';
       
       if (type === 'insights') {
@@ -128,7 +118,6 @@ const AiInsightsPage = () => {
         setTips(response.trim());
       }
       
-      // Set the last updated timestamp
       setLastUpdated(new Date().toLocaleString());
       
       toast.success(`AI ${type} generated successfully!`);
@@ -163,7 +152,7 @@ const AiInsightsPage = () => {
       return (
         <div className="py-16 flex flex-col items-center justify-center text-center">
           <div className="relative">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-500 mb-4" />
+            <Loader2 className="h-12 w-12 animate-spin text-purple-500 mb-4" />
             <Sparkles className="h-6 w-6 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
           </div>
           <p className="text-lg font-medium text-gray-700 mt-4">Generating AI {type}...</p>
@@ -176,7 +165,7 @@ const AiInsightsPage = () => {
       return (
         <div className="py-16 flex flex-col items-center justify-center text-center">
           {type === 'insights' ? (
-            <Brain className="h-20 w-20 text-blue-200 mb-4" />
+            <Brain className="h-20 w-20 text-purple-200 mb-4" />
           ) : type === 'predictions' ? (
             <TrendingUp className="h-20 w-20 text-purple-200 mb-4" />
           ) : (
@@ -189,7 +178,7 @@ const AiInsightsPage = () => {
           </p>
           <Button 
             onClick={() => generateContent(type)} 
-            className="mt-6"
+            className="mt-6 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 shadow-md hover:shadow-lg transition-all duration-200"
             disabled={loading}
             size="lg"
           >
@@ -206,26 +195,24 @@ const AiInsightsPage = () => {
       <div className="py-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
           {contentArray.map((line, i) => {
-            // Remove bullet point if present
             const cleanedLine = line.replace(/^[•\-\*]\s*/, '');
-            // Split by colon to get title and description
             const [title, ...descParts] = cleanedLine.split(':');
             const description = descParts.join(':').trim();
             
             return (
               <Card key={i} className={cn(
-                "transition-all overflow-hidden",
-                "hover:shadow-md border-l-4",
-                type === 'insights' ? "border-l-blue-500" : 
-                type === 'predictions' ? "border-l-purple-500" : 
+                "transition-all overflow-hidden hover:scale-[1.02]",
+                "hover:shadow-md border-l-4 animate-fade-in",
+                type === 'insights' ? "border-l-purple-500" : 
+                type === 'predictions' ? "border-l-indigo-500" : 
                 "border-l-yellow-500"
               )}>
                 <CardContent className="p-5">
                   <div className="flex items-start gap-3">
                     <div className={cn(
                       "rounded-full p-2 mt-1",
-                      type === 'insights' ? "bg-blue-100 text-blue-700" : 
-                      type === 'predictions' ? "bg-purple-100 text-purple-700" : 
+                      type === 'insights' ? "bg-purple-100 text-purple-700" : 
+                      type === 'predictions' ? "bg-indigo-100 text-indigo-700" : 
                       "bg-yellow-100 text-yellow-700"
                     )}>
                       {i % 3 === 0 ? (
@@ -260,7 +247,7 @@ const AiInsightsPage = () => {
           <Button 
             onClick={() => generateContent(type)} 
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 hover:bg-purple-50 hover:text-purple-600 transition-all"
             disabled={loading}
           >
             <ArrowDownCircle className="h-4 w-4" />
@@ -274,23 +261,23 @@ const AiInsightsPage = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">AI Financial Insights</h1>
+        <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">AI Financial Insights</h1>
         <p className="text-gray-500 mt-1">Get personalized financial analysis, predictions, and tips</p>
       </div>
       
-      <Card className="overflow-hidden shadow-sm border border-gray-200/80">
+      <Card className="overflow-hidden shadow-md border border-gray-200/80">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full rounded-none flex p-0 h-auto bg-white border-b">
             <TabsTrigger 
               value="insights" 
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-blue-500 py-4"
+              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-purple-500 py-4"
             >
               <Brain className="h-5 w-5 mr-2" />
               Insights
             </TabsTrigger>
             <TabsTrigger 
               value="predictions" 
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-purple-500 py-4"
+              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-500 py-4"
             >
               <TrendingUp className="h-5 w-5 mr-2" />
               Predictions
@@ -318,9 +305,9 @@ const AiInsightsPage = () => {
         </Tabs>
       </Card>
       
-      <GlassCard className="p-6 bg-gradient-to-r from-blue-50 to-purple-50">
+      <GlassCard className="p-6 bg-gradient-to-r from-purple-50 to-indigo-50 hover:shadow-lg transition-all duration-300">
         <div className="flex items-start gap-4">
-          <div className="bg-blue-100 rounded-full p-3 text-blue-600">
+          <div className="bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full p-3 text-purple-600">
             <BrainCircuit className="h-6 w-6" />
           </div>
           <div>
@@ -330,17 +317,17 @@ const AiInsightsPage = () => {
               The more transactions you have, the more accurate the insights will be.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-blue-500 mb-2"><Brain className="h-5 w-5" /></div>
+              <div className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all hover:scale-105">
+                <div className="text-purple-500 mb-2"><Brain className="h-5 w-5" /></div>
                 <h4 className="font-medium mb-1">Insights</h4>
                 <p className="text-sm text-gray-500">Analysis of your spending patterns and financial habits</p>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="text-purple-500 mb-2"><TrendingUp className="h-5 w-5" /></div>
+              <div className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all hover:scale-105">
+                <div className="text-indigo-500 mb-2"><TrendingUp className="h-5 w-5" /></div>
                 <h4 className="font-medium mb-1">Predictions</h4>
                 <p className="text-sm text-gray-500">Future financial trends based on your historical data</p>
               </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm">
+              <div className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all hover:scale-105">
                 <div className="text-yellow-500 mb-2"><Lightbulb className="h-5 w-5" /></div>
                 <h4 className="font-medium mb-1">Actions</h4>
                 <p className="text-sm text-gray-500">Personalized tips to improve your financial health</p>

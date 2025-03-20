@@ -1,7 +1,7 @@
 
 import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, Sparkles, MeshDistortMaterial } from '@react-three/drei';
+import { Float, Sparkles, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 const FinancialObjects = () => {
@@ -129,15 +129,7 @@ const FinancialScene = () => {
         
         <FinancialObjects />
         
-        <OrbitControls 
-          enableZoom={false} 
-          enablePan={false}
-          autoRotate
-          autoRotateSpeed={0.3}
-          rotateSpeed={0.1}
-          maxPolarAngle={Math.PI / 2.2} 
-          minPolarAngle={Math.PI / 3}
-        />
+        {/* Removed OrbitControls to eliminate mouse cursor and user interaction */}
       </Canvas>
     </div>
   );

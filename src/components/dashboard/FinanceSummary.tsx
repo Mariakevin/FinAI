@@ -34,9 +34,9 @@ const FinanceSummary = ({ balance, income, expenses, isLoading }: FinanceSummary
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <GlassCard className="relative overflow-hidden group hover:shadow-md transition-all duration-300 border-2 border-blue-100">
-        <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-          <Wallet className="w-6 h-6 text-blue-600" />
+      <GlassCard className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-2 border-purple-100 hover:scale-[1.02]">
+        <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
+          <Wallet className="w-6 h-6 text-purple-600" />
         </div>
         <div className="pt-1">
           <p className="text-sm text-gray-500 font-medium">Current Balance</p>
@@ -56,8 +56,8 @@ const FinanceSummary = ({ balance, income, expenses, isLoading }: FinanceSummary
         </div>
       </GlassCard>
       
-      <GlassCard className="relative overflow-hidden group hover:shadow-md transition-all duration-300 border-2 border-green-100">
-        <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+      <GlassCard className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-2 border-green-100 hover:scale-[1.02]">
+        <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
           <ArrowUpRight className="w-6 h-6 text-green-600" />
         </div>
         <div className="pt-1">
@@ -75,8 +75,8 @@ const FinanceSummary = ({ balance, income, expenses, isLoading }: FinanceSummary
         </div>
       </GlassCard>
       
-      <GlassCard className="relative overflow-hidden group hover:shadow-md transition-all duration-300 border-2 border-red-100">
-        <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+      <GlassCard className="relative overflow-hidden group hover:shadow-lg transition-all duration-300 border-2 border-red-100 hover:scale-[1.02]">
+        <div className="absolute top-2 right-2 w-12 h-12 rounded-full bg-gradient-to-br from-red-100 to-rose-100 flex items-center justify-center">
           <ArrowDownRight className="w-6 h-6 text-red-600" />
         </div>
         <div className="pt-1">
