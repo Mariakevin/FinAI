@@ -17,14 +17,14 @@ import PersonalInfoForm from './PersonalInfoForm';
 import AccountSettings from './AccountSettings';
 
 const ProfilePage = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const { clearAllTransactions } = useTransactions();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [profileData, setProfileData] = useState({
-    name: '',
-    email: '',
+    name: user?.name || '',
+    email: user?.email || '',
     phone: localStorage.getItem('profile_phone') || '',
     address: localStorage.getItem('profile_address') || '',
     profileImage: localStorage.getItem('profile_image') || '',
@@ -41,6 +41,13 @@ const ProfilePage = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    // If not authenticated, redirect to login
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProfileData(prev => ({
@@ -54,6 +61,32 @@ const ProfilePage = () => {
     localStorage.setItem('profile_phone', profileData.phone);
     localStorage.setItem('profile_address', profileData.address);
     localStorage.setItem('profile_image', profileData.profileImage);
+    
+    // Update user information in the "users" storage if email or name has changed
+    const users = JSON.parse(localStorage.getItem('finwise_users') || '[]');
+    if (user && users.length) {
+      const updatedUsers = users.map((u: any) => {
+        if (u.id === user.id) {
+          return {
+            ...u,
+            name: profileData.name,
+            email: profileData.email
+          };
+        }
+        return u;
+      });
+      
+      localStorage.setItem('finwise_users', JSON.stringify(updatedUsers));
+      
+      // Update the current user session
+      const updatedUser = {
+        ...user,
+        name: profileData.name,
+        email: profileData.email
+      };
+      
+      localStorage.setItem('finwise_user', JSON.stringify(updatedUser));
+    }
     
     toast.success('Profile information updated successfully');
   };
@@ -114,14 +147,10 @@ const ProfilePage = () => {
         
         <div className="w-full lg:w-2/3">
           <Tabs defaultValue="personal" className="animate-scale-in">
-            <TabsList className="mb-4 grid grid-cols-2 gap-1 bg-muted/50 p-1 rounded-lg">
+            <TabsList className="mb-4 grid grid-cols-1 gap-1 bg-muted/50 p-1 rounded-lg">
               <TabsTrigger value="personal" className="flex items-center gap-1 text-xs sm:text-sm">
                 <UserCog className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Personal Info</span>
-              </TabsTrigger>
-              <TabsTrigger value="settings" className="flex items-center gap-1 text-xs sm:text-sm">
-                <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Settings</span>
               </TabsTrigger>
             </TabsList>
             

@@ -5,7 +5,7 @@ import DashboardPage from '@/components/dashboard/DashboardPage';
 
 const Dashboard = () => {
   return (
-    <Layout>
+    <Layout requireAuth={true}>
       <DashboardPage />
     </Layout>
   );

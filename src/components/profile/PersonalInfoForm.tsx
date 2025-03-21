@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { User, Mail, MapPin, Phone, Save, Pencil } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ProfileData {
   name: string;
@@ -28,15 +29,30 @@ const PersonalInfoForm = ({
   user 
 }: PersonalInfoFormProps) => {
   const [editMode, setEditMode] = useState({
+    name: false,
+    email: false,
     phone: false,
     address: false
   });
 
-  const toggleEdit = (field: 'phone' | 'address') => {
+  const toggleEdit = (field: 'name' | 'email' | 'phone' | 'address') => {
     setEditMode(prev => ({
       ...prev,
       [field]: !prev[field]
     }));
+  };
+
+  const handleUpdateProfile = () => {
+    // Reset all edit modes after saving
+    setEditMode({
+      name: false,
+      email: false,
+      phone: false,
+      address: false
+    });
+    
+    // Call the save handler from parent
+    handleSave();
   };
 
   return (
@@ -53,7 +69,18 @@ const PersonalInfoForm = ({
       <CardContent className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleEdit('name')}
+                className="h-7 px-2 text-xs flex gap-1 items-center text-blue-600"
+              >
+                <Pencil className="h-3 w-3" />
+                {editMode.name ? 'Done' : 'Edit'}
+              </Button>
+            </div>
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
               <Input 
@@ -61,18 +88,28 @@ const PersonalInfoForm = ({
                 name="name"
                 value={profileData.name}
                 onChange={handleChange}
-                className="pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200"
+                className={`pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200 ${
+                  editMode.name ? 'bg-white' : 'bg-gray-50'
+                }`}
                 placeholder="Your Name"
-                readOnly={!!user?.name}
+                readOnly={!editMode.name}
               />
             </div>
-            {user?.name && (
-              <p className="text-xs text-gray-500">Your name is managed by your account settings</p>
-            )}
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleEdit('email')}
+                className="h-7 px-2 text-xs flex gap-1 items-center text-blue-600"
+              >
+                <Pencil className="h-3 w-3" />
+                {editMode.email ? 'Done' : 'Edit'}
+              </Button>
+            </div>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
               <Input 
@@ -80,14 +117,13 @@ const PersonalInfoForm = ({
                 name="email"
                 value={profileData.email}
                 onChange={handleChange}
-                className="pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200"
+                className={`pl-10 transition-all focus:ring-2 focus:ring-blue-500 border-gray-200 ${
+                  editMode.email ? 'bg-white' : 'bg-gray-50'
+                }`}
                 placeholder="email@example.com"
-                readOnly={!!user?.email}
+                readOnly={!editMode.email}
               />
             </div>
-            {user?.email && (
-              <p className="text-xs text-gray-500">Your email is managed by your account settings</p>
-            )}
           </div>
           
           <div className="space-y-2">
@@ -150,7 +186,7 @@ const PersonalInfoForm = ({
         </div>
         
         <Button 
-          onClick={handleSave}
+          onClick={handleUpdateProfile}
           className="mt-2 btn-hover-effect w-full sm:w-auto"
         >
           <Save className="mr-2 h-4 w-4" />
