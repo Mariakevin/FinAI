@@ -59,7 +59,7 @@ const ProfilePage = () => {
     }));
   };
 
-  const toggleEdit = (field: keyof typeof isEditing) => {
+  const toggleEdit = (field: string) => {
     setIsEditing(prev => ({
       ...prev,
       [field]: !prev[field]

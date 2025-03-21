@@ -22,7 +22,7 @@ interface PersonalInfoFormProps {
     phone: boolean;
     address: boolean;
   };
-  toggleEdit: (field: keyof typeof isEditing) => void;
+  toggleEdit: (field: string) => void;
 }
 
 const PersonalInfoForm = ({ 
