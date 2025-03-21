@@ -17,10 +17,10 @@ const Layout = ({ children }: LayoutProps) => {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-50/30 to-white">
       <Navbar />
       <main className={cn(
-        "pt-20 pb-12",
+        "pt-16 pb-12 w-full",
         isIndexPage 
-          ? "w-full" 
-          : "px-4 sm:px-6 md:px-8 max-w-7xl mx-auto"
+          ? "px-0" 
+          : "px-2 sm:px-4 md:px-6 max-w-full mx-auto"
       )}>
         <div 
           className="animate-scale-in transition-all duration-300 rounded-xl"

@@ -111,9 +111,9 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl py-6 animate-fade-in">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">
+    <div className="w-full px-2 sm:px-4 max-w-6xl mx-auto py-4 animate-fade-in">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">
           My Profile
         </h1>
         <Button 
@@ -126,18 +126,18 @@ const ProfilePage = () => {
         </Button>
       </div>
       
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-1/3">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+        <div className="w-full lg:w-1/3">
           <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-0">
             <CardContent className="pt-6 pb-6 flex flex-col items-center">
               <div className="relative group transition-transform duration-300 hover:scale-105">
-                <Avatar className="h-28 w-28 mb-6 cursor-pointer border-4 border-white shadow-lg" onClick={triggerFileInput}>
+                <Avatar className="h-24 w-24 mb-4 cursor-pointer border-4 border-white shadow-lg" onClick={triggerFileInput}>
                   <AvatarImage src={profileData.profileImage || ''} />
                   <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-2xl text-white">
                     {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
                   </AvatarFallback>
                   <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Upload className="h-8 w-8 text-white" />
+                    <Upload className="h-6 w-6 text-white" />
                   </div>
                 </Avatar>
                 <input 
@@ -149,13 +149,13 @@ const ProfilePage = () => {
                 />
               </div>
               
-              <h2 className="text-2xl font-semibold text-gray-800 mb-1">{profileData.name || 'Your Name'}</h2>
-              <p className="text-gray-500 flex items-center gap-2 mb-4">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-1">{profileData.name || 'Your Name'}</h2>
+              <p className="text-gray-500 flex items-center gap-2 mb-3 text-sm">
                 <Mail className="h-4 w-4" />
                 {profileData.email || 'email@example.com'}
               </p>
               
-              <div className="w-full space-y-3 mt-2">
+              <div className="w-full space-y-2 mt-1 px-2">
                 {profileData.phone && (
                   <div className="flex items-center text-gray-600 text-sm">
                     <Phone className="h-4 w-4 mr-2 text-gray-400" />
@@ -171,34 +171,34 @@ const ProfilePage = () => {
                 )}
               </div>
               
-              <p className="text-xs text-gray-400 mt-5 text-center">
+              <p className="text-xs text-gray-400 mt-4 text-center">
                 Click on the avatar to upload a new profile picture
               </p>
             </CardContent>
           </Card>
         </div>
         
-        <div className="w-full md:w-2/3">
+        <div className="w-full lg:w-2/3">
           <Tabs defaultValue="personal" className="animate-scale-in">
-            <TabsList className="mb-6 grid grid-cols-3 gap-2 bg-muted/50 p-1 rounded-lg">
-              <TabsTrigger value="personal" className="flex items-center gap-2">
-                <UserCog className="h-4 w-4" />
+            <TabsList className="mb-4 grid grid-cols-3 gap-1 bg-muted/50 p-1 rounded-lg">
+              <TabsTrigger value="personal" className="flex items-center gap-1 text-xs sm:text-sm">
+                <UserCog className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Personal Info</span>
               </TabsTrigger>
-              <TabsTrigger value="preferences" className="flex items-center gap-2">
-                <BellRing className="h-4 w-4" />
+              <TabsTrigger value="preferences" className="flex items-center gap-1 text-xs sm:text-sm">
+                <BellRing className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Preferences</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="flex items-center gap-2">
-                <Settings className="h-4 w-4" />
+              <TabsTrigger value="settings" className="flex items-center gap-1 text-xs sm:text-sm">
+                <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Settings</span>
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="personal" className="animate-slide-up">
               <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="py-4">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                     <User className="h-5 w-5 text-blue-500" />
                     Personal Information
                   </CardTitle>
@@ -206,8 +206,8 @@ const ProfilePage = () => {
                     Update your personal details and contact information
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CardContent className="space-y-4 sm:space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
                       <div className="relative">
@@ -279,7 +279,7 @@ const ProfilePage = () => {
                   
                   <Button 
                     onClick={handleSave}
-                    className="mt-4 btn-hover-effect w-full md:w-auto"
+                    className="mt-2 btn-hover-effect w-full sm:w-auto"
                   >
                     <Save className="mr-2 h-4 w-4" />
                     Save Changes
@@ -290,8 +290,8 @@ const ProfilePage = () => {
             
             <TabsContent value="preferences" className="animate-slide-up">
               <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="py-4">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                     <BellRing className="h-5 w-5 text-blue-500" />
                     Notification Preferences
                   </CardTitle>
@@ -299,11 +299,11 @@ const ProfilePage = () => {
                     Customize your notification and alert settings
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between py-4 border-b border-gray-100 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between py-3 border-b border-gray-100 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
                     <div className="space-y-0.5">
-                      <Label className="text-base font-medium">App Notifications</Label>
-                      <p className="text-sm text-gray-500">Receive in-app notifications about important updates</p>
+                      <Label className="text-sm sm:text-base font-medium">App Notifications</Label>
+                      <p className="text-xs sm:text-sm text-gray-500">Receive in-app notifications about important updates</p>
                     </div>
                     <Switch 
                       checked={preferences.notifications} 
@@ -312,10 +312,10 @@ const ProfilePage = () => {
                     />
                   </div>
                   
-                  <div className="flex items-center justify-between py-4 border-b border-gray-100 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
+                  <div className="flex items-center justify-between py-3 border-b border-gray-100 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
                     <div className="space-y-0.5">
-                      <Label className="text-base font-medium">Email Alerts</Label>
-                      <p className="text-sm text-gray-500">Receive email notifications about your account</p>
+                      <Label className="text-sm sm:text-base font-medium">Email Alerts</Label>
+                      <p className="text-xs sm:text-sm text-gray-500">Receive email notifications about your account</p>
                     </div>
                     <Switch 
                       checked={preferences.emailAlerts} 
@@ -324,10 +324,10 @@ const ProfilePage = () => {
                     />
                   </div>
                   
-                  <div className="flex items-center justify-between py-4 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
+                  <div className="flex items-center justify-between py-3 hover:bg-gray-50/50 px-2 -mx-2 rounded-lg transition-colors">
                     <div className="space-y-0.5">
-                      <Label className="text-base font-medium">Monthly Reports</Label>
-                      <p className="text-sm text-gray-500">Get monthly summary reports of your finances</p>
+                      <Label className="text-sm sm:text-base font-medium">Monthly Reports</Label>
+                      <p className="text-xs sm:text-sm text-gray-500">Get monthly summary reports of your finances</p>
                     </div>
                     <Switch 
                       checked={preferences.monthlyReports} 
@@ -341,8 +341,8 @@ const ProfilePage = () => {
             
             <TabsContent value="settings" className="animate-slide-up">
               <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="py-4">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                     <Shield className="h-5 w-5 text-blue-500" />
                     Account Settings
                   </CardTitle>
@@ -350,38 +350,38 @@ const ProfilePage = () => {
                     Manage your account settings and data
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="p-4 bg-red-50 rounded-lg border border-red-100">
-                    <h4 className="font-medium text-red-800 mb-2 flex items-center gap-2">
+                <CardContent className="space-y-4">
+                  <div className="p-3 sm:p-4 bg-red-50 rounded-lg border border-red-100">
+                    <h4 className="font-medium text-red-800 mb-2 flex items-center gap-2 text-sm sm:text-base">
                       <Shield className="h-4 w-4" />
                       Data Management
                     </h4>
-                    <p className="text-red-600 text-sm mb-4">
+                    <p className="text-red-600 text-xs sm:text-sm mb-3">
                       These actions permanently delete your data and cannot be undone.
                     </p>
-                    <div className="space-y-3">
+                    <div className="space-y-2 flex flex-col sm:flex-row sm:space-y-0 sm:space-x-2">
                       <Button variant="outline" onClick={handleClearData} 
-                        className="w-full sm:w-auto border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700">
+                        className="w-full sm:w-auto border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs sm:text-sm">
                         Clear All Transaction Data
                       </Button>
                       
                       <Button variant="outline" onClick={handleClearHistory} 
-                        className="w-full sm:w-auto border-gray-200 text-gray-700 hover:bg-gray-100">
+                        className="w-full sm:w-auto border-gray-200 text-gray-700 hover:bg-gray-100 text-xs sm:text-sm">
                         Clear Activity History
                       </Button>
                     </div>
                   </div>
                   
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-medium text-gray-800 mb-2">Currency Setting</h4>
-                    <p className="text-gray-600 text-sm mb-0">
+                  <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium text-gray-800 mb-1 text-sm sm:text-base">Currency Setting</h4>
+                    <p className="text-gray-600 text-xs sm:text-sm mb-0">
                       Your current currency is set to <span className="font-medium">Indian Rupees (₹)</span>
                     </p>
                   </div>
                   
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                    <h4 className="font-medium text-blue-800 mb-2">About FinWise</h4>
-                    <p className="text-blue-600 text-sm">
+                  <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <h4 className="font-medium text-blue-800 mb-1 text-sm sm:text-base">About FinWise</h4>
+                    <p className="text-blue-600 text-xs sm:text-sm">
                       FinWise - Personal Finance Tracker<br />
                       Version 1.0.0
                     </p>
