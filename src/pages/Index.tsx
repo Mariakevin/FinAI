@@ -1,8 +1,9 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, LogIn, User, CreditCard, Sparkles, TrendingUp, CheckCircle, BarChart, Shield } from 'lucide-react';
+import { ArrowRight, LogIn, User, CreditCard, Sparkles, TrendingUp, CheckCircle, BarChart, Shield, Zap, Lock, DollarSign } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from '@/components/ui/animated';
 import PiggyBank from '@/components/ui/PiggyBank';
@@ -107,17 +108,6 @@ const Index = () => {
             )}
           </AnimatePresence>
         </motion.div>
-        
-        {/* Scroll indicator */}
-        <motion.div 
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="w-8 h-12 rounded-full border-2 border-purple-400 flex items-start justify-center">
-            <div className="w-1 h-3 bg-purple-400 rounded-full mt-2 animate-pulse"></div>
-          </div>
-        </motion.div>
       </div>
 
       {/* Features Section with Card Design */}
@@ -200,19 +190,34 @@ const Index = () => {
               title: "Save Smarter",
               description: "Our AI analyzes your spending patterns and suggests personalized saving strategies that fit your lifestyle.",
               icon: <PiggyBank className="h-12 w-12 text-indigo-600" />,
-              align: "right"
+              align: "right",
+              points: [
+                { icon: <DollarSign className="h-5 w-5 text-green-500 mr-2" />, text: "Automated savings recommendations" },
+                { icon: <Zap className="h-5 w-5 text-green-500 mr-2" />, text: "Smart goal-based saving plans" },
+                { icon: <TrendingUp className="h-5 w-5 text-green-500 mr-2" />, text: "Personalized spending insights" }
+              ]
             },
             {
               title: "Insightful Analytics",
               description: "Transform complex financial data into easy-to-understand visualizations that help you make better decisions.",
               icon: <BarChart className="h-12 w-12 text-purple-600" />,
-              align: "left"
+              align: "left",
+              points: [
+                { icon: <BarChart className="h-5 w-5 text-purple-500 mr-2" />, text: "Interactive spending charts" },
+                { icon: <TrendingUp className="h-5 w-5 text-purple-500 mr-2" />, text: "Predictive trend analysis" },
+                { icon: <Sparkles className="h-5 w-5 text-purple-500 mr-2" />, text: "AI-driven financial forecasting" }
+              ]
             },
             {
               title: "Secure & Private",
               description: "Your financial data is protected with bank-level encryption and strict privacy controls.",
               icon: <Shield className="h-12 w-12 text-blue-600" />,
-              align: "right"
+              align: "right",
+              points: [
+                { icon: <Lock className="h-5 w-5 text-blue-500 mr-2" />, text: "End-to-end data encryption" },
+                { icon: <Shield className="h-5 w-5 text-blue-500 mr-2" />, text: "Robust privacy controls" },
+                { icon: <CheckCircle className="h-5 w-5 text-blue-500 mr-2" />, text: "Compliance with financial regulations" }
+              ]
             }
           ].map((benefit, index) => (
             <motion.div
@@ -231,11 +236,11 @@ const Index = () => {
               <div className="flex-1 text-center md:text-left">
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">{benefit.title}</h3>
                 <p className="text-lg text-gray-600 mb-6">{benefit.description}</p>
-                <ul className="space-y-2">
-                  {[1, 2, 3].map((item) => (
-                    <li key={item} className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                      <span className="text-gray-700">Benefit point {item}</span>
+                <ul className="space-y-3">
+                  {benefit.points.map((point, i) => (
+                    <li key={i} className="flex items-center">
+                      {point.icon}
+                      <span className="text-gray-700">{point.text}</span>
                     </li>
                   ))}
                 </ul>
@@ -344,4 +349,3 @@ const Index = () => {
 };
 
 export default Index;
-
