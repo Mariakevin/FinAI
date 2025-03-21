@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -35,7 +34,7 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero Section with Gradient Background */}
-      <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center overflow-hidden w-full">
         {/* Gradient background with animated circles */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-indigo-50 to-purple-100 overflow-hidden">
           <div className="absolute top-1/4 left-1/3 w-64 h-64 rounded-full bg-purple-300/20 animate-pulse-light"></div>
@@ -111,8 +110,8 @@ const Index = () => {
       </div>
 
       {/* Features Section with Card Design */}
-      <div className="py-20 bg-gradient-to-b from-white to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-20 bg-gradient-to-b from-white to-purple-50 w-full">
+        <div className="container px-4 sm:px-8 mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -126,7 +125,7 @@ const Index = () => {
             </p>
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
             {[
               {
                 icon: <CreditCard className="h-8 w-8 text-purple-600" />,
@@ -170,8 +169,8 @@ const Index = () => {
       </div>
       
       {/* Benefits Section with Alternating Layout */}
-      <div className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-16 bg-white w-full">
+        <div className="container px-4 sm:px-8 mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -251,8 +250,8 @@ const Index = () => {
       </div>
       
       {/* Testimonials Section */}
-      <div className="py-20 bg-gradient-to-b from-purple-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-20 bg-gradient-to-b from-purple-50 to-white w-full">
+        <div className="container px-4 sm:px-8 mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -298,7 +297,7 @@ const Index = () => {
               >
                 <div className="mb-4 text-purple-600">
                   <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 32 32" aria-hidden="true">
-                    <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104-6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.855-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+                    <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.855-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104-6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.855-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
                   </svg>
                 </div>
                 <p className="text-gray-600 mb-4">{testimonial.quote}</p>
@@ -318,13 +317,13 @@ const Index = () => {
       </div>
       
       {/* CTA Section */}
-      <div className="py-20 bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+      <div className="py-20 bg-gradient-to-r from-purple-600 to-indigo-600 text-white w-full">
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+          className="container px-4 sm:px-8 mx-auto text-center"
         >
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to transform your finances?</h2>
           <p className="text-xl mb-10 max-w-2xl mx-auto text-indigo-100">

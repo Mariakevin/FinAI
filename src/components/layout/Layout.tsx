@@ -11,15 +11,19 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const pageKey = location.pathname;
+  const isIndexPage = location.pathname === '/';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-50/30 to-white">
       <Navbar />
-      <main className="pt-20 pb-12 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto animate-fade-in">
+      <main className={cn(
+        "pt-20 pb-12",
+        isIndexPage 
+          ? "w-full px-4 md:px-6 lg:px-8" 
+          : "px-4 sm:px-6 md:px-8 max-w-7xl mx-auto"
+      )}>
         <div 
-          className={cn(
-            "animate-scale-in transition-all duration-300 rounded-xl"
-          )}
+          className="animate-scale-in transition-all duration-300 rounded-xl"
           key={pageKey}
         >
           {children}
