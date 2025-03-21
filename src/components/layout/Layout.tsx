@@ -19,7 +19,7 @@ const Layout = ({ children }: LayoutProps) => {
       <main className={cn(
         "pt-20 pb-12",
         isIndexPage 
-          ? "w-full px-4 md:px-6 lg:px-8" 
+          ? "w-full" 
           : "px-4 sm:px-6 md:px-8 max-w-7xl mx-auto"
       )}>
         <div 

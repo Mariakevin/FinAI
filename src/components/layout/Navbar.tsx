@@ -10,7 +10,6 @@ import {
   LogIn,
   Calculator,
   Bot,
-  HelpCircle,
   Menu,
   X
 } from 'lucide-react';
@@ -118,94 +117,101 @@ const Navbar = () => {
             </span>
           </Link>
 
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="rounded-full"
-                aria-label="Menu"
-              >
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="p-0 w-[300px] sm:w-[350px]">
-              <div className="flex flex-col h-full">
-                <div className="p-4 border-b">
-                  <div className="flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-                        <span className="text-white font-semibold text-base">F</span>
-                      </div>
-                      <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
-                        Finwise
-                      </span>
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="flex-1 overflow-auto py-4">
-                  <div className="px-2 space-y-1">
-                    {routes.map((route) => (
-                      <Link
-                        key={route.path}
-                        to={route.path}
-                        className={cn(
-                          "px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 text-sm font-medium",
-                          location.pathname === route.path
-                            ? "text-blue-600 bg-blue-50"
-                            : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                        )}
-                      >
-                        {route.icon}
-                        <span>{route.name}</span>
+          {/* Only show burger menu if authenticated */}
+          {isAuthenticated && (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="rounded-full"
+                  aria-label="Menu"
+                >
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="p-0 w-[300px] sm:w-[350px]">
+                <div className="flex flex-col h-full">
+                  <div className="p-4 border-b">
+                    <div className="flex items-center justify-between">
+                      <Link to="/" className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
+                          <span className="text-white font-semibold text-base">F</span>
+                        </div>
+                        <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
+                          Finwise
+                        </span>
                       </Link>
-                    ))}
-                    
-                    {isAuthenticated && (
-                      <>
-                        <div className="border-t border-gray-200 my-2 pt-2">
-                          {userMenuItems.map((item) => (
-                            <Link
-                              key={item.path}
-                              to={item.path}
-                              className={cn(
-                                "px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 text-sm font-medium",
-                                location.pathname === item.path
-                                  ? "text-blue-600 bg-blue-50"
-                                  : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
-                              )}
+                    </div>
+                  </div>
+
+                  <div className="flex-1 overflow-auto py-4">
+                    <div className="px-2 space-y-1">
+                      {routes.map((route) => (
+                        <Link
+                          key={route.path}
+                          to={route.path}
+                          className={cn(
+                            "px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 text-sm font-medium",
+                            location.pathname === route.path
+                              ? "text-blue-600 bg-blue-50"
+                              : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                          )}
+                        >
+                          {route.icon}
+                          <span>{route.name}</span>
+                        </Link>
+                      ))}
+                      
+                      {isAuthenticated && (
+                        <>
+                          <div className="border-t border-gray-200 my-2 pt-2">
+                            {userMenuItems.map((item) => (
+                              <Link
+                                key={item.path}
+                                to={item.path}
+                                className={cn(
+                                  "px-4 py-3 rounded-lg flex items-center gap-3 transition-all duration-200 text-sm font-medium",
+                                  location.pathname === item.path
+                                    ? "text-blue-600 bg-blue-50"
+                                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                                )}
+                              >
+                                {item.icon}
+                                <span>{item.name}</span>
+                              </Link>
+                            ))}
+                            
+                            <button
+                              onClick={handleLogout}
+                              className="w-full px-4 py-3 mt-1 rounded-lg flex items-center gap-3 text-red-600 hover:bg-red-50 transition-all duration-200 text-sm font-medium"
                             >
-                              {item.icon}
-                              <span>{item.name}</span>
-                            </Link>
-                          ))}
-                          
-                          <button
-                            onClick={handleLogout}
-                            className="w-full px-4 py-3 mt-1 rounded-lg flex items-center gap-3 text-red-600 hover:bg-red-50 transition-all duration-200 text-sm font-medium"
-                          >
-                            <LogOut className="w-5 h-5" />
-                            <span>Logout</span>
-                          </button>
-                        </div>
-                        
-                        <div className="mt-4 px-4 py-3 bg-blue-50 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <HelpCircle className="w-5 h-5 text-blue-600" />
-                            <div className="text-sm">
-                              <p className="font-medium text-blue-800">Need help?</p>
-                              <p className="text-blue-600 text-xs">Check the help section in settings</p>
-                            </div>
+                              <LogOut className="w-5 h-5" />
+                              <span>Logout</span>
+                            </button>
                           </div>
-                        </div>
-                      </>
-                    )}
+                          
+                          {/* Removed the "Need help?" section as requested */}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          )}
+          
+          {/* Show auth buttons for unauthenticated users on mobile */}
+          {!isAuthenticated && (
+            <div className="flex gap-2">
+              <Link to="/login">
+                <Button size="sm" variant="ghost">Login</Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm" variant="default">Register</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </nav>
