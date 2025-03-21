@@ -1,10 +1,11 @@
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
+import { useEffect } from 'react';
 
 import Index from '@/pages/Index';
 import Dashboard from '@/pages/Dashboard';
