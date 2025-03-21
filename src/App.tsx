@@ -24,16 +24,19 @@ const queryClient = new QueryClient();
 // RequireAuth component that redirects to login if not authenticated
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/login', { replace: true });
+    }
+  }, [isAuthenticated, isLoading, navigate]);
   
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
   
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return <>{children}</>;
+  return isAuthenticated ? <>{children}</> : <div className="min-h-screen flex items-center justify-center">Redirecting to login...</div>;
 };
 
 function AppRoutes() {
