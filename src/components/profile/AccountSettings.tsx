@@ -2,17 +2,27 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Shield, Globe, Trash, Bell } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
 interface AccountSettingsProps {
   handleClearData: () => void;
-  handleClearHistory: () => void;
 }
 
 const AccountSettings = ({ 
-  handleClearData, 
-  handleClearHistory 
+  handleClearData 
 }: AccountSettingsProps) => {
+  const handleCurrencyChange = (value: string) => {
+    toast.success(`Currency changed to ${value}`);
+  };
+
+  const handleNotificationToggle = (enabled: boolean) => {
+    toast.success(`Notifications ${enabled ? 'enabled' : 'disabled'}`);
+  };
+
   return (
     <Card className="border-0 shadow-md">
       <CardHeader className="py-4">
@@ -21,36 +31,71 @@ const AccountSettings = ({
           Account Settings
         </CardTitle>
         <CardDescription>
-          Manage your account settings and data
+          Manage your account preferences
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="p-3 sm:p-4 bg-red-50 rounded-lg border border-red-100">
-          <h4 className="font-medium text-red-800 mb-2 flex items-center gap-2 text-sm sm:text-base">
-            <Shield className="h-4 w-4" />
-            Data Management
-          </h4>
-          <p className="text-red-600 text-xs sm:text-sm mb-3">
-            These actions permanently delete your data and cannot be undone.
-          </p>
-          <div className="space-y-2 flex flex-col sm:flex-row sm:space-y-0 sm:space-x-2">
-            <Button variant="outline" onClick={handleClearData} 
-              className="w-full sm:w-auto border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs sm:text-sm">
-              Clear All Transaction Data
-            </Button>
-            
-            <Button variant="outline" onClick={handleClearHistory} 
-              className="w-full sm:w-auto border-gray-200 text-gray-700 hover:bg-gray-100 text-xs sm:text-sm">
-              Clear Activity History
-            </Button>
+      <CardContent className="space-y-6">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label className="text-base flex items-center gap-2">
+                <Globe className="h-4 w-4 text-gray-500" />
+                Currency
+              </Label>
+              <p className="text-sm text-gray-500">
+                Set your preferred currency for transactions
+              </p>
+            </div>
+            <Select onValueChange={handleCurrencyChange} defaultValue="INR">
+              <SelectTrigger className="w-[110px]">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="USD">USD ($)</SelectItem>
+                <SelectItem value="EUR">EUR (€)</SelectItem>
+                <SelectItem value="GBP">GBP (£)</SelectItem>
+                <SelectItem value="INR">INR (₹)</SelectItem>
+                <SelectItem value="JPY">JPY (¥)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         
-        <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
-          <h4 className="font-medium text-gray-800 mb-1 text-sm sm:text-base">Currency Setting</h4>
-          <p className="text-gray-600 text-xs sm:text-sm mb-0">
-            Your current currency is set to <span className="font-medium">Indian Rupees (₹)</span>
-          </p>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label className="text-base flex items-center gap-2">
+                <Bell className="h-4 w-4 text-gray-500" />
+                Notifications
+              </Label>
+              <p className="text-sm text-gray-500">
+                Receive alerts about account activity
+              </p>
+            </div>
+            <Switch 
+              defaultChecked 
+              onCheckedChange={handleNotificationToggle}
+            />
+          </div>
+        </div>
+        
+        <div className="pt-4 border-t border-gray-100">
+          <div className="p-3 sm:p-4 bg-red-50 rounded-lg border border-red-100">
+            <h4 className="font-medium text-red-800 mb-2 flex items-center gap-2 text-sm sm:text-base">
+              <Trash className="h-4 w-4" />
+              Data Management
+            </h4>
+            <p className="text-red-600 text-xs sm:text-sm mb-3">
+              This action permanently deletes your data and cannot be undone.
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={handleClearData} 
+              className="w-full sm:w-auto border-red-200 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs sm:text-sm"
+            >
+              Clear All Transaction Data
+            </Button>
+          </div>
         </div>
         
         <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">

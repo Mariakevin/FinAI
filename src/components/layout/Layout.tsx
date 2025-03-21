@@ -20,9 +20,12 @@ const Layout = ({ children, requireAuth = false }: LayoutProps) => {
   useEffect(() => {
     // If authentication is required and user is not authenticated, redirect to login
     if (requireAuth && !isLoading && !isAuthenticated) {
-      navigate('/login', { replace: true });
+      navigate('/login', { 
+        replace: true,
+        state: { from: location.pathname }
+      });
     }
-  }, [requireAuth, isAuthenticated, isLoading, navigate]);
+  }, [requireAuth, isAuthenticated, isLoading, navigate, location.pathname]);
 
   // Show loading state if checking authentication
   if (requireAuth && isLoading) {
