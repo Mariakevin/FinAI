@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Shield, UserCog } from 'lucide-react';
+import { User, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +33,6 @@ const ProfilePage = () => {
   });
   
   useEffect(() => {
-    // Set the name and email from the authenticated user data
     if (user) {
       setProfileData(prev => ({
         ...prev,
@@ -45,7 +43,6 @@ const ProfilePage = () => {
   }, [user]);
 
   useEffect(() => {
-    // If not authenticated, redirect to login
     if (!isAuthenticated) {
       navigate('/login');
     }
@@ -67,12 +64,10 @@ const ProfilePage = () => {
   };
 
   const handleSave = () => {
-    // Save to localStorage
     localStorage.setItem('profile_phone', profileData.phone);
     localStorage.setItem('profile_address', profileData.address);
     localStorage.setItem('profile_image', profileData.profileImage);
     
-    // Update user information in the "users" storage if email or name has changed
     const users = JSON.parse(localStorage.getItem('finwise_users') || '[]');
     if (user && users.length) {
       const updatedUsers = users.map((u: any) => {
@@ -88,7 +83,6 @@ const ProfilePage = () => {
       
       localStorage.setItem('finwise_users', JSON.stringify(updatedUsers));
       
-      // Update the current user session
       const updatedUser = {
         ...user,
         name: profileData.name,
@@ -98,7 +92,6 @@ const ProfilePage = () => {
       localStorage.setItem('finwise_user', JSON.stringify(updatedUser));
     }
     
-    // Reset all editing states
     setIsEditing({
       name: false,
       email: false,
@@ -158,7 +151,7 @@ const ProfilePage = () => {
         
         <div className="w-full lg:w-2/3">
           <Tabs defaultValue="personal" className="animate-scale-in">
-            <TabsList className="mb-4 grid grid-cols-3 gap-1 bg-muted/50 p-1 rounded-lg">
+            <TabsList className="mb-4 grid grid-cols-2 gap-1 bg-muted/50 p-1 rounded-lg">
               <TabsTrigger value="personal" className="flex items-center gap-1 text-xs sm:text-sm">
                 <User className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Personal Info</span>
@@ -167,31 +160,27 @@ const ProfilePage = () => {
                 <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Security</span>
               </TabsTrigger>
-              <TabsTrigger value="settings" className="flex items-center gap-1 text-xs sm:text-sm">
-                <UserCog className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Account</span>
-              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="personal" className="animate-slide-up">
-              <PersonalInfoForm 
-                profileData={profileData}
-                handleChange={handleChange}
-                handleSave={handleSave}
-                user={user}
-                isEditing={isEditing}
-                toggleEdit={toggleEdit}
-              />
+              <div className="space-y-6">
+                <PersonalInfoForm 
+                  profileData={profileData}
+                  handleChange={handleChange}
+                  handleSave={handleSave}
+                  user={user}
+                  isEditing={isEditing}
+                  toggleEdit={toggleEdit}
+                />
+                
+                <AccountSettings 
+                  handleClearData={handleClearData}
+                />
+              </div>
             </TabsContent>
             
             <TabsContent value="security" className="animate-slide-up">
               <SecuritySettings />
-            </TabsContent>
-            
-            <TabsContent value="settings" className="animate-slide-up">
-              <AccountSettings 
-                handleClearData={handleClearData}
-              />
             </TabsContent>
           </Tabs>
         </div>
