@@ -5,17 +5,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Mail, Shield, Sparkles } from 'lucide-react';
+import { ArrowRight, Mail, Shield, Sparkles, User } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordField } from '@/components/auth/PasswordField';
-import { toast } from 'sonner';
 import { motion } from '@/components/ui/animated';
 
 const RegisterPage = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState('');
+  const [nameError, setNameError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -37,20 +38,40 @@ const RegisterPage = () => {
     return true;
   };
 
+  const validateName = (name: string) => {
+    setNameError('');
+    if (!name.trim()) {
+      setNameError('Please enter your name');
+      return false;
+    }
+    return true;
+  };
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
     if (newEmail) validateEmail(newEmail);
   };
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setName(newName);
+    if (newName) validateName(newName);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateEmail(email)) return;
+    
+    // Validate all fields
+    const isEmailValid = validateEmail(email);
+    const isNameValid = validateName(name);
+    
+    if (!isEmailValid || !isNameValid) return;
     
     setIsSubmitting(true);
     
     try {
-      const success = await register(email, password);
+      const success = await register(email, password, name);
       if (success) {
         navigate('/dashboard');
       }
@@ -105,6 +126,43 @@ const RegisterPage = () => {
           
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
+              {/* Name field */}
+              <motion.div 
+                className="space-y-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 }}
+              >
+                <Label htmlFor="name" className="text-sm font-medium">Name</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="John Doe"
+                    value={name}
+                    onChange={handleNameChange}
+                    onBlur={() => validateName(name)}
+                    className={`pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500 ${
+                      nameError ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''
+                    }`}
+                    required
+                  />
+                </div>
+                {nameError && (
+                  <motion.p 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="text-red-500 text-xs mt-1"
+                  >
+                    {nameError}
+                  </motion.p>
+                )}
+              </motion.div>
+              
+              {/* Email field */}
               <motion.div 
                 className="space-y-2"
                 initial={{ opacity: 0, x: -20 }}
@@ -140,6 +198,7 @@ const RegisterPage = () => {
                 )}
               </motion.div>
               
+              {/* Password field */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -150,6 +209,7 @@ const RegisterPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   id="password"
                   label="Password"
+                  showStrength={true}
                 />
               </motion.div>
             </CardContent>

@@ -14,7 +14,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string, name?: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
   canEdit: (resourceOwnerId?: string) => boolean;
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const register = async (email: string, password: string): Promise<boolean> => {
+  const register = async (email: string, password: string, name?: string): Promise<boolean> => {
     setIsLoading(true);
     try {
       // Validate inputs
@@ -162,13 +162,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return false;
       }
       
-      // Generate a username from email
-      const name = email.split('@')[0];
+      // Use provided name or generate from email
+      const userName = name ? name.trim() : email.split('@')[0];
       
       // Create new user
       const newUser = {
         id: Math.random().toString(36).substring(2, 9),
-        name,
+        name: userName,
         email,
         password,
         provider: 'email' as const,
