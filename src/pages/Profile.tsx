@@ -1,37 +1,20 @@
 
-import React, { useEffect } from 'react';
+import { memo } from 'react';
 import Layout from '@/components/layout/Layout';
 import ProfilePage from '@/components/profile/ProfilePage';
-import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
+// No need for additional auth logic since Layout already handles it
 const Profile = () => {
-  const { isAuthenticated, isLoading } = useAuth();
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate('/login', { replace: true });
-    }
-  }, [isAuthenticated, isLoading, navigate]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 via-blue-50/30 to-white">
-        <div className="animate-pulse text-lg text-gray-600">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null; // Will redirect via useEffect
-  }
-
   return (
     <Layout requireAuth={true}>
+      <Helmet>
+        <title>Profile | FinWise</title>
+        <meta name="description" content="Manage your profile settings and account information" />
+      </Helmet>
       <ProfilePage />
     </Layout>
   );
 };
 
-export default Profile;
+export default memo(Profile);

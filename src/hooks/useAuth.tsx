@@ -1,5 +1,5 @@
 
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 
 interface User {
@@ -29,21 +29,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load user on initial mount only
   useEffect(() => {
     const loadUser = () => {
-      setIsLoading(true);
       try {
         const storedUser = localStorage.getItem(STORAGE_KEY);
         if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-          console.log('User loaded from storage:', parsedUser);
-        } else {
-          console.log('No user found in storage');
+          setUser(JSON.parse(storedUser));
         }
       } catch (error) {
         console.error('Error loading user:', error);
-        // Clear potentially corrupt data
         localStorage.removeItem(STORAGE_KEY);
       } finally {
         setIsLoading(false);
@@ -53,7 +48,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadUser();
   }, []);
 
-  const checkEmailExists = (email: string): boolean => {
+  // Memoize this function to prevent unnecessary re-renders
+  const checkEmailExists = useCallback((email: string): boolean => {
     try {
       const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
       const users = storedUsers ? JSON.parse(storedUsers) : [];
@@ -64,9 +60,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Error checking email:', e);
       return false;
     }
-  };
+  }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = useCallback(async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
       // Validate inputs
@@ -102,11 +98,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         localStorage.setItem(STORAGE_KEY, JSON.stringify(userSession));
         setUser(userSession);
-        console.log('Login successful:', userSession);
         toast.success('Login successful!');
         return true;
       } else {
-        console.log('Invalid credentials');
         toast.error('Invalid email or password');
         return false;
       }
@@ -117,9 +111,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const register = async (email: string, password: string, name?: string): Promise<boolean> => {
+  const register = useCallback(async (email: string, password: string, name?: string): Promise<boolean> => {
     setIsLoading(true);
     try {
       // Validate inputs
@@ -157,7 +151,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       // Check if email already exists (case insensitive)
       if (users.some((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
-        console.log('Email already registered');
         toast.error('Email already registered');
         return false;
       }
@@ -178,7 +171,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Save to "database"
       users.push(newUser);
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-      console.log('User registered and saved to storage:', newUser);
       
       // Create user session without password
       const userSession: User = {
@@ -200,37 +192,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     setUser(null);
-    console.log('User logged out');
     toast.success('Logged out successfully');
-  };
+  }, []);
 
-  // Function to determine if user can edit a resource
-  const canEdit = (resourceOwnerId?: string): boolean => {
-    // If not authenticated, can't edit anything
+  // Memoize this function to prevent unnecessary re-renders
+  const canEdit = useCallback((resourceOwnerId?: string): boolean => {
     if (!user) return false;
-    
-    // If no resource owner specified, just check if authenticated
     if (!resourceOwnerId) return true;
-    
-    // Check if current user is the owner of the resource
     return user.id === resourceOwnerId;
-  };
+  }, [user]);
+
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
+    user, 
+    isLoading, 
+    login, 
+    register,
+    logout,
+    isAuthenticated: !!user,
+    canEdit
+  }), [user, isLoading, login, register, logout, canEdit]);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isLoading, 
-      login, 
-      register,
-      logout,
-      isAuthenticated: !!user,
-      canEdit
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

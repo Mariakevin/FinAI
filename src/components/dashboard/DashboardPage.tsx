@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import FinanceSummary from './FinanceSummary';
 import BalanceChart from './BalanceChart';
 import RecentTransactions from './RecentTransactions';
@@ -13,6 +13,29 @@ import { LineChart, BarChartBig, PieChart, TrendingUp, Wallet, LayoutDashboard, 
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+
+// QuickAction component for better organization
+const QuickAction = memo(({ 
+  title, 
+  icon, 
+  onClick, 
+  color 
+}: { 
+  title: string; 
+  icon: React.ReactNode; 
+  onClick: () => void; 
+  color: string;
+}) => (
+  <Button 
+    variant="outline" 
+    size="sm"
+    onClick={onClick}
+    className={`${color} border-none shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105`}
+  >
+    {icon}
+    <span className="ml-1">{title}</span>
+  </Button>
+));
 
 const DashboardPage = () => {
   const { 
@@ -37,8 +60,8 @@ const DashboardPage = () => {
     setRefreshKey(prev => prev + 1);
   }, [isUpiConnected, transactions.length]);
   
-  // Handle UPI connection/disconnection with refresh
-  const handleUpiConnect = (upiId: string) => {
+  // Memoize handlers to prevent unnecessary re-renders
+  const handleUpiConnect = useCallback((upiId: string) => {
     if (!isAuthenticated) {
       toast.error('Please sign in to connect UPI');
       navigate('/login');
@@ -46,42 +69,53 @@ const DashboardPage = () => {
     }
     
     connectUpiId(upiId);
-    // We'll set a small timeout to ensure transactions are updated before refresh
     setTimeout(() => setRefreshKey(prev => prev + 1), 100);
-  };
+  }, [isAuthenticated, connectUpiId, navigate]);
 
-  // Handle chart view change with refresh to ensure proper rendering
-  const handleChartViewChange = (view: string) => {
+  const handleChartViewChange = useCallback((view: string) => {
     setActiveChartView(view);
-    // Small delay to ensure view change takes effect
     setTimeout(() => setRefreshKey(prev => prev + 1), 50);
-  };
+  }, []);
 
+  const navigateToLogin = useCallback(() => {
+    navigate('/login');
+  }, [navigate]);
+
+  const navigateToTransactions = useCallback(() => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in to add transactions');
+      navigate('/login');
+      return;
+    }
+    navigate('/transactions');
+  }, [isAuthenticated, navigate]);
+
+  const navigateToBudget = useCallback(() => {
+    navigate('/budget');
+  }, [navigate]);
+
+  const navigateToAiInsights = useCallback(() => {
+    navigate('/ai-insights');
+  }, [navigate]);
+  
   // Quick actions
   const quickActions = [
     {
       title: 'Add Transaction',
       icon: <TrendingUp className="h-5 w-5" />,
-      onClick: () => {
-        if (!isAuthenticated) {
-          toast.error('Please sign in to add transactions');
-          navigate('/login');
-          return;
-        }
-        navigate('/transactions');
-      },
+      onClick: navigateToTransactions,
       color: 'bg-green-50 text-green-600'
     },
     {
       title: 'View Budget',
       icon: <Wallet className="h-5 w-5" />,
-      onClick: () => navigate('/budget'),
+      onClick: navigateToBudget,
       color: 'bg-blue-50 text-blue-600'
     },
     {
       title: 'AI Insights',
       icon: <Sparkles className="h-5 w-5" />,
-      onClick: () => navigate('/ai-insights'),
+      onClick: navigateToAiInsights,
       color: 'bg-purple-50 text-purple-600'
     }
   ];
@@ -100,7 +134,7 @@ const DashboardPage = () => {
         <div className="flex flex-wrap gap-2">
           {!isAuthenticated && (
             <Button 
-              onClick={() => navigate('/login')}
+              onClick={navigateToLogin}
               variant="outline"
               size="sm"
               className="bg-blue-50 text-blue-600 border-none shadow-sm hover:shadow-md transition-all duration-200"
@@ -111,16 +145,13 @@ const DashboardPage = () => {
           )}
           
           {quickActions.map((action, index) => (
-            <Button 
-              key={index} 
-              variant="outline" 
-              size="sm"
+            <QuickAction
+              key={index}
+              title={action.title}
+              icon={action.icon}
               onClick={action.onClick}
-              className={`${action.color} border-none shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105`}
-            >
-              {action.icon}
-              <span className="ml-1">{action.title}</span>
-            </Button>
+              color={action.color}
+            />
           ))}
         </div>
       </div>
@@ -187,4 +218,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default memo(DashboardPage);

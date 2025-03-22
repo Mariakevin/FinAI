@@ -1,12 +1,12 @@
 
-import React from 'react';
+import { memo } from 'react';
 import Layout from '@/components/layout/Layout';
 import BudgetPage from '@/components/budget/BudgetPage';
 import { Helmet } from 'react-helmet-async';
 
 const Budget = () => {
   return (
-    <Layout>
+    <Layout requireAuth={true}>
       <Helmet>
         <title>Budget | FinWise</title>
         <meta name="description" content="Manage your budgets and track spending against limits" />
@@ -16,4 +16,4 @@ const Budget = () => {
   );
 };
 
-export default Budget;
+export default memo(Budget);
