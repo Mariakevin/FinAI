@@ -1,10 +1,10 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Mail, MapPin, Phone, Save, Pencil, X } from 'lucide-react';
+import { User, Mail, MapPin, Phone, Save, Pencil, X, Lock } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PersonalInfoFormProps {
   profileData: {
@@ -33,6 +33,37 @@ const PersonalInfoForm = ({
   isEditing,
   toggleEdit
 }: PersonalInfoFormProps) => {
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+
+  const handleChangePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Please fill in all password fields');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match');
+      return;
+    }
+    
+    // Simple password validation
+    if (newPassword.length < 8) {
+      toast.error('Password must be at least 8 characters long');
+      return;
+    }
+    
+    // In a real app, this would send the password change to an API
+    toast.success('Password changed successfully');
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setShowPasswordForm(false);
+  };
+
   return (
     <Card className="border-0 shadow-md">
       <CardHeader className="py-4">
@@ -228,6 +259,68 @@ const PersonalInfoForm = ({
             Save Changes
           </Button>
         )}
+
+        <div className="pt-4 border-t border-gray-200 mt-6">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password" className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-gray-500" />
+              Password
+            </Label>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setShowPasswordForm(!showPasswordForm)}
+              className="h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            >
+              {showPasswordForm ? 'Cancel' : 'Change Password'}
+            </Button>
+          </div>
+          
+          {!showPasswordForm ? (
+            <div className="px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700 mt-2">
+              ••••••••
+            </div>
+          ) : (
+            <form onSubmit={handleChangePassword} className="space-y-4 mt-3">
+              <div className="space-y-2">
+                <Label htmlFor="current-password">Current Password</Label>
+                <Input 
+                  id="current-password" 
+                  type="password" 
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter your current password"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="new-password">New Password</Label>
+                <Input 
+                  id="new-password" 
+                  type="password" 
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">Confirm New Password</Label>
+                <Input 
+                  id="confirm-password" 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                />
+              </div>
+              
+              <Button type="submit" className="w-full sm:w-auto">
+                Update Password
+              </Button>
+            </form>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Shield } from 'lucide-react';
+import { User } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,6 @@ import ProfileHeader from './ProfileHeader';
 import ProfileSidebar from './ProfileSidebar';
 import PersonalInfoForm from './PersonalInfoForm';
 import AccountSettings from './AccountSettings';
-import SecuritySettings from './SecuritySettings';
 
 const ProfilePage = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -151,14 +150,10 @@ const ProfilePage = () => {
         
         <div className="w-full lg:w-2/3">
           <Tabs defaultValue="personal" className="animate-scale-in">
-            <TabsList className="mb-4 grid grid-cols-2 gap-1 bg-muted/50 p-1 rounded-lg">
+            <TabsList className="mb-4 grid grid-cols-1 gap-1 bg-muted/50 p-1 rounded-lg">
               <TabsTrigger value="personal" className="flex items-center gap-1 text-xs sm:text-sm">
                 <User className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Personal Info</span>
-              </TabsTrigger>
-              <TabsTrigger value="security" className="flex items-center gap-1 text-xs sm:text-sm">
-                <Shield className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Security</span>
               </TabsTrigger>
             </TabsList>
             
@@ -177,10 +172,6 @@ const ProfilePage = () => {
                   handleClearData={handleClearData}
                 />
               </div>
-            </TabsContent>
-            
-            <TabsContent value="security" className="animate-slide-up">
-              <SecuritySettings />
             </TabsContent>
           </Tabs>
         </div>
