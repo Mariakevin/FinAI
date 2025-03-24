@@ -108,10 +108,10 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-full">
           <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center shadow-sm">
-              <span className="text-white font-semibold text-base">F</span>
+              <span className="text-white font-semibold text-base">f</span>
             </div>
             <span className="text-lg sm:text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
-              Finwise
+              finAI
             </span>
           </Link>
 
@@ -133,10 +133,10 @@ const Navbar = () => {
                     <div className="flex items-center justify-between">
                       <Link to="/" className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-                          <span className="text-white font-semibold text-sm">F</span>
+                          <span className="text-white font-semibold text-sm">f</span>
                         </div>
                         <span className="text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
-                          Finwise
+                          finAI
                         </span>
                       </Link>
                     </div>

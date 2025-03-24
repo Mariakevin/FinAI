@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, LogIn, User, CreditCard, Sparkles, Shield, BarChart3 } from 'lucide-react';
+import { ArrowRight, LogIn, User, CreditCard, Sparkles, Shield, BarChart3, BrainCircuit } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from '@/components/ui/animated';
 import PiggyBank from '@/components/ui/PiggyBank';
@@ -15,19 +15,20 @@ const Index = () => {
   return (
     <Layout>
       <Helmet>
-        <title>FinWise - Master Your Finances</title>
+        <title>finAI - AI-Powered Financial Intelligence</title>
         <meta name="description" content="Visualize, analyze, and optimize your financial journey with intelligent AI insights and beautiful analytics." />
       </Helmet>
-      {/* Hero Section with New Gradient Background */}
-      <div className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center overflow-hidden w-full">
-        {/* Updated gradient background */}
+      
+      {/* Hero Section */}
+      <section className="relative min-h-[calc(100vh-8rem)] flex flex-col items-center justify-center overflow-hidden w-full">
+        {/* Background Elements */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-teal-50 to-blue-100 overflow-hidden">
           <div className="absolute top-1/4 left-1/3 w-64 h-64 rounded-full bg-teal-300/20 animate-pulse-light"></div>
           <div className="absolute top-1/2 right-1/4 w-80 h-80 rounded-full bg-blue-300/20 animate-pulse-light" style={{ animationDelay: '1s' }}></div>
           <div className="absolute bottom-1/4 left-1/4 w-48 h-48 rounded-full bg-orange-300/20 animate-pulse-light" style={{ animationDelay: '2s' }}></div>
         </div>
         
-        {/* Content overlay with animation */}
+        {/* Content */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -35,16 +36,16 @@ const Index = () => {
           className="text-center max-w-3xl mx-auto px-4 z-10"
         >
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-teal-500/10 to-blue-500/10 text-teal-600 mb-6 backdrop-blur-sm border border-teal-200/20">
-            <Sparkles className="mr-2 h-4 w-4" />
-            <span className="text-sm font-medium">AI-Powered Financial Insights</span>
+            <BrainCircuit className="mr-2 h-4 w-4" />
+            <span className="text-sm font-medium">AI-Powered Financial Intelligence</span>
           </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-primary-600 bg-clip-text text-transparent mb-6 tracking-tight">
-            Master Your Finances
+            Smart Finance with AI
           </h1>
           
           <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-            Visualize, analyze, and optimize your financial journey with intelligent AI insights and beautiful analytics.
+            Leverage artificial intelligence to analyze your spending, optimize savings, and reach your financial goals faster.
           </p>
           
           {!isAuthenticated ? (
@@ -71,34 +72,34 @@ const Index = () => {
             </Link>
           )}
         </motion.div>
-      </div>
+      </section>
 
-      {/* Key Features Section with Updated Design */}
-      <div className="py-16 bg-white w-full">
+      {/* Features Section */}
+      <section className="py-16 bg-white w-full">
         <div className="container px-4 sm:px-8 mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Key Features</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">AI-Powered Features</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Everything you need to take control of your financial future
+              Intelligent tools to take control of your financial future
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                icon: <CreditCard className="h-8 w-8 text-teal-600" />,
-                title: "Smart Transaction Tracking",
-                description: "Automatically categorize and track your spending patterns with AI-powered insights."
+                icon: <BrainCircuit className="h-8 w-8 text-teal-600" />,
+                title: "AI Spending Analysis",
+                description: "Our AI examines your transactions to find patterns and suggest smart ways to save money."
               },
               {
                 icon: <PiggyBank className="h-8 w-8 text-blue-600" />,
-                title: "Intelligent Savings",
-                description: "Get personalized recommendations to save money based on your spending habits."
+                title: "Predictive Savings",
+                description: "AI algorithms predict your future expenses and help set optimal savings goals."
               },
               {
-                icon: <Shield className="h-8 w-8 text-primary-600" />,
-                title: "Secure & Private",
-                description: "Your financial data is protected with bank-level encryption and privacy controls."
+                icon: <BarChart3 className="h-8 w-8 text-primary-600" />,
+                title: "Intelligent Insights",
+                description: "Get personalized financial advice based on your unique spending habits and goals."
               }
             ].map((feature, index) => (
               <div
@@ -116,14 +117,14 @@ const Index = () => {
             ))}
           </div>
         </div>
-      </div>
+      </section>
       
-      {/* CTA Section with Updated Gradient */}
-      <div className="py-16 bg-gradient-to-r from-teal-600 to-blue-600 text-white w-full">
+      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-teal-600 to-blue-600 text-white w-full">
         <div className="container px-4 sm:px-8 mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to transform your finances?</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to transform your finances with AI?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto text-teal-100">
-            Join thousands of users who have taken control of their financial future with Finwise.
+            Join thousands of users who have taken control of their financial future with finAI.
           </p>
           
           <Link to={isAuthenticated ? "/dashboard" : "/register"}>
@@ -133,7 +134,7 @@ const Index = () => {
             </Button>
           </Link>
         </div>
-      </div>
+      </section>
     </Layout>
   );
 };
