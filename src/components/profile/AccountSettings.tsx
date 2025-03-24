@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Shield, Globe, Trash, Bell, Info, FileChart, Code } from 'lucide-react';
+import { Shield, Globe, Trash, Bell, Info, BarChart, Code } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -41,7 +41,7 @@ const AccountSettings = ({
               <span>Preferences</span>
             </TabsTrigger>
             <TabsTrigger value="diagrams" className="flex items-center gap-2">
-              <FileChart className="h-4 w-4" />
+              <BarChart className="h-4 w-4" />
               <span>Diagrams</span>
             </TabsTrigger>
             <TabsTrigger value="data" className="flex items-center gap-2">
@@ -158,7 +158,7 @@ const AccountSettings = ({
               {/* UML Class Diagram */}
               <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-100">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <FileChart className="h-5 w-5 text-teal-500" />
+                  <BarChart className="h-5 w-5 text-teal-500" />
                   UML Class Diagram
                 </h3>
                 <div className="bg-gray-50 p-6 rounded-lg overflow-x-auto">
