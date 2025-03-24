@@ -13,10 +13,10 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
   // Financial icons for floating animation
   const financialIcons = useMemo(() => [
     { icon: <CreditCard size={22} className="text-blue-400/20" />, delay: 0 },
-    { icon: <Coins size={22} className="text-indigo-400/20" />, delay: 1.5 },
-    { icon: <PiggyBank size={22} className="text-purple-400/20" />, delay: 3 },
+    { icon: <Coins size={22} className="text-teal-400/20" />, delay: 1.5 },
+    { icon: <PiggyBank size={22} className="text-primary-400/20" />, delay: 3 },
     { icon: <DollarSign size={22} className="text-green-400/20" />, delay: 4.5 },
-    { icon: <CardIcon size={22} className="text-pink-400/20" />, delay: 2.5 },
+    { icon: <CardIcon size={22} className="text-orange-400/20" />, delay: 2.5 },
     { icon: <LineChart size={22} className="text-cyan-400/20" />, delay: 3.5 },
     { icon: <TrendingUp size={22} className="text-yellow-400/20" />, delay: 0.5 },
     { icon: <Wallet size={22} className="text-orange-400/20" />, delay: 2 }
@@ -29,7 +29,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       size: Math.random() * 8 + 6,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      hue: Math.floor(Math.random() * 60) + 200,
+      hue: Math.floor(Math.random() * 60) + 180,
       saturation: Math.floor(Math.random() * 20) + 70,
       lightness: Math.floor(Math.random() * 15) + 75,
       delay: i * 0.5,
@@ -44,7 +44,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 flex flex-col overflow-hidden">
       {/* Enhanced background elements */}
       <div className="fixed inset-0 z-0 overflow-hidden">
         {/* Animated gradient orbs */}
@@ -87,13 +87,13 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       <div className="absolute bottom-0 left-0 w-full opacity-5 pointer-events-none overflow-hidden" style={{ height: '30%' }}>
         <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="absolute bottom-0 w-full h-full">
           <path 
-            fill="rgba(96, 165, 250, 0.3)" 
+            fill="rgba(20, 184, 166, 0.3)" 
             fillOpacity="1" 
             d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,128C672,107,768,117,864,144C960,171,1056,213,1152,218.7C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
             style={{ animation: 'float 25s ease-in-out infinite' }}
           ></path>
           <path 
-            fill="rgba(79, 70, 229, 0.3)" 
+            fill="rgba(12, 152, 233, 0.3)" 
             fillOpacity="1" 
             d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,90.7C672,85,768,107,864,144C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
             style={{ animation: 'float 20s ease-in-out infinite reverse' }}
@@ -109,7 +109,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
             fill="none" 
             stroke="currentColor" 
             strokeWidth="0.2" 
-            className="text-blue-500"
+            className="text-teal-500"
             style={{ animation: 'pulse 15s ease-in-out infinite' }}
           />
           <path 
@@ -117,7 +117,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
             fill="none" 
             stroke="currentColor" 
             strokeWidth="0.2" 
-            className="text-indigo-500"
+            className="text-blue-500"
             style={{ animation: 'pulse 20s ease-in-out infinite reverse' }}
           />
           <path 
@@ -125,7 +125,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
             fill="none" 
             stroke="currentColor" 
             strokeWidth="0.2" 
-            className="text-purple-500"
+            className="text-primary-500"
             style={{ animation: 'pulse 25s ease-in-out infinite' }}
           />
         </svg>
@@ -135,10 +135,10 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       <header className={`relative z-10 py-6 transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+            <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
               <span className="text-white font-bold text-lg">F</span>
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-blue-600">
               Finwise
             </span>
           </Link>

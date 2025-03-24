@@ -30,7 +30,7 @@ const Layout = ({ children, requireAuth = false }: LayoutProps) => {
   // Show loading state if checking authentication
   if (requireAuth && isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 via-blue-50/30 to-white">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-50 via-blue-50/30 to-white">
         <div className="animate-pulse text-lg text-gray-600">Loading...</div>
       </div>
     );
@@ -39,14 +39,14 @@ const Layout = ({ children, requireAuth = false }: LayoutProps) => {
   // If authentication is required but user is not authenticated, show nothing (will redirect)
   if (requireAuth && !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 via-blue-50/30 to-white">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-50 via-blue-50/30 to-white">
         <div className="text-lg text-gray-600">Redirecting to login...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-50/30 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50/30 to-white">
       <Navbar />
       <main className={cn(
         "pt-16 pb-8 w-full",
