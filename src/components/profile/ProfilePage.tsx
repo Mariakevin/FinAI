@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User } from 'lucide-react';
+import { User, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -135,43 +136,49 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto py-4 animate-fade-in">
+    <div className="w-full max-w-7xl mx-auto py-6 px-4 animate-fade-in">
       <ProfileHeader 
         handleLogout={handleLogout} 
       />
       
-      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-        <ProfileSidebar 
-          profileData={profileData}
-          triggerFileInput={triggerFileInput}
-          fileInputRef={fileInputRef}
-          handleImageUpload={handleImageUpload}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+        <div className="lg:col-span-1">
+          <ProfileSidebar 
+            profileData={profileData}
+            triggerFileInput={triggerFileInput}
+            fileInputRef={fileInputRef}
+            handleImageUpload={handleImageUpload}
+          />
+        </div>
         
-        <div className="w-full lg:w-2/3">
+        <div className="lg:col-span-2">
           <Tabs defaultValue="personal" className="animate-scale-in">
-            <TabsList className="mb-4 grid grid-cols-1 gap-1 bg-muted/50 p-1 rounded-lg">
-              <TabsTrigger value="personal" className="flex items-center gap-1 text-xs sm:text-sm">
-                <User className="h-3 w-3 sm:h-4 sm:w-4" />
+            <TabsList className="w-full mb-6 grid grid-cols-2 bg-muted/20 p-1 rounded-xl">
+              <TabsTrigger value="personal" className="flex items-center gap-2 py-3 rounded-lg">
+                <User className="h-4 w-4" />
                 <span>Personal Info</span>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="flex items-center gap-2 py-3 rounded-lg">
+                <Settings className="h-4 w-4" />
+                <span>Account Settings</span>
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="personal" className="animate-slide-up">
-              <div className="space-y-6">
-                <PersonalInfoForm 
-                  profileData={profileData}
-                  handleChange={handleChange}
-                  handleSave={handleSave}
-                  user={user}
-                  isEditing={isEditing}
-                  toggleEdit={toggleEdit}
-                />
-                
-                <AccountSettings 
-                  handleClearData={handleClearData}
-                />
-              </div>
+              <PersonalInfoForm 
+                profileData={profileData}
+                handleChange={handleChange}
+                handleSave={handleSave}
+                user={user}
+                isEditing={isEditing}
+                toggleEdit={toggleEdit}
+              />
+            </TabsContent>
+            
+            <TabsContent value="settings" className="animate-slide-up">
+              <AccountSettings 
+                handleClearData={handleClearData}
+              />
             </TabsContent>
           </Tabs>
         </div>

@@ -16,6 +16,7 @@ const Layout = ({ children, requireAuth = false }: LayoutProps) => {
   const { isAuthenticated, isLoading } = useAuth();
   const pageKey = location.pathname;
   const isIndexPage = location.pathname === '/';
+  const isProfilePage = location.pathname === '/profile';
   
   useEffect(() => {
     // If authentication is required and user is not authenticated, redirect to login
@@ -46,7 +47,10 @@ const Layout = ({ children, requireAuth = false }: LayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50 via-blue-50/30 to-white">
+    <div className={cn(
+      "min-h-screen bg-gradient-to-b from-teal-50 via-blue-50/30 to-white",
+      isProfilePage && "bg-gradient-to-b from-teal-100/50 via-blue-50/20 to-white"
+    )}>
       <Navbar />
       <main className={cn(
         "pt-16 pb-8 w-full",

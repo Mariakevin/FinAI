@@ -9,10 +9,13 @@ interface ProfileHeaderProps {
 
 const ProfileHeader = ({ handleLogout }: ProfileHeaderProps) => {
   return (
-    <div className="flex justify-between items-center mb-6">
-      <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">
-        My Profile
-      </h1>
+    <div className="flex justify-between items-center">
+      <div>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 bg-clip-text text-transparent">
+          My Profile
+        </h1>
+        <p className="text-gray-500 mt-1">Manage your personal information and settings</p>
+      </div>
       <Button 
         variant="outline"
         onClick={handleLogout}
