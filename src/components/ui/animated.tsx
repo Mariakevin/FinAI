@@ -1,117 +1,69 @@
 
 import React from 'react';
-import { motion as framerMotion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
-// Export the basic motion components from framer-motion
-export const motion = framerMotion;
-export { AnimatePresence };
-
-// Common animation variants
-export const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
-export const slideUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
-
-export const slideIn = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0 },
-};
-
-export const scale = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { opacity: 1, scale: 1 },
-};
-
-// A component that animates its children when they enter the viewport
-export const AnimateOnScroll = ({ 
-  children, 
-  animation = "fade", 
-  delay = 0, 
-  duration = 0.5,
-  ...props 
-}: {
+interface MotionProps {
+  initial?: any;
+  animate?: any;
+  exit?: any;
+  transition?: any;
   children: React.ReactNode;
-  animation?: "fade" | "slide" | "scale";
-  delay?: number;
-  duration?: number;
+  className?: string;
   [key: string]: any;
-}) => {
-  let variants;
-  
-  switch (animation) {
-    case "slide":
-      variants = slideUp;
-      break;
-    case "scale":
-      variants = scale;
-      break;
-    case "fade":
-    default:
-      variants = fadeIn;
-      break;
+}
+
+// Simple animation component that applies CSS animations based on props
+export const motion = {
+  div: ({ 
+    initial, 
+    animate, 
+    exit, 
+    transition,
+    children, 
+    className, 
+    ...props 
+  }: MotionProps) => {
+    // Convert motion props to CSS
+    const getAnimationStyles = () => {
+      const styles: React.CSSProperties = {};
+      
+      if (initial?.opacity !== undefined) {
+        styles.opacity = initial.opacity;
+      }
+      
+      if (initial?.y !== undefined) {
+        styles.transform = `translateY(${initial.y}px)`;
+      }
+      
+      if (initial?.x !== undefined) {
+        styles.transform = `translateX(${initial.x}px)`;
+      }
+      
+      if (initial?.scale !== undefined) {
+        styles.transform = `scale(${initial.scale})`;
+      }
+      
+      if (transition) {
+        styles.transition = `all ${transition.duration || 0.3}s ${transition.delay ? `${transition.delay}s` : ''} ${transition.type === 'spring' ? 'cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'ease-out'}`;
+      }
+      
+      return styles;
+    };
+    
+    return (
+      <div 
+        className={cn(
+          "transition-all",
+          animate?.opacity !== undefined && "animate-fade-in",
+          animate?.y !== undefined && initial?.y !== undefined && "animate-slide-up",
+          animate?.scale !== undefined && initial?.scale !== undefined && "animate-scale-in",
+          className
+        )}
+        style={getAnimationStyles()}
+        {...props}
+      >
+        {children}
+      </div>
+    );
   }
-  
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration, delay }}
-      variants={variants}
-      {...props}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
-// A staggered list animation
-export const StaggeredList = ({ 
-  children,
-  delayStep = 0.1,
-  staggerDelay = 0.2,
-  ...props
-}: {
-  children: React.ReactNode[];
-  delayStep?: number;
-  staggerDelay?: number;
-  [key: string]: any;
-}) => {
-  return (
-    <div {...props}>
-      {React.Children.map(children, (child, i) => (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: staggerDelay + i * delayStep }}
-        >
-          {child}
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-
-// Hover card animation
-export const HoverCard = ({
-  children,
-  ...props
-}: {
-  children: React.ReactNode;
-  [key: string]: any;
-}) => {
-  return (
-    <motion.div
-      whileHover={{ y: -5, boxShadow: "0 10px 25px -3px rgba(0, 0, 0, 0.1)" }}
-      transition={{ type: "spring", stiffness: 300 }}
-      {...props}
-    >
-      {children}
-    </motion.div>
-  );
 };

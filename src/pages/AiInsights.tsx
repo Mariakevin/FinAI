@@ -1,19 +1,18 @@
 
-import { memo } from 'react';
-import Layout from '@/components/layout/Layout';
+import React from 'react';
+import MainLayout from '@/components/layout/MainLayout';
 import AiInsightsPage from '@/components/ai-insights/AiInsightsPage';
 import { Helmet } from 'react-helmet-async';
 
 const AiInsights = () => {
   return (
-    <Layout requireAuth={true}>
+    <MainLayout>
       <Helmet>
-        <title>AI Insights | FinWise</title>
-        <meta name="description" content="Get personalized financial analysis, predictions, and tips powered by AI" />
+        <title>AI Insights | finAI</title>
       </Helmet>
       <AiInsightsPage />
-    </Layout>
+    </MainLayout>
   );
 };
 
-export default memo(AiInsights);
+export default AiInsights;
