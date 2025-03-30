@@ -9,7 +9,8 @@ export type Transaction = {
   date: string;
   type: 'income' | 'expense';
   upiId?: string;
-  payee?: string;
+  transactionId?: string;
+  status?: 'completed' | 'pending' | 'failed';
 };
 
 export type CategoryWithTotal = {
@@ -203,6 +204,3 @@ export const getMonthlyTotals = (transactions: Transaction[], months = 6) => {
   
   return { labels, incomeData, expenseData };
 };
-
-// We've removed the generateSampleTransactions function since we won't use predefined data anymore
-
