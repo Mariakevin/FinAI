@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Settings, FileText, Info } from 'lucide-react';
+import { User, Settings, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +11,6 @@ import ProfileHeader from './ProfileHeader';
 import ProfileSidebar from './ProfileSidebar';
 import PersonalInfoForm from './PersonalInfoForm';
 import AccountSettings from './AccountSettings';
-import AppArchitectureDiagram from '@/components/ui/AppArchitectureDiagram';
 
 const ProfilePage = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -139,7 +138,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className={`w-full max-w-7xl mx-auto ${isMobile ? 'py-4 px-3' : 'py-6 px-4'} animate-fade-in`}>
+    <div className={`w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 animate-fade-in`}>
       <ProfileHeader 
         handleLogout={handleLogout} 
       />
@@ -156,7 +155,7 @@ const ProfilePage = () => {
         
         <div className="lg:col-span-2">
           <Tabs defaultValue="personal" className="animate-scale-in">
-            <TabsList className="w-full mb-6 grid grid-cols-4 bg-muted/20 p-1 rounded-xl">
+            <TabsList className="w-full mb-6 grid grid-cols-2 bg-muted/20 p-1 rounded-xl">
               <TabsTrigger value="personal" className="flex items-center gap-2 py-3 rounded-lg">
                 <User className="h-4 w-4" />
                 <span className={isMobile ? 'hidden' : 'block'}>Personal Info</span>
@@ -164,14 +163,6 @@ const ProfilePage = () => {
               <TabsTrigger value="settings" className="flex items-center gap-2 py-3 rounded-lg">
                 <Settings className="h-4 w-4" />
                 <span className={isMobile ? 'hidden' : 'block'}>Settings</span>
-              </TabsTrigger>
-              <TabsTrigger value="architecture" className="flex items-center gap-2 py-3 rounded-lg">
-                <FileText className="h-4 w-4" />
-                <span className={isMobile ? 'hidden' : 'block'}>Architecture</span>
-              </TabsTrigger>
-              <TabsTrigger value="about" className="flex items-center gap-2 py-3 rounded-lg">
-                <Info className="h-4 w-4" />
-                <span className={isMobile ? 'hidden' : 'block'}>About</span>
               </TabsTrigger>
             </TabsList>
             
@@ -190,10 +181,6 @@ const ProfilePage = () => {
               <AccountSettings 
                 handleClearData={handleClearData}
               />
-            </TabsContent>
-            
-            <TabsContent value="architecture" className="animate-slide-up">
-              <AppArchitectureDiagram />
             </TabsContent>
             
             <TabsContent value="about" className="animate-slide-up">

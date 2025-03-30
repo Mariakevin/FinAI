@@ -12,7 +12,9 @@ const Profile = () => {
         <title>Profile | FinWise</title>
         <meta name="description" content="Manage your profile settings and account information" />
       </Helmet>
-      <ProfilePage />
+      <div className="px-4 sm:px-6 md:px-8 py-6 max-w-7xl mx-auto w-full">
+        <ProfilePage />
+      </div>
     </Layout>
   );
 };
