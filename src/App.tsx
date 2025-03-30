@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
@@ -89,7 +89,7 @@ function App() {
           <HelmetProvider>
             <Router>
               <AppRoutes />
-              <Toaster position="top-right" richColors />
+              <Toaster />
             </Router>
           </HelmetProvider>
         </AuthProvider>

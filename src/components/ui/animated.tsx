@@ -27,20 +27,29 @@ const createMotionComponent = (ElementType: keyof JSX.IntrinsicElements) => {
     const getAnimationStyles = () => {
       const styles: React.CSSProperties = {};
       
-      if (initial?.opacity !== undefined) {
-        styles.opacity = initial.opacity;
-      }
-      
-      if (initial?.y !== undefined) {
-        styles.transform = `translateY(${initial.y}px)`;
-      }
-      
-      if (initial?.x !== undefined) {
-        styles.transform = `translateX(${initial.x}px)`;
-      }
-      
-      if (initial?.scale !== undefined) {
-        styles.transform = `scale(${initial.scale})`;
+      // Only apply initial styles if they're explicitly passed
+      if (initial) {
+        if (initial.opacity !== undefined) {
+          styles.opacity = animate?.opacity !== undefined ? animate.opacity : 1;
+        }
+        
+        if (initial.y !== undefined) {
+          styles.transform = animate?.y !== undefined 
+            ? `translateY(${animate.y}px)` 
+            : 'translateY(0)';
+        }
+        
+        if (initial.x !== undefined) {
+          styles.transform = animate?.x !== undefined 
+            ? `translateX(${animate.x}px)` 
+            : 'translateX(0)';
+        }
+        
+        if (initial.scale !== undefined) {
+          styles.transform = animate?.scale !== undefined 
+            ? `scale(${animate.scale})` 
+            : 'scale(1)';
+        }
       }
       
       if (transition) {
@@ -56,7 +65,7 @@ const createMotionComponent = (ElementType: keyof JSX.IntrinsicElements) => {
       <Element 
         className={cn(
           "transition-all",
-          animate?.opacity !== undefined && "animate-fade-in",
+          animate?.opacity !== undefined && initial?.opacity !== undefined && "animate-fade-in",
           animate?.y !== undefined && initial?.y !== undefined && "animate-slide-up",
           animate?.scale !== undefined && initial?.scale !== undefined && "animate-scale-in",
           className
