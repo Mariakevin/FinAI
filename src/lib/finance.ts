@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 export type Transaction = {
@@ -10,6 +9,8 @@ export type Transaction = {
   type: 'income' | 'expense';
   upiId?: string;
   payee?: string;
+  transactionId?: string;  // Added for UPI transaction IDs
+  status?: 'pending' | 'completed' | 'failed';
 };
 
 export type CategoryWithTotal = {
@@ -205,4 +206,3 @@ export const getMonthlyTotals = (transactions: Transaction[], months = 6) => {
 };
 
 // We've removed the generateSampleTransactions function since we won't use predefined data anymore
-

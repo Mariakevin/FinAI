@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import FinanceSummary from './FinanceSummary';
 import BalanceChart from './BalanceChart';
@@ -61,14 +60,14 @@ const DashboardPage = () => {
   }, [isUpiConnected, transactions.length]);
   
   // Memoize handlers to prevent unnecessary re-renders
-  const handleUpiConnect = useCallback((upiId: string) => {
+  const handleUpiConnect = useCallback((upiId: string, includeTransactionId = true) => {
     if (!isAuthenticated) {
       toast.error('Please sign in to connect UPI');
       navigate('/login');
       return;
     }
     
-    connectUpiId(upiId);
+    connectUpiId(upiId, includeTransactionId);
     setTimeout(() => setRefreshKey(prev => prev + 1), 100);
   }, [isAuthenticated, connectUpiId, navigate]);
 
