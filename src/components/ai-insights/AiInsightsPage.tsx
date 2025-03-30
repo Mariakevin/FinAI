@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTransactions } from '@/hooks/useTransactions';
 import { 
   BrainCircuit, 
@@ -77,6 +77,7 @@ const INSIGHT_CATEGORIES = [
 ];
 
 const AiInsightsPage = () => {
+  const navigate = useNavigate();
   const { transactions } = useTransactions();
   const [activeCategory, setActiveCategory] = useState('overview');
   const [loading, setLoading] = useState(false);
@@ -116,7 +117,6 @@ const AiInsightsPage = () => {
     const cleanup = resetProgress();
     
     try {
-      // Calculate financial metrics
       const totalIncome = transactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
@@ -185,7 +185,6 @@ const AiInsightsPage = () => {
           ]
         };
       } else if (category === 'spending') {
-        // Calculate spending trends
         const monthlySpending: Record<string, number> = {};
         const lastThreeMonths = new Array(3).fill(0).map((_, i) => {
           const date = new Date();
@@ -242,7 +241,6 @@ const AiInsightsPage = () => {
       } else if (category === 'savings') {
         const potentialSavings: any[] = [];
         
-        // Look for recurring expenses
         const recurringExpenses = transactions
           .filter(t => t.type === 'expense')
           .reduce((acc: Record<string, any[]>, t) => {
@@ -266,7 +264,6 @@ const AiInsightsPage = () => {
             });
           });
         
-        // Look for unusually large expenses
         const averageExpense = totalExpenses / (transactions.filter(t => t.type === 'expense').length || 1);
         const largeExpenses = transactions
           .filter(t => t.type === 'expense' && t.amount > averageExpense * 3)
@@ -335,7 +332,37 @@ const AiInsightsPage = () => {
       } else if (category === 'alerts') {
         const alerts = [];
         
-        // Check for negative balance
+        const monthlySpending: Record<string, number> = {};
+        const lastThreeMonths = new Array(3).fill(0).map((_, i) => {
+          const date = new Date();
+          date.setMonth(date.getMonth() - i);
+          return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+        });
+        
+        lastThreeMonths.forEach(month => {
+          monthlySpending[month] = 0;
+        });
+        
+        transactions
+          .filter(t => t.type === 'expense')
+          .forEach(t => {
+            const date = new Date(t.date);
+            const monthYear = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+            if (lastThreeMonths.includes(monthYear)) {
+              monthlySpending[monthYear] = (monthlySpending[monthYear] || 0) + t.amount;
+            }
+          });
+          
+        const spendingTrends = Object.entries(monthlySpending)
+          .map(([month, amount]) => ({ month, amount }))
+          .sort((a, b) => {
+            const [monthA, yearA] = a.month.split(' ');
+            const [monthB, yearB] = b.month.split(' ');
+            const dateA = new Date(`${monthA} 1, ${yearA}`);
+            const dateB = new Date(`${monthB} 1, ${yearB}`);
+            return dateA.getTime() - dateB.getTime();
+          });
+        
         if (totalIncome < totalExpenses) {
           alerts.push({
             severity: "high",
@@ -345,7 +372,6 @@ const AiInsightsPage = () => {
           });
         }
         
-        // Check for low savings rate
         if (savingsRate < 10) {
           alerts.push({
             severity: "medium",
@@ -355,7 +381,6 @@ const AiInsightsPage = () => {
           });
         }
         
-        // Check for sudden increase in spending
         if (spendingTrends && spendingTrends.length > 1) {
           const latestMonth = spendingTrends[spendingTrends.length - 1];
           const previousMonth = spendingTrends[spendingTrends.length - 2];
@@ -370,7 +395,6 @@ const AiInsightsPage = () => {
           }
         }
         
-        // Add a low severity alert if no other alerts
         if (alerts.length === 0) {
           alerts.push({
             severity: "low",
