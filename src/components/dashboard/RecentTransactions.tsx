@@ -2,7 +2,7 @@
 import React from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import { Transaction, formatCurrency, formatDate } from '@/lib/finance';
-import { ArrowUpRight, ArrowDownRight, CreditCard, LogIn, CheckCircle } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, CreditCard, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
@@ -101,12 +101,6 @@ const RecentTransactions = ({ transactions, isLoading, isReadOnly = false }: Rec
                     {transaction.payee && (
                       <div className="text-xs text-gray-500 mt-0.5">
                         Payee: {transaction.payee}
-                      </div>
-                    )}
-                    {transaction.transactionId && (
-                      <div className="text-xs flex items-center text-green-600 mt-0.5">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        ID: {transaction.transactionId}
                       </div>
                     )}
                   </div>

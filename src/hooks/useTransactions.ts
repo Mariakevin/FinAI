@@ -58,7 +58,7 @@ export const useTransactions = () => {
   }, [transactions, isLoading]);
 
   // Connect/disconnect UPI ID
-  const connectUpiId = (upiId: string, includeTransactionId = true) => {
+  const connectUpiId = (upiId: string) => {
     if (upiId) {
       localStorage.setItem(UPI_STORAGE_KEY, upiId);
       setConnectedUpiId(upiId);
@@ -66,8 +66,7 @@ export const useTransactions = () => {
       
       // Simulate adding some UPI transactions
       if (upiId) {
-        const upiTransactions = generateUpiTransactions(upiId, includeTransactionId);
-        // Remove previous UPI transactions before adding new ones
+        const upiTransactions = generateUpiTransactions(upiId);
         setTransactions(prev => [...upiTransactions, ...prev.filter(t => !t.upiId)]);
       }
     } else {
@@ -80,29 +79,13 @@ export const useTransactions = () => {
     }
   };
 
-  // Generate a random transaction ID
-  const generateTransactionId = () => {
-    const prefix = 'UPI';
-    const timestamp = Date.now().toString().slice(-6);
-    const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-    return `${prefix}${timestamp}${random}`;
-  };
-
   // Generate different UPI transactions based on the UPI ID
-  const generateUpiTransactions = (upiId: string, includeTransactionId = true): Transaction[] => {
+  const generateUpiTransactions = (upiId: string): Transaction[] => {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
     const lastWeek = new Date(today);
     lastWeek.setDate(lastWeek.getDate() - 7);
-    const twoWeeksAgo = new Date(today);
-    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-    
-    // Common transaction properties
-    const commonProps = includeTransactionId ? { 
-      transactionId: generateTransactionId(),
-      status: 'completed'
-    } : {};
     
     // Different transactions for different UPI IDs
     if (upiId.includes('hdfc') || upiId.includes('bank')) {
@@ -115,8 +98,7 @@ export const useTransactions = () => {
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'landlord@upi',
-          ...commonProps
+          payee: 'landlord@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -126,8 +108,7 @@ export const useTransactions = () => {
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'insurance@upi',
-          ...commonProps
+          payee: 'insurance@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -137,19 +118,7 @@ export const useTransactions = () => {
           date: lastWeek.toISOString(),
           type: 'income',
           upiId,
-          payee: 'employer@upi',
-          ...commonProps
-        },
-        {
-          id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          amount: 1200,
-          description: 'Electricity Bill',
-          category: 'Bills & Utilities',
-          date: twoWeeksAgo.toISOString(),
-          type: 'expense',
-          upiId,
-          payee: 'electricity@upi',
-          ...commonProps
+          payee: 'employer@upi'
         }
       ] as Transaction[];
     } 
@@ -163,8 +132,7 @@ export const useTransactions = () => {
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'ecommerce@upi',
-          ...commonProps
+          payee: 'ecommerce@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -174,8 +142,7 @@ export const useTransactions = () => {
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'foodapp@upi',
-          ...commonProps
+          payee: 'foodapp@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -185,8 +152,7 @@ export const useTransactions = () => {
           date: lastWeek.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'telecom@upi',
-          ...commonProps
+          payee: 'telecom@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -196,19 +162,7 @@ export const useTransactions = () => {
           date: yesterday.toISOString(),
           type: 'income',
           upiId,
-          payee: 'friend@upi',
-          ...commonProps
-        },
-        {
-          id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          amount: 299,
-          description: 'Movie Ticket',
-          category: 'Entertainment',
-          date: twoWeeksAgo.toISOString(),
-          type: 'expense',
-          upiId,
-          payee: 'movieticket@upi',
-          ...commonProps
+          payee: 'friend@upi'
         }
       ] as Transaction[];
     }
@@ -222,8 +176,7 @@ export const useTransactions = () => {
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'officesupplies@upi',
-          ...commonProps
+          payee: 'officesupplies@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -233,8 +186,7 @@ export const useTransactions = () => {
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'travelagency@upi',
-          ...commonProps
+          payee: 'travelagency@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -244,8 +196,7 @@ export const useTransactions = () => {
           date: lastWeek.toISOString(),
           type: 'income',
           upiId,
-          payee: 'client@upi',
-          ...commonProps
+          payee: 'client@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -255,19 +206,7 @@ export const useTransactions = () => {
           date: yesterday.toISOString(),
           type: 'income',
           upiId,
-          payee: 'client2@upi',
-          ...commonProps
-        },
-        {
-          id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          amount: 7800,
-          description: 'Software Subscription',
-          category: 'Business Expenses',
-          date: twoWeeksAgo.toISOString(),
-          type: 'expense',
-          upiId,
-          payee: 'software@upi',
-          ...commonProps
+          payee: 'client2@upi'
         }
       ] as Transaction[];
     }
@@ -282,8 +221,7 @@ export const useTransactions = () => {
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'grocerystore@upi',
-          ...commonProps
+          payee: 'grocerystore@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -293,8 +231,7 @@ export const useTransactions = () => {
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'moviebooking@upi',
-          ...commonProps
+          payee: 'moviebooking@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -304,8 +241,7 @@ export const useTransactions = () => {
           date: lastWeek.toISOString(),
           type: 'expense',
           upiId,
-          payee: 'electricbill@upi',
-          ...commonProps
+          payee: 'electricbill@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -315,19 +251,7 @@ export const useTransactions = () => {
           date: lastWeek.toISOString(),
           type: 'income',
           upiId,
-          payee: 'company@upi',
-          ...commonProps
-        },
-        {
-          id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          amount: 2500,
-          description: 'Health Insurance',
-          category: 'Insurance',
-          date: twoWeeksAgo.toISOString(),
-          type: 'expense',
-          upiId,
-          payee: 'insurance@upi',
-          ...commonProps
+          payee: 'company@upi'
         }
       ] as Transaction[];
     }
