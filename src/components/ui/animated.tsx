@@ -12,9 +12,9 @@ interface MotionProps {
   [key: string]: any;
 }
 
-// Simple animation component that applies CSS animations based on props
-export const motion = {
-  div: ({ 
+// Create a reusable motion component factory for different element types
+const createMotionComponent = (ElementType: keyof JSX.IntrinsicElements) => {
+  return ({ 
     initial, 
     animate, 
     exit, 
@@ -50,8 +50,10 @@ export const motion = {
       return styles;
     };
     
+    const Element = ElementType as any;
+    
     return (
-      <div 
+      <Element 
         className={cn(
           "transition-all",
           animate?.opacity !== undefined && "animate-fade-in",
@@ -63,7 +65,25 @@ export const motion = {
         {...props}
       >
         {children}
-      </div>
+      </Element>
     );
-  }
+  };
+};
+
+// Simple animation components that apply CSS animations based on props
+export const motion = {
+  div: createMotionComponent('div'),
+  p: createMotionComponent('p'),
+  span: createMotionComponent('span'),
+  h1: createMotionComponent('h1'),
+  h2: createMotionComponent('h2'),
+  h3: createMotionComponent('h3'),
+  h4: createMotionComponent('h4'),
+  h5: createMotionComponent('h5'),
+  h6: createMotionComponent('h6'),
+  button: createMotionComponent('button'),
+  a: createMotionComponent('a'),
+  li: createMotionComponent('li'),
+  ul: createMotionComponent('ul'),
+  ol: createMotionComponent('ol')
 };
