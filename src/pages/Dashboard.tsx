@@ -1,9 +1,7 @@
 
 import { memo } from 'react';
-import { Layout } from '@/components/layout/Layout';
 import DashboardPage from '@/components/dashboard/DashboardPage';
 import { Helmet } from 'react-helmet-async';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 const Dashboard = () => {
   return (

@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
 import { useEffect, lazy, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 // Use lazy loading for better performance
 const Index = lazy(() => import('@/pages/Index'));
@@ -65,22 +66,24 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
 
 function AppRoutes() {
   return (
-    <Layout>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
-          <Route path="/transactions" element={<RequireAuth><Transactions /></RequireAuth>} />
-          <Route path="/budget" element={<RequireAuth><Budget /></RequireAuth>} />
-          <Route path="/ai-insights" element={<RequireAuth><AiInsights /></RequireAuth>} />
-          <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-          <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
-    </Layout>
+    <SidebarProvider>
+      <Layout>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+            <Route path="/transactions" element={<RequireAuth><Transactions /></RequireAuth>} />
+            <Route path="/budget" element={<RequireAuth><Budget /></RequireAuth>} />
+            <Route path="/ai-insights" element={<RequireAuth><AiInsights /></RequireAuth>} />
+            <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+            <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </Layout>
+    </SidebarProvider>
   );
 }
 

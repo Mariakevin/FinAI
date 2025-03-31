@@ -1,9 +1,7 @@
 
 import React from 'react';
-import { Layout } from '@/components/layout/Layout';
 import SettingsPage from '@/components/settings/SettingsPage';
 import { Helmet } from 'react-helmet-async';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 const Settings = () => {
   return (

@@ -1,7 +1,6 @@
 
 import React from 'react';
 import EnhancedAIInsights from '@/components/ai-insights/EnhancedAIInsights';
-import { Layout } from '@/components/layout/Layout';
 import { Helmet } from 'react-helmet-async';
 
 const AiInsights = () => {
