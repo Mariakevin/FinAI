@@ -66,24 +66,22 @@ const RequireAuth = ({ children }: { children: React.ReactNode }) => {
 
 function AppRoutes() {
   return (
-    <SidebarProvider>
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
-            <Route path="/transactions" element={<RequireAuth><Transactions /></RequireAuth>} />
-            <Route path="/budget" element={<RequireAuth><Budget /></RequireAuth>} />
-            <Route path="/ai-insights" element={<RequireAuth><AiInsights /></RequireAuth>} />
-            <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-            <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </Layout>
-    </SidebarProvider>
+    <Layout>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path="/transactions" element={<RequireAuth><Transactions /></RequireAuth>} />
+          <Route path="/budget" element={<RequireAuth><Budget /></RequireAuth>} />
+          <Route path="/ai-insights" element={<RequireAuth><AiInsights /></RequireAuth>} />
+          <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+          <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </Layout>
   );
 }
 
@@ -93,10 +91,12 @@ function App() {
       <TooltipProvider>
         <AuthProvider>
           <HelmetProvider>
-            <Router>
-              <AppRoutes />
-              <Toaster position="top-right" richColors />
-            </Router>
+            <SidebarProvider>
+              <Router>
+                <AppRoutes />
+                <Toaster position="top-right" richColors />
+              </Router>
+            </SidebarProvider>
           </HelmetProvider>
         </AuthProvider>
       </TooltipProvider>
