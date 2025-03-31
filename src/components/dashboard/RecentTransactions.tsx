@@ -98,9 +98,9 @@ const RecentTransactions = ({ transactions, isLoading, isReadOnly = false }: Rec
                         </>
                       )}
                     </div>
-                    {transaction.transactionId && (
+                    {transaction.payee && (
                       <div className="text-xs text-gray-500 mt-0.5">
-                        ID: {transaction.transactionId}
+                        Payee: {transaction.payee}
                       </div>
                     )}
                   </div>

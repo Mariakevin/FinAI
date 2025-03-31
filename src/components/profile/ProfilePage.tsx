@@ -1,12 +1,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Settings, Info } from 'lucide-react';
+import { User, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useTransactions } from '@/hooks/useTransactions';
-import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileHeader from './ProfileHeader';
 import ProfileSidebar from './ProfileSidebar';
 import PersonalInfoForm from './PersonalInfoForm';
@@ -17,7 +16,6 @@ const ProfilePage = () => {
   const { clearAllTransactions } = useTransactions();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const isMobile = useIsMobile();
   
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
@@ -138,7 +136,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className={`w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 animate-fade-in`}>
+    <div className="w-full max-w-7xl mx-auto py-6 px-4 animate-fade-in">
       <ProfileHeader 
         handleLogout={handleLogout} 
       />
@@ -158,11 +156,11 @@ const ProfilePage = () => {
             <TabsList className="w-full mb-6 grid grid-cols-2 bg-muted/20 p-1 rounded-xl">
               <TabsTrigger value="personal" className="flex items-center gap-2 py-3 rounded-lg">
                 <User className="h-4 w-4" />
-                <span className={isMobile ? 'hidden' : 'block'}>Personal Info</span>
+                <span>Personal Info</span>
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex items-center gap-2 py-3 rounded-lg">
                 <Settings className="h-4 w-4" />
-                <span className={isMobile ? 'hidden' : 'block'}>Settings</span>
+                <span>Account Settings</span>
               </TabsTrigger>
             </TabsList>
             
@@ -181,32 +179,6 @@ const ProfilePage = () => {
               <AccountSettings 
                 handleClearData={handleClearData}
               />
-            </TabsContent>
-            
-            <TabsContent value="about" className="animate-slide-up">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">About FinWise</h2>
-                <p className="text-gray-600 mb-4">
-                  FinWise is a personal finance management application designed to help users
-                  track their expenses, analyze spending patterns, and achieve financial goals.
-                </p>
-                <h3 className="text-lg font-medium mb-2">Features</h3>
-                <ul className="list-disc pl-5 space-y-1 text-gray-600 mb-4">
-                  <li>Transaction tracking and management</li>
-                  <li>UPI payment integration</li>
-                  <li>Expense analytics and insights</li>
-                  <li>Budgeting tools</li>
-                  <li>Secure user authentication</li>
-                </ul>
-                <h3 className="text-lg font-medium mb-2">Technology Stack</h3>
-                <ul className="list-disc pl-5 space-y-1 text-gray-600">
-                  <li>React with TypeScript</li>
-                  <li>TailwindCSS for styling</li>
-                  <li>React Query for data management</li>
-                  <li>Recharts for data visualization</li>
-                  <li>LocalStorage for data persistence</li>
-                </ul>
-              </div>
             </TabsContent>
           </Tabs>
         </div>

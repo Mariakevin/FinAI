@@ -1,98 +1,117 @@
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { motion as framerMotion, AnimatePresence } from 'framer-motion';
 
-interface MotionProps {
-  initial?: any;
-  animate?: any;
-  exit?: any;
-  transition?: any;
-  children: React.ReactNode;
-  className?: string;
-  [key: string]: any;
-}
+// Export the basic motion components from framer-motion
+export const motion = framerMotion;
+export { AnimatePresence };
 
-// Create a reusable motion component factory for different element types
-const createMotionComponent = (ElementType: keyof JSX.IntrinsicElements) => {
-  return ({ 
-    initial, 
-    animate, 
-    exit, 
-    transition,
-    children, 
-    className, 
-    ...props 
-  }: MotionProps) => {
-    // Convert motion props to CSS
-    const getAnimationStyles = () => {
-      const styles: React.CSSProperties = {};
-      
-      // Only apply initial styles if they're explicitly passed
-      if (initial) {
-        if (initial.opacity !== undefined) {
-          styles.opacity = animate?.opacity !== undefined ? animate.opacity : 1;
-        }
-        
-        if (initial.y !== undefined) {
-          styles.transform = animate?.y !== undefined 
-            ? `translateY(${animate.y}px)` 
-            : 'translateY(0)';
-        }
-        
-        if (initial.x !== undefined) {
-          styles.transform = animate?.x !== undefined 
-            ? `translateX(${animate.x}px)` 
-            : 'translateX(0)';
-        }
-        
-        if (initial.scale !== undefined) {
-          styles.transform = animate?.scale !== undefined 
-            ? `scale(${animate.scale})` 
-            : 'scale(1)';
-        }
-      }
-      
-      if (transition) {
-        styles.transition = `all ${transition.duration || 0.3}s ${transition.delay ? `${transition.delay}s` : ''} ${transition.type === 'spring' ? 'cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'ease-out'}`;
-      }
-      
-      return styles;
-    };
-    
-    const Element = ElementType as any;
-    
-    return (
-      <Element 
-        className={cn(
-          "transition-all",
-          animate?.opacity !== undefined && initial?.opacity !== undefined && "animate-fade-in",
-          animate?.y !== undefined && initial?.y !== undefined && "animate-slide-up",
-          animate?.scale !== undefined && initial?.scale !== undefined && "animate-scale-in",
-          className
-        )}
-        style={getAnimationStyles()}
-        {...props}
-      >
-        {children}
-      </Element>
-    );
-  };
+// Common animation variants
+export const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
 };
 
-// Simple animation components that apply CSS animations based on props
-export const motion = {
-  div: createMotionComponent('div'),
-  p: createMotionComponent('p'),
-  span: createMotionComponent('span'),
-  h1: createMotionComponent('h1'),
-  h2: createMotionComponent('h2'),
-  h3: createMotionComponent('h3'),
-  h4: createMotionComponent('h4'),
-  h5: createMotionComponent('h5'),
-  h6: createMotionComponent('h6'),
-  button: createMotionComponent('button'),
-  a: createMotionComponent('a'),
-  li: createMotionComponent('li'),
-  ul: createMotionComponent('ul'),
-  ol: createMotionComponent('ol')
+export const slideUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+export const slideIn = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0 },
+};
+
+export const scale = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1 },
+};
+
+// A component that animates its children when they enter the viewport
+export const AnimateOnScroll = ({ 
+  children, 
+  animation = "fade", 
+  delay = 0, 
+  duration = 0.5,
+  ...props 
+}: {
+  children: React.ReactNode;
+  animation?: "fade" | "slide" | "scale";
+  delay?: number;
+  duration?: number;
+  [key: string]: any;
+}) => {
+  let variants;
+  
+  switch (animation) {
+    case "slide":
+      variants = slideUp;
+      break;
+    case "scale":
+      variants = scale;
+      break;
+    case "fade":
+    default:
+      variants = fadeIn;
+      break;
+  }
+  
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration, delay }}
+      variants={variants}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// A staggered list animation
+export const StaggeredList = ({ 
+  children,
+  delayStep = 0.1,
+  staggerDelay = 0.2,
+  ...props
+}: {
+  children: React.ReactNode[];
+  delayStep?: number;
+  staggerDelay?: number;
+  [key: string]: any;
+}) => {
+  return (
+    <div {...props}>
+      {React.Children.map(children, (child, i) => (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: staggerDelay + i * delayStep }}
+        >
+          {child}
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+// Hover card animation
+export const HoverCard = ({
+  children,
+  ...props
+}: {
+  children: React.ReactNode;
+  [key: string]: any;
+}) => {
+  return (
+    <motion.div
+      whileHover={{ y: -5, boxShadow: "0 10px 25px -3px rgba(0, 0, 0, 0.1)" }}
+      transition={{ type: "spring", stiffness: 300 }}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
 };

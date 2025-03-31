@@ -5,12 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Mail, ShieldCheck, Lock } from 'lucide-react';
+import { ArrowRight, Mail, CreditCard, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordField } from '@/components/auth/PasswordField';
 import { toast } from 'sonner';
 import { motion } from '@/components/ui/animated';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +18,6 @@ const LoginPage = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -41,7 +39,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className={`w-full ${isMobile ? 'px-4' : 'max-w-md mx-auto'}`}>
+    <div className="w-full max-w-md mx-auto">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -122,32 +120,7 @@ const LoginPage = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  icon={<Lock className="h-4 w-4 text-gray-400" />}
                 />
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3, delay: 0.6 }}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
-                    Remember me
-                  </label>
-                </div>
-                <div className="text-sm">
-                  <Link to="#" className="font-medium text-blue-600 hover:text-blue-500">
-                    Forgot password?
-                  </Link>
-                </div>
               </motion.div>
             </CardContent>
             
@@ -156,7 +129,7 @@ const LoginPage = () => {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.7 }}
+                  transition={{ duration: 0.3, delay: 0.6 }}
                   className="w-full"
                 >
                   <Button 
@@ -172,7 +145,7 @@ const LoginPage = () => {
                 <motion.p 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.8 }}
+                  transition={{ duration: 0.3, delay: 0.7 }}
                   className="text-center text-sm text-gray-600"
                 >
                   Don't have an account?{' '}

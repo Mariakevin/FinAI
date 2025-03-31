@@ -57,14 +57,6 @@ export const useTransactions = () => {
     }
   }, [transactions, isLoading]);
 
-  // Generate UPI transaction ID
-  const generateUpiTransactionId = (upiId: string) => {
-    const prefix = upiId.split('@')[1]?.substring(0, 3).toUpperCase() || 'UPI';
-    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const timestamp = Date.now().toString().substring(9, 13);
-    return `${prefix}${timestamp}${random}`;
-  };
-
   // Connect/disconnect UPI ID
   const connectUpiId = (upiId: string) => {
     if (upiId) {
@@ -96,88 +88,81 @@ export const useTransactions = () => {
     lastWeek.setDate(lastWeek.getDate() - 7);
     
     // Different transactions for different UPI IDs
-    if (upiId.includes('bank') || upiId.includes('@sbi') || upiId.includes('@hdfc')) {
+    if (upiId.includes('hdfc') || upiId.includes('bank')) {
       return [
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 7500,
           description: 'Rent Payment',
           category: 'Housing',
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'landlord@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 2800,
           description: 'Car Insurance',
           category: 'Insurance',
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'insurance@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 35000,
           description: 'Salary Credit',
           category: 'Salary',
           date: lastWeek.toISOString(),
           type: 'income',
           upiId,
-          status: 'completed'
+          payee: 'employer@upi'
         }
       ] as Transaction[];
     } 
-    else if (upiId.includes('paytm') || upiId.includes('gpay') || upiId.includes('@okgpay')) {
+    else if (upiId.includes('paytm') || upiId.includes('gpay')) {
       return [
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 1200,
           description: 'Online Shopping',
           category: 'Shopping',
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'ecommerce@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 599,
           description: 'Food Delivery',
           category: 'Food & Dining',
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'foodapp@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 850,
           description: 'Mobile Recharge',
           category: 'Bills & Utilities',
           date: lastWeek.toISOString(),
           type: 'expense',
           upiId,
-          status: 'pending'
+          payee: 'telecom@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 5000,
           description: 'Friend Payment',
           category: 'Personal',
           date: yesterday.toISOString(),
           type: 'income',
           upiId,
-          status: 'completed'
+          payee: 'friend@upi'
         }
       ] as Transaction[];
     }
@@ -185,47 +170,43 @@ export const useTransactions = () => {
       return [
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 15000,
           description: 'Office Supplies',
           category: 'Business Expenses',
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'officesupplies@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 8500,
           description: 'Business Travel',
           category: 'Travel',
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'travelagency@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 25000,
           description: 'Client Payment',
           category: 'Business Income',
           date: lastWeek.toISOString(),
           type: 'income',
           upiId,
-          status: 'completed'
+          payee: 'client@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 42000,
           description: 'Consulting Fee',
           category: 'Business Income',
           date: yesterday.toISOString(),
           type: 'income',
           upiId,
-          status: 'failed'
+          payee: 'client2@upi'
         }
       ] as Transaction[];
     }
@@ -234,47 +215,43 @@ export const useTransactions = () => {
       return [
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 3500,
           description: 'Grocery Store Payment',
           category: 'Food & Dining',
           date: yesterday.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'grocerystore@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 799,
           description: 'Movie Tickets',
           category: 'Entertainment',
           date: today.toISOString(),
           type: 'expense',
           upiId,
-          status: 'completed'
+          payee: 'moviebooking@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 1200,
           description: 'Electric Bill',
           category: 'Bills & Utilities',
           date: lastWeek.toISOString(),
           type: 'expense',
           upiId,
-          status: 'pending'
+          payee: 'electricbill@upi'
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
-          transactionId: generateUpiTransactionId(upiId),
           amount: 20000,
           description: 'Salary Credit',
           category: 'Salary',
           date: lastWeek.toISOString(),
           type: 'income',
           upiId,
-          status: 'completed'
+          payee: 'company@upi'
         }
       ] as Transaction[];
     }
@@ -285,8 +262,6 @@ export const useTransactions = () => {
     const newTransaction: Transaction = {
       ...transaction,
       id: Math.random().toString(36).substring(2, 9),
-      transactionId: transaction.upiId ? generateUpiTransactionId(transaction.upiId) : undefined,
-      status: transaction.status || 'completed'
     };
 
     setTransactions(prev => [newTransaction, ...prev]);

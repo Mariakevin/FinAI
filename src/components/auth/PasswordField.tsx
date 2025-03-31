@@ -11,7 +11,6 @@ interface PasswordFieldProps {
   label?: string;
   placeholder?: string;
   showStrength?: boolean;
-  icon?: React.ReactNode;
 }
 
 export const PasswordField: React.FC<PasswordFieldProps> = ({
@@ -21,7 +20,6 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
   label = "Password",
   placeholder = "••••••••",
   showStrength = false,
-  icon = <Lock className="h-4 w-4 text-gray-400" />
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   
@@ -65,7 +63,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
       {label && <Label htmlFor={id} className="text-sm font-medium">{label}</Label>}
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          {icon}
+          <Lock className="h-4 w-4 text-gray-400" />
         </div>
         <Input
           id={id}
