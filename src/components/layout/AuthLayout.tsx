@@ -9,8 +9,8 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen bg-white lg:bg-gray-50 flex flex-col">
-      <div className="flex-1 flex flex-col lg:flex-row">
+    <div className="min-h-screen w-full bg-white lg:bg-gray-50 flex flex-col">
+      <div className="flex-1 flex flex-col lg:flex-row w-full">
         {/* Left side - Brand area (hidden on mobile) */}
         <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 bg-gradient-to-br from-blue-500 to-indigo-600 p-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-blue-600 opacity-10">
@@ -74,7 +74,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         
         {/* Right side - Auth form */}
         <div className="w-full lg:w-1/2 xl:w-2/5 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-          <div className="w-full">
+          <div className="w-full max-w-md">
             <div className="mb-6 flex justify-between items-center lg:hidden">
               <Link 
                 to="/" 

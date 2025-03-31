@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Sparkles, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, Wallet, PiggyBank, CreditCard, ArrowRight, RefreshCw, Bot, Brain } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
@@ -21,20 +20,12 @@ interface Insight {
   actionLink?: string;
 }
 
-interface SpendingPattern {
-  category: string;
-  percentage: number;
-  amount: number;
-  trend: 'up' | 'down' | 'stable';
-  change: number;
-}
-
 const EnhancedAIInsights = () => {
   const { transactions, getBalance, getTotalIncome, getTotalExpenses } = useTransactions();
   const [insights, setInsights] = useState<Insight[]>([]);
+  const [predictions, setPredictions] = useState<Insight[]>([]);
+  const [tips, setTips] = useState<Insight[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
-  const [spendingPatterns, setSpendingPatterns] = useState<SpendingPattern[]>([]);
-  const [selectedTab, setSelectedTab] = useState('insights');
   const [isRegenerating, setIsRegenerating] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -109,6 +100,7 @@ const EnhancedAIInsights = () => {
       
       const getRandomPhrase = (array: string[]) => array[Math.floor(Math.random() * array.length)];
       
+      // Current insights
       const generatedInsights: Insight[] = [
         {
           id: '1',
@@ -145,10 +137,34 @@ const EnhancedAIInsights = () => {
           impact: isSpendingIncreasing ? 'negative' : 'positive',
           category: 'spending',
           icon: isSpendingIncreasing ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />
-        },
+        }
+      ];
+      
+      // Future predictions
+      const generatedPredictions: Insight[] = [
         {
           id: '4',
-          title: 'Investment Opportunity Assessment',
+          title: 'Financial Trajectory Forecast',
+          description: `Based on current spending patterns and income stability, my predictive models project a ${savingsRate >= 15 ? 'positive financial trajectory over the next 6 months. If current saving habits continue, you are on track to build an emergency fund that covers 3-6 months of expenses by year end.' : 'challenging financial period ahead unless spending patterns are adjusted. My recommendation is to increase your savings rate by at least 5% to build necessary financial buffers.'}`,
+          impact: savingsRate >= 15 ? 'positive' : 'negative',
+          category: 'saving',
+          icon: <Lightbulb className="h-5 w-5" />
+        },
+        {
+          id: '5',
+          title: 'Cash Flow Prediction',
+          description: `My cash flow predictive algorithm indicates ${isSpendingIncreasing ? 'a potential cash shortage within the next 2-3 months if current spending trends continue. I recommend creating a more restrictive budget for non-essential categories.' : 'sufficient liquidity to meet ongoing expenses and short-term financial goals. Your consistent financial management has created a stable cash flow projection.'}`,
+          impact: isSpendingIncreasing ? 'negative' : 'positive',
+          category: 'spending',
+          icon: <Wallet className="h-5 w-5" />
+        }
+      ];
+      
+      // Actionable tips
+      const generatedTips: Insight[] = [
+        {
+          id: '6',
+          title: 'Investment Opportunity',
           description: `Based on my analysis of your current balance (₹${balance.toFixed(2)}) and spending patterns, I've identified potential for investment optimization. Consider allocating resources to a diversified portfolio including high-yield savings, index funds, or other investment vehicles aligned with your risk tolerance.`,
           impact: 'neutral',
           category: 'investment',
@@ -157,33 +173,32 @@ const EnhancedAIInsights = () => {
           actionLink: '#'
         },
         {
-          id: '5',
-          title: 'Income Stability Evaluation',
+          id: '7',
+          title: 'Income Diversification',
           description: transactions.filter(t => t.type === 'income').length > 1 
             ? 'My algorithms have detected multiple income streams in your financial data. This diversification is excellent for financial stability and risk mitigation. I project reduced vulnerability to economic fluctuations based on this pattern.' 
             : 'I observe a single primary income source in your transaction history. This creates a potential single point of failure in your financial structure. My recommendation: develop secondary income streams to enhance financial resilience.',
           impact: transactions.filter(t => t.type === 'income').length > 1 ? 'positive' : 'neutral',
           category: 'income',
-          icon: <Wallet className="h-5 w-5" />
+          icon: <Wallet className="h-5 w-5" />,
+          actionLabel: 'Explore Side Income Ideas',
+          actionLink: '#'
+        },
+        {
+          id: '8',
+          title: 'Budget Optimization Suggestion',
+          description: `My advanced pattern recognition suggests an opportunity to optimize your ${largestCategory} budget. By reducing this category by just 10%, you could increase your savings rate by approximately ${((largestAmount * 0.1 / totalIncome) * 100).toFixed(1)}% without significantly impacting your lifestyle.`,
+          impact: 'neutral',
+          category: 'spending',
+          icon: <Lightbulb className="h-5 w-5" />,
+          actionLabel: 'View Budget Recommendations',
+          actionLink: '/budget'
         }
       ];
       
-      const generatedPatterns: SpendingPattern[] = Array.from(categories).map(([category, amount]) => {
-        const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
-        const trend = ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable';
-        const change = Math.random() * 10;
-        
-        return {
-          category,
-          percentage,
-          amount,
-          trend,
-          change
-        };
-      }).sort((a, b) => b.amount - a.amount);
-      
       setInsights(generatedInsights);
-      setSpendingPatterns(generatedPatterns);
+      setPredictions(generatedPredictions);
+      setTips(generatedTips);
       setIsAnalyzing(false);
       setIsRegenerating(false);
     }, 1500);
@@ -207,8 +222,164 @@ const EnhancedAIInsights = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
   
+  const renderInsightCards = (insightList: Insight[]) => (
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={{
+        visible: {
+          transition: {
+            staggerChildren: 0.1
+          }
+        }
+      }}
+      className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+    >
+      {insightList.map((insight) => (
+        <motion.div key={insight.id} variants={fadeIn}>
+          <Card className={`hover:shadow-md transition-all border border-gray-100 ${
+            insight.impact === 'positive' ? 'border-l-4 border-l-green-500' :
+            insight.impact === 'negative' ? 'border-l-4 border-l-red-500' :
+            'border-l-4 border-l-blue-500'
+          }`}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <span className={`p-1.5 rounded-full ${
+                  insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
+                  insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
+                  'bg-blue-100 text-blue-600'
+                }`}>
+                  {insight.icon}
+                </span>
+                {insight.title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 text-sm">{insight.description}</p>
+              {insight.actionLabel && (
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto mt-2 text-purple-600"
+                  onClick={() => navigate(insight.actionLink || '#')}
+                >
+                  {insight.actionLabel} <ArrowRight className="h-3 w-3 ml-1" />
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+  
+  if (isAnalyzing) {
+    return (
+      <div className="space-y-6 max-w-6xl mx-auto w-full">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+          className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl shadow-sm"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-purple-100 rounded-full">
+              <Brain className="h-6 w-6 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-blue-700 bg-clip-text text-transparent">
+                AI-Powered Financial Insights
+              </h2>
+              <p className="text-gray-600">
+                Our advanced AI analyzes your transaction patterns to provide personalized financial guidance
+              </p>
+            </div>
+          </div>
+        </motion.div>
+        
+        <Card className="border-none shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center justify-center py-10">
+              <div className="relative">
+                <Brain className="h-12 w-12 text-purple-200" />
+                <Sparkles className="h-6 w-6 text-purple-500 absolute top-0 right-0 animate-pulse" />
+              </div>
+              <h3 className="text-lg font-medium mt-4 mb-2">AI is analyzing your financial data</h3>
+              <p className="text-gray-500 mb-6 text-center max-w-md">
+                Processing transaction patterns, identifying trends, and generating personalized insights...
+              </p>
+              <Progress value={65} className="w-64 h-2" />
+              <div className="mt-6 grid grid-cols-3 gap-3 text-xs text-center">
+                <div className="flex flex-col items-center">
+                  <div className="bg-purple-100 p-2 rounded-full mb-2">
+                    <Bot className="h-4 w-4 text-purple-600" />
+                  </div>
+                  <span>Analyzing Patterns</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="bg-blue-100 p-2 rounded-full mb-2">
+                    <Brain className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <span>Processing Data</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="bg-green-100 p-2 rounded-full mb-2">
+                    <Lightbulb className="h-4 w-4 text-green-600" />
+                  </div>
+                  <span>Creating Insights</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
+  if (transactions.length === 0) {
+    return (
+      <div className="space-y-6 max-w-6xl mx-auto w-full">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+          className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl shadow-sm"
+        >
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-purple-100 rounded-full">
+              <Brain className="h-6 w-6 text-purple-600" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-blue-700 bg-clip-text text-transparent">
+                AI-Powered Financial Insights
+              </h2>
+              <p className="text-gray-600">
+                Our advanced AI analyzes your transaction patterns to provide personalized financial guidance
+              </p>
+            </div>
+          </div>
+        </motion.div>
+        
+        <Card className="border-none shadow-sm">
+          <CardContent className="pt-6">
+            <div className="text-center py-10">
+              <AlertTriangle className="h-10 w-10 text-amber-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">No data to analyze</h3>
+              <p className="text-gray-500 mb-4">Add some transactions to get personalized insights</p>
+              <Button 
+                onClick={() => navigate('/transactions')} 
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                Add Transactions
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+  
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-6xl mx-auto w-full">
       <motion.div 
         initial="hidden"
         animate="visible"
@@ -240,232 +411,46 @@ const EnhancedAIInsights = () => {
         </div>
       </motion.div>
       
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
-        <TabsList className="w-full grid grid-cols-2 gap-2 bg-muted/20 p-1 rounded-lg max-w-md mx-auto">
-          <TabsTrigger value="insights" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800 rounded-md">
-            <Lightbulb className="h-4 w-4 mr-2" />
-            Insights
-          </TabsTrigger>
-          <TabsTrigger value="spending" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 rounded-md">
-            <CreditCard className="h-4 w-4 mr-2" />
-            Spending
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="insights" className="space-y-4 pt-4">
-          {isAnalyzing ? (
-            <Card className="border-none shadow-sm">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center py-10">
-                  <div className="relative">
-                    <Brain className="h-12 w-12 text-purple-200" />
-                    <Sparkles className="h-6 w-6 text-purple-500 absolute top-0 right-0 animate-pulse" />
-                  </div>
-                  <h3 className="text-lg font-medium mt-4 mb-2">AI is analyzing your financial data</h3>
-                  <p className="text-gray-500 mb-6 text-center max-w-md">
-                    Processing transaction patterns, identifying trends, and generating personalized insights...
-                  </p>
-                  <Progress value={65} className="w-64 h-2" />
-                  <div className="mt-6 grid grid-cols-3 gap-3 text-xs text-center">
-                    <div className="flex flex-col items-center">
-                      <div className="bg-purple-100 p-2 rounded-full mb-2">
-                        <Bot className="h-4 w-4 text-purple-600" />
-                      </div>
-                      <span>Analyzing Patterns</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="bg-blue-100 p-2 rounded-full mb-2">
-                        <Brain className="h-4 w-4 text-blue-600" />
-                      </div>
-                      <span>Processing Data</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="bg-green-100 p-2 rounded-full mb-2">
-                        <Lightbulb className="h-4 w-4 text-green-600" />
-                      </div>
-                      <span>Creating Insights</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : insights.length > 0 ? (
-            <div>
-              <div className="flex items-center mb-4 px-1">
-                <div className="flex text-xs text-gray-500 items-center">
-                  <Bot className="h-3 w-3 mr-1 text-purple-500" />
-                  <span>AI-generated insights based on your financial data</span>
-                </div>
-                <div className="ml-auto flex gap-2">
-                  {!isRegenerating && (
-                    <div className="text-xs flex items-center gap-1 text-gray-500">
-                      <RefreshCw className="h-3 w-3" />
-                      <span>Updated just now</span>
-                    </div>
-                  )}
-                </div>
+      <div className="space-y-8">
+        {/* Current Insights Section */}
+        <section>
+          <div className="flex items-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-800 flex items-center">
+              <Lightbulb className="h-5 w-5 mr-2 text-amber-500" />
+              Current Financial Insights
+            </h3>
+            <div className="ml-auto flex gap-2">
+              <div className="text-xs flex items-center gap-1 text-gray-500">
+                <Bot className="h-3 w-3 text-purple-500" />
+                <span>AI-powered analysis</span>
               </div>
-              <motion.div 
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.1
-                    }
-                  }
-                }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
-                {insights.map((insight) => (
-                  <motion.div key={insight.id} variants={fadeIn}>
-                    <Card className={`hover:shadow-md transition-all border border-gray-100 ${
-                      insight.impact === 'positive' ? 'border-l-4 border-l-green-500' :
-                      insight.impact === 'negative' ? 'border-l-4 border-l-red-500' :
-                      'border-l-4 border-l-blue-500'
-                    }`}>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg flex items-center gap-2">
-                          <span className={`p-1.5 rounded-full ${
-                            insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
-                            insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
-                            'bg-blue-100 text-blue-600'
-                          }`}>
-                            {insight.icon}
-                          </span>
-                          {insight.title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 text-sm">{insight.description}</p>
-                        {insight.actionLabel && (
-                          <Button 
-                            variant="link" 
-                            className="p-0 h-auto mt-2 text-purple-600"
-                            onClick={() => window.open(insight.actionLink, '_blank')}
-                          >
-                            {insight.actionLabel} <ArrowRight className="h-3 w-3 ml-1" />
-                          </Button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
             </div>
-          ) : (
-            <Card className="border-none shadow-sm">
-              <CardContent className="pt-6">
-                <div className="text-center py-10">
-                  <AlertTriangle className="h-10 w-10 text-amber-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No data to analyze</h3>
-                  <p className="text-gray-500 mb-4">Add some transactions to get personalized insights</p>
-                  <Button 
-                    onClick={() => navigate('/transactions')} 
-                    className="bg-purple-600 hover:bg-purple-700"
-                  >
-                    Add Transactions
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
+          </div>
+          {renderInsightCards(insights)}
+        </section>
         
-        <TabsContent value="spending" className="space-y-4 pt-4">
-          <Card className="border-none shadow-sm">
-            <CardHeader>
-              <CardTitle>Spending Distribution</CardTitle>
-              <CardDescription>
-                AI analysis of your spending patterns across different categories
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isAnalyzing ? (
-                <div className="flex justify-center items-center py-10">
-                  <Sparkles className="h-8 w-8 text-purple-500 animate-pulse" />
-                </div>
-              ) : spendingPatterns.length > 0 ? (
-                <div className="space-y-4">
-                  <div className="text-xs text-gray-500 mb-4 bg-blue-50 p-3 rounded-md">
-                    <div className="flex items-start gap-2">
-                      <Bot className="h-4 w-4 text-blue-500 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-blue-700">AI Spending Analysis</p>
-                        <p className="mt-1">I've analyzed your transaction history and categorized your spending to identify patterns and opportunities for optimization.</p>
-                      </div>
-                    </div>
-                  </div>
-                  {spendingPatterns.map((pattern, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">{pattern.category}</span>
-                          {pattern.trend === 'up' ? (
-                            <TrendingUp className="h-4 w-4 text-red-500" />
-                          ) : pattern.trend === 'down' ? (
-                            <TrendingDown className="h-4 w-4 text-green-500" />
-                          ) : null}
-                          {pattern.trend !== 'stable' && (
-                            <span className={`text-xs ${pattern.trend === 'up' ? 'text-red-500' : 'text-green-500'}`}>
-                              {pattern.change.toFixed(1)}%
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <span className="font-semibold">₹{pattern.amount.toFixed(2)}</span>
-                          <span className="text-gray-500 text-xs ml-1">({pattern.percentage.toFixed(1)}%)</span>
-                        </div>
-                      </div>
-                      <Progress value={pattern.percentage} className="h-2" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <p className="text-gray-500">No spending data available</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          
-          <Card className="border-none shadow-sm">
-            <CardHeader>
-              <CardTitle>AI Recommendations</CardTitle>
-              <CardDescription>
-                Smart suggestions based on pattern recognition and financial modeling
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {!isAnalyzing && spendingPatterns.length > 0 && (
-                  <>
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50">
-                      <Lightbulb className="h-5 w-5 text-amber-500 mt-0.5" />
-                      <div>
-                        <h4 className="font-medium text-amber-800">Optimize {spendingPatterns[0].category}</h4>
-                        <p className="text-sm text-amber-700">
-                          My algorithms have identified this as your highest spending category. Statistical analysis suggests targeted optimization here will have maximum impact on your overall financial health.
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50">
-                      <Lightbulb className="h-5 w-5 text-blue-500 mt-0.5" />
-                      <div>
-                        <h4 className="font-medium text-blue-800">Budget Allocation Strategy</h4>
-                        <p className="text-sm text-blue-700">
-                          Based on predictive modeling, I recommend implementing the 50/30/20 rule: allocate 50% for essential needs, 30% for discretionary wants, and 20% for savings and debt repayment to optimize financial stability.
-                        </p>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        {/* Predictions Section */}
+        <section>
+          <div className="flex items-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-800 flex items-center">
+              <TrendingUp className="h-5 w-5 mr-2 text-blue-500" />
+              Financial Predictions
+            </h3>
+          </div>
+          {renderInsightCards(predictions)}
+        </section>
+        
+        {/* Tips & Actions Section */}
+        <section>
+          <div className="flex items-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-800 flex items-center">
+              <Sparkles className="h-5 w-5 mr-2 text-purple-500" />
+              Recommended Actions
+            </h3>
+          </div>
+          {renderInsightCards(tips)}
+        </section>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 
-import { Home, PieChart, DollarSign, TrendingUp, LogOut, User, Lightbulb } from 'lucide-react';
+import { Home, PieChart, DollarSign, LogOut, Lightbulb, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
@@ -8,7 +8,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -29,7 +28,7 @@ export function AppSidebar() {
     navigate('/login');
   };
 
-  // Main navigation items
+  // Main navigation items - removed Settings
   const navItems = [
     {
       title: 'Dashboard',
@@ -55,7 +54,7 @@ export function AppSidebar() {
       title: 'Profile',
       path: '/profile',
       icon: User,
-    },
+    }
   ];
 
   if (!isAuthenticated) {
@@ -63,10 +62,9 @@ export function AppSidebar() {
   }
 
   return (
-    <Sidebar>
-      <SidebarHeader>
+    <Sidebar className="border-r">
+      <SidebarHeader className="px-6 py-4">
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-6 w-6 text-primary" />
           <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">FinAI</span>
         </div>
       </SidebarHeader>
@@ -91,7 +89,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="p-4">
         <Button
           variant="outline"
           className="w-full flex items-center gap-2 justify-start"
