@@ -5,10 +5,16 @@ import type { MotionProps } from 'framer-motion';
 // Create a mock of framer-motion
 // This allows us to have a uniform interface without requiring framer-motion
 export const motion = {
-  div: ({ initial, animate, exit, transition, children, ...props }: MotionProps & { className?: string }) => (
+  div: ({ initial, animate, exit, transition, children, ...props }: MotionProps & { 
+    className?: string, 
+    children?: React.ReactNode 
+  }) => (
     <div className={props.className} {...props}>{children}</div>
   ),
-  p: ({ initial, animate, exit, transition, children, ...props }: MotionProps & { className?: string }) => (
+  p: ({ initial, animate, exit, transition, children, ...props }: MotionProps & { 
+    className?: string, 
+    children?: React.ReactNode 
+  }) => (
     <p className={props.className} {...props}>{children}</p>
   )
 };
