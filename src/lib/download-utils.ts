@@ -53,3 +53,13 @@ export const saveSvgAsPng = (svgElement: SVGElement | HTMLElement, fileName: str
     console.error('Error saving SVG as PNG:', error);
   }
 };
+
+/**
+ * Downloads text content as a file
+ * @param text - The text content to download
+ * @param fileName - The name for the downloaded file
+ */
+export const downloadTextFile = (text: string, fileName: string): void => {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  saveAs(blob, fileName);
+};

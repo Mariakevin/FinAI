@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,6 +6,7 @@ import { Sparkles, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, Target, W
 import { useTransactions } from '@/hooks/useTransactions';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface Insight {
   id: string;
@@ -42,19 +42,17 @@ const EnhancedAIInsights = () => {
   const [spendingPatterns, setSpendingPatterns] = useState<SpendingPattern[]>([]);
   const [savingGoals, setSavingGoals] = useState<SavingGoal[]>([]);
   const [selectedTab, setSelectedTab] = useState('insights');
+  const navigate = useNavigate();
 
-  // Function to generate insights based on transaction data
   const generateInsights = () => {
     setIsAnalyzing(true);
     
-    // Simulate AI analysis with a delay
     setTimeout(() => {
       const balance = getBalance();
       const totalIncome = getTotalIncome();
       const totalExpenses = getTotalExpenses();
       const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome) * 100 : 0;
       
-      // Categorize transactions
       const categories = new Map<string, number>();
       transactions.forEach(transaction => {
         if (transaction.type === 'expense') {
@@ -63,7 +61,6 @@ const EnhancedAIInsights = () => {
         }
       });
       
-      // Find largest expense category
       let largestCategory = '';
       let largestAmount = 0;
       categories.forEach((amount, category) => {
@@ -73,7 +70,6 @@ const EnhancedAIInsights = () => {
         }
       });
       
-      // Generate monthly spending trend
       const monthlySpending = new Map<string, number>();
       transactions.forEach(transaction => {
         if (transaction.type === 'expense') {
@@ -84,7 +80,6 @@ const EnhancedAIInsights = () => {
         }
       });
       
-      // Sort months and check for trend
       const sortedMonths = Array.from(monthlySpending.entries())
         .sort((a, b) => {
           const [monthA, yearA] = a[0].split('/').map(Number);
@@ -95,7 +90,6 @@ const EnhancedAIInsights = () => {
       const isSpendingIncreasing = sortedMonths.length > 1 && 
         sortedMonths[sortedMonths.length - 1][1] > sortedMonths[sortedMonths.length - 2][1];
       
-      // Generate insights based on data
       const generatedInsights: Insight[] = [
         {
           id: '1',
@@ -155,10 +149,8 @@ const EnhancedAIInsights = () => {
         }
       ];
       
-      // Generate spending patterns
       const generatedPatterns: SpendingPattern[] = Array.from(categories).map(([category, amount]) => {
         const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
-        // Generate random trend data for demonstration
         const trend = ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable';
         const change = Math.random() * 10;
         
@@ -171,12 +163,11 @@ const EnhancedAIInsights = () => {
         };
       }).sort((a, b) => b.amount - a.amount);
       
-      // Generate savings goals based on spending patterns
       const generatedGoals: SavingGoal[] = [
         {
           id: '1',
           name: 'Emergency Fund',
-          target: totalIncome * 6, // 6 months of income
+          target: totalIncome * 6,
           current: balance > 0 ? balance : 0,
           deadline: '2024-12-31'
         },
@@ -184,13 +175,13 @@ const EnhancedAIInsights = () => {
           id: '2',
           name: 'Vacation Fund',
           target: 50000,
-          current: 15000, // Placeholder value
+          current: 15000,
         },
         {
           id: '3',
           name: 'New Tech Gadget',
           target: 25000,
-          current: 5000, // Placeholder value
+          current: 5000,
         }
       ];
       
@@ -202,7 +193,6 @@ const EnhancedAIInsights = () => {
   };
   
   useEffect(() => {
-    // Generate insights when transactions change
     if (transactions.length > 0) {
       generateInsights();
     } else {
