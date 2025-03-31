@@ -97,8 +97,7 @@ export const useTransactions = () => {
           category: 'Housing',
           date: yesterday.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'landlord@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -107,8 +106,7 @@ export const useTransactions = () => {
           category: 'Insurance',
           date: today.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'insurance@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -117,8 +115,7 @@ export const useTransactions = () => {
           category: 'Salary',
           date: lastWeek.toISOString(),
           type: 'income',
-          upiId,
-          payee: 'employer@upi'
+          upiId
         }
       ] as Transaction[];
     } 
@@ -131,8 +128,7 @@ export const useTransactions = () => {
           category: 'Shopping',
           date: yesterday.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'ecommerce@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -141,8 +137,7 @@ export const useTransactions = () => {
           category: 'Food & Dining',
           date: today.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'foodapp@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -151,8 +146,7 @@ export const useTransactions = () => {
           category: 'Bills & Utilities',
           date: lastWeek.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'telecom@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -161,8 +155,7 @@ export const useTransactions = () => {
           category: 'Personal',
           date: yesterday.toISOString(),
           type: 'income',
-          upiId,
-          payee: 'friend@upi'
+          upiId
         }
       ] as Transaction[];
     }
@@ -175,8 +168,7 @@ export const useTransactions = () => {
           category: 'Business Expenses',
           date: yesterday.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'officesupplies@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -185,8 +177,7 @@ export const useTransactions = () => {
           category: 'Travel',
           date: today.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'travelagency@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -195,8 +186,7 @@ export const useTransactions = () => {
           category: 'Business Income',
           date: lastWeek.toISOString(),
           type: 'income',
-          upiId,
-          payee: 'client@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -205,8 +195,7 @@ export const useTransactions = () => {
           category: 'Business Income',
           date: yesterday.toISOString(),
           type: 'income',
-          upiId,
-          payee: 'client2@upi'
+          upiId
         }
       ] as Transaction[];
     }
@@ -220,8 +209,7 @@ export const useTransactions = () => {
           category: 'Food & Dining',
           date: yesterday.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'grocerystore@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -230,8 +218,7 @@ export const useTransactions = () => {
           category: 'Entertainment',
           date: today.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'moviebooking@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -240,8 +227,7 @@ export const useTransactions = () => {
           category: 'Bills & Utilities',
           date: lastWeek.toISOString(),
           type: 'expense',
-          upiId,
-          payee: 'electricbill@upi'
+          upiId
         },
         {
           id: 'upi-' + Math.random().toString(36).substring(2, 9),
@@ -250,8 +236,7 @@ export const useTransactions = () => {
           category: 'Salary',
           date: lastWeek.toISOString(),
           type: 'income',
-          upiId,
-          payee: 'company@upi'
+          upiId
         }
       ] as Transaction[];
     }

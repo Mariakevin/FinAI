@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Mail, MapPin, Phone, Upload } from 'lucide-react';
+import { Mail, Briefcase, Phone, Upload } from 'lucide-react';
 import GlassCard from '@/components/ui/GlassCard';
 
 interface ProfileData {
   name: string;
   email: string;
   phone: string;
-  address: string;
+  occupation: string;
   profileImage: string;
 }
 
@@ -72,15 +72,15 @@ const ProfileSidebar = ({
             </div>
           )}
           
-          {profileData.address ? (
+          {profileData.occupation ? (
             <div className="flex items-center text-gray-700 text-sm bg-white p-3 rounded-lg shadow-sm">
-              <MapPin className="h-4 w-4 mr-3 text-teal-500" />
-              {profileData.address}
+              <Briefcase className="h-4 w-4 mr-3 text-teal-500" />
+              {profileData.occupation}
             </div>
           ) : (
             <div className="flex items-center text-gray-400 text-sm bg-white/80 p-3 rounded-lg">
-              <MapPin className="h-4 w-4 mr-3 text-gray-300" />
-              No address
+              <Briefcase className="h-4 w-4 mr-3 text-gray-300" />
+              No occupation specified
             </div>
           )}
         </div>

@@ -21,7 +21,7 @@ const ProfilePage = () => {
     name: user?.name || '',
     email: user?.email || '',
     phone: localStorage.getItem('profile_phone') || '',
-    address: localStorage.getItem('profile_address') || '',
+    occupation: localStorage.getItem('profile_occupation') || '',
     profileImage: localStorage.getItem('profile_image') || '',
   });
 
@@ -29,7 +29,7 @@ const ProfilePage = () => {
     name: false,
     email: false,
     phone: false,
-    address: false
+    occupation: false
   });
   
   useEffect(() => {
@@ -65,7 +65,7 @@ const ProfilePage = () => {
 
   const handleSave = () => {
     localStorage.setItem('profile_phone', profileData.phone);
-    localStorage.setItem('profile_address', profileData.address);
+    localStorage.setItem('profile_occupation', profileData.occupation);
     localStorage.setItem('profile_image', profileData.profileImage);
     
     const users = JSON.parse(localStorage.getItem('finwise_users') || '[]');
@@ -96,7 +96,7 @@ const ProfilePage = () => {
       name: false,
       email: false,
       phone: false,
-      address: false
+      occupation: false
     });
     
     toast.success('Profile information updated successfully');

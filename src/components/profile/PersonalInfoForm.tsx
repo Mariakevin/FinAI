@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Mail, MapPin, Phone, Save, Pencil, X, Lock } from 'lucide-react';
+import { User, Mail, Briefcase, Phone, Save, Pencil, X, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface PersonalInfoFormProps {
@@ -12,7 +12,7 @@ interface PersonalInfoFormProps {
     name: string;
     email: string;
     phone: string;
-    address: string;
+    occupation: string;
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSave: () => void;
@@ -21,7 +21,7 @@ interface PersonalInfoFormProps {
     name: boolean;
     email: boolean;
     phone: boolean;
-    address: boolean;
+    occupation: boolean;
   };
   toggleEdit: (field: string) => void;
 }
@@ -204,15 +204,15 @@ const PersonalInfoForm = ({
           
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="address" className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                <MapPin className="h-4 w-4 text-teal-500" />
-                Address
+              <Label htmlFor="occupation" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Briefcase className="h-4 w-4 text-teal-500" />
+                Occupation
               </Label>
-              {!isEditing.address ? (
+              {!isEditing.occupation ? (
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => toggleEdit('address')}
+                  onClick={() => toggleEdit('occupation')}
                   className="h-8 px-2 text-teal-600 hover:text-teal-700 hover:bg-teal-50"
                 >
                   <Pencil className="h-3.5 w-3.5 mr-1" />
@@ -222,7 +222,7 @@ const PersonalInfoForm = ({
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  onClick={() => toggleEdit('address')}
+                  onClick={() => toggleEdit('occupation')}
                   className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <X className="h-3.5 w-3.5 mr-1" />
@@ -230,24 +230,24 @@ const PersonalInfoForm = ({
                 </Button>
               )}
             </div>
-            {isEditing.address ? (
+            {isEditing.occupation ? (
               <Input 
-                id="address" 
-                name="address" 
-                value={profileData.address} 
+                id="occupation" 
+                name="occupation" 
+                value={profileData.occupation} 
                 onChange={handleChange}
-                placeholder="Enter your address"
+                placeholder="Enter your occupation"
                 className="border-teal-200 focus-visible:ring-teal-500 bg-white"
               />
             ) : (
               <div className="px-4 py-3 rounded-md bg-gray-50 text-gray-700 border border-gray-100">
-                {profileData.address || 'Not specified'}
+                {profileData.occupation || 'Not specified'}
               </div>
             )}
           </div>
         </div>
         
-        {(isEditing.name || isEditing.email || isEditing.phone || isEditing.address) && (
+        {(isEditing.name || isEditing.email || isEditing.phone || isEditing.occupation) && (
           <Button onClick={handleSave} className="w-full sm:w-auto mt-4 bg-teal-600 hover:bg-teal-700">
             <Save className="h-4 w-4 mr-2" />
             Save Changes
