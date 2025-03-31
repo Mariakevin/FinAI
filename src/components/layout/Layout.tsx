@@ -56,7 +56,7 @@ const Layout = ({ children, requireAuth = false }: LayoutProps) => {
         "pt-16 pb-8 w-full",
         isIndexPage 
           ? "px-0" 
-          : "px-4 md:px-6 lg:px-8 mx-auto"
+          : "px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 mx-auto"
       )}>
         <div 
           className="animate-scale-in transition-all duration-300 rounded-xl max-w-7xl mx-auto"
@@ -65,6 +65,10 @@ const Layout = ({ children, requireAuth = false }: LayoutProps) => {
           {children}
         </div>
       </main>
+      
+      <footer className="py-4 text-center text-xs text-gray-500 bg-gradient-to-t from-teal-50/40 to-transparent">
+        <p>Powered by FinWise AI • Analyzing your finances for smarter decisions</p>
+      </footer>
     </div>
   );
 };

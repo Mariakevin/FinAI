@@ -11,7 +11,9 @@ const AiInsights = () => {
         <title>AI Insights | FinWise</title>
         <meta name="description" content="Get AI-powered insights about your financial habits" />
       </Helmet>
-      <AiInsightsPage />
+      <div className="max-w-6xl mx-auto">
+        <AiInsightsPage />
+      </div>
     </Layout>
   );
 };

@@ -1,161 +1,120 @@
 
-import React, { ReactNode, useEffect, useState, useMemo } from 'react';
+import React, { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { CreditCard, Coins, PiggyBank, DollarSign, CreditCard as CardIcon, LineChart, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 interface AuthLayoutProps {
   children: ReactNode;
 }
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  
-  // Financial icons for floating animation
-  const financialIcons = useMemo(() => [
-    { icon: <CreditCard size={22} className="text-blue-400/20" />, delay: 0 },
-    { icon: <Coins size={22} className="text-teal-400/20" />, delay: 1.5 },
-    { icon: <PiggyBank size={22} className="text-primary-400/20" />, delay: 3 },
-    { icon: <DollarSign size={22} className="text-green-400/20" />, delay: 4.5 },
-    { icon: <CardIcon size={22} className="text-orange-400/20" />, delay: 2.5 },
-    { icon: <LineChart size={22} className="text-cyan-400/20" />, delay: 3.5 },
-    { icon: <TrendingUp size={22} className="text-yellow-400/20" />, delay: 0.5 },
-    { icon: <Wallet size={22} className="text-orange-400/20" />, delay: 2 }
-  ], []);
-
-  // Generate animated gradient orbs
-  const gradientOrbs = useMemo(() => 
-    Array.from({ length: 6 }, (_, i) => ({
-      id: i,
-      size: Math.random() * 8 + 6,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      hue: Math.floor(Math.random() * 60) + 180,
-      saturation: Math.floor(Math.random() * 20) + 70,
-      lightness: Math.floor(Math.random() * 15) + 75,
-      delay: i * 0.5,
-      duration: Math.random() * 10 + 10, // Random duration between 10-20s
-    })),
-  []);
-
-  // Set loaded state for initial animations
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 flex flex-col overflow-hidden">
-      {/* Enhanced background elements */}
-      <div className="fixed inset-0 z-0 overflow-hidden">
-        {/* Animated gradient orbs */}
-        {gradientOrbs.map((orb) => (
-          <div
-            key={orb.id}
-            className="absolute rounded-full opacity-20 will-change-transform"
-            style={{
-              width: `${orb.size}rem`,
-              height: `${orb.size}rem`,
-              left: `${orb.x}%`,
-              top: `${orb.y}%`,
-              background: `radial-gradient(circle, hsl(${orb.hue}, ${orb.saturation}%, ${orb.lightness}%) 30%, transparent 70%)`,
-              filter: 'blur(18px)',
-              animation: `float ${orb.duration}s ease-in-out infinite`,
-              animationDelay: `${orb.delay}s`,
-            }}
-          />
-        ))}
-        
-        {/* Financial floating icons with improved animation */}
-        {financialIcons.map((el, i) => (
-          <div
-            key={`icon-${i}`}
-            className="absolute will-change-transform"
-            style={{
-              left: `${Math.random() * 90 + 5}%`,
-              top: `${Math.random() * 80 + 10}%`,
-              opacity: 0.2,
-              animation: 'float 15s ease-in-out infinite',
-              animationDelay: `${el.delay}s`,
-            }}
-          >
-            {el.icon}
+    <div className="min-h-screen bg-white lg:bg-gray-50 flex flex-col">
+      <div className="flex-1 flex flex-col lg:flex-row">
+        {/* Left side - Brand area (hidden on mobile) */}
+        <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 bg-gradient-to-br from-blue-500 to-indigo-600 p-12 relative overflow-hidden">
+          <div className="absolute inset-0 bg-blue-600 opacity-10">
+            <svg 
+              className="absolute inset-0 w-full h-full" 
+              viewBox="0 0 800 800"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="a" gradientTransform="rotate(90)">
+                  <stop offset="0%" stopColor="#667eea"/>
+                  <stop offset="100%" stopColor="#764ba2"/>
+                </linearGradient>
+              </defs>
+              <path 
+                fill="url(#a)" 
+                d="M0 0h800v800H0z"
+              />
+              <g fill="#fff" fillOpacity=".4">
+                <circle r="150" cx="400" cy="400"/>
+                <circle r="100" cx="500" cy="300"/>
+                <circle r="50" cx="300" cy="500"/>
+                <circle r="75" cx="200" cy="200"/>
+                <circle r="50" cx="600" cy="600"/>
+                <circle r="25" cx="700" cy="300"/>
+                <circle r="15" cx="250" cy="350"/>
+                <circle r="40" cx="550" cy="450"/>
+              </g>
+            </svg>
           </div>
-        ))}
-      </div>
-      
-      {/* Animated wave background */}
-      <div className="absolute bottom-0 left-0 w-full opacity-5 pointer-events-none overflow-hidden" style={{ height: '30%' }}>
-        <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="absolute bottom-0 w-full h-full">
-          <path 
-            fill="rgba(20, 184, 166, 0.3)" 
-            fillOpacity="1" 
-            d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,128C672,107,768,117,864,144C960,171,1056,213,1152,218.7C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            style={{ animation: 'float 25s ease-in-out infinite' }}
-          ></path>
-          <path 
-            fill="rgba(12, 152, 233, 0.3)" 
-            fillOpacity="1" 
-            d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,90.7C672,85,768,107,864,144C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            style={{ animation: 'float 20s ease-in-out infinite reverse' }}
-          ></path>
-        </svg>
-      </div>
-      
-      {/* Digital graph patterns - enhanced */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path 
-            d="M0,50 C20,40 40,60 60,50 S80,60 100,50" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="0.2" 
-            className="text-teal-500"
-            style={{ animation: 'pulse 15s ease-in-out infinite' }}
-          />
-          <path 
-            d="M0,60 C20,50 40,70 60,60 S80,70 100,60" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="0.2" 
-            className="text-blue-500"
-            style={{ animation: 'pulse 20s ease-in-out infinite reverse' }}
-          />
-          <path 
-            d="M0,40 C20,30 40,50 60,40 S80,50 100,40" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="0.2" 
-            className="text-primary-500"
-            style={{ animation: 'pulse 25s ease-in-out infinite' }}
-          />
-        </svg>
-      </div>
-      
-      {/* Main content */}
-      <header className={`relative z-10 py-6 transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
-              <span className="text-white font-bold text-lg">F</span>
+          
+          <div className="relative z-10 flex flex-col h-full justify-between text-white">
+            <div>
+              <h1 className="text-4xl font-bold mb-6">FinWise</h1>
+              <p className="text-xl font-light mb-8">
+                The smart way to manage your finances with AI-powered insights
+              </p>
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-blue-600">
-              Finwise
-            </span>
-          </Link>
+            
+            <div className="space-y-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <BrainIcon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">AI-Powered Analysis</h3>
+                  </div>
+                </div>
+                <p className="text-white/80">
+                  Our advanced AI analyzes your spending patterns and provides personalized insights to help you make better financial decisions.
+                </p>
+              </div>
+              
+              <div className="text-sm text-white/70">
+                &copy; 2023 FinWise. All rights reserved.
+              </div>
+            </div>
+          </div>
         </div>
-      </header>
-
-      <main className={`flex-1 flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8 relative z-10 transition-all duration-500 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-        <div className="w-full max-w-md">
-          {children}
+        
+        {/* Right side - Auth form */}
+        <div className="w-full lg:w-1/2 xl:w-2/5 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <div className="w-full">
+            <div className="mb-6 flex justify-between items-center lg:hidden">
+              <Link 
+                to="/" 
+                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                <span>Back</span>
+              </Link>
+              <div className="text-xl font-bold text-indigo-600">FinWise</div>
+            </div>
+            
+            {children}
+          </div>
         </div>
-      </main>
-      
-      <footer className={`relative z-10 py-4 text-center text-sm text-gray-500 transition-all duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-        <p>© {new Date().getFullYear()} Finwise. All rights reserved.</p>
-      </footer>
+      </div>
     </div>
   );
 };
+
+// Helper Icons
+const BrainIcon = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 0 19.5v-15A2.5 2.5 0 0 1 2.5 2h7z"></path>
+    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 2.5 2.5h7a2.5 2.5 0 0 0 2.5-2.5v-15A2.5 2.5 0 0 0 21.5 2h-7z"></path>
+    <path d="M6 12h4"></path>
+    <path d="M14 12h4"></path>
+    <path d="M6 8h4"></path>
+    <path d="M14 8h4"></path>
+    <path d="M6 16h4"></path>
+    <path d="M14 16h4"></path>
+  </svg>
+);
 
 export default AuthLayout;

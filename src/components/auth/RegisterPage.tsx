@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Mail, Shield, Sparkles, User } from 'lucide-react';
+import { ArrowRight, Mail, Shield, Sparkles, User, AlertCircle, Check } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { PasswordField } from '@/components/auth/PasswordField';
 import { motion } from '@/components/ui/animated';
+import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -17,6 +19,7 @@ const RegisterPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [nameError, setNameError] = useState('');
+  const [generalError, setGeneralError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -59,29 +62,46 @@ const RegisterPage = () => {
     if (newName) validateName(newName);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate all fields
+  const validateForm = () => {
     const isEmailValid = validateEmail(email);
     const isNameValid = validateName(name);
     
-    if (!isEmailValid || !isNameValid) return;
+    if (password.length < 8) {
+      setGeneralError('Password must be at least 8 characters');
+      return false;
+    }
+
+    return isEmailValid && isNameValid && password.length >= 8;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGeneralError('');
+    
+    if (!validateForm()) {
+      return;
+    }
     
     setIsSubmitting(true);
     
     try {
       const success = await register(email, password, name);
       if (success) {
+        toast.success('Account created successfully! Welcome to FinWise.');
         navigate('/dashboard');
+      } else {
+        setGeneralError('Failed to create account. The email may already be registered.');
       }
+    } catch (err) {
+      console.error('Registration error:', err);
+      setGeneralError('An unexpected error occurred. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto px-4 sm:px-0">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -91,7 +111,7 @@ const RegisterPage = () => {
         <h1 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
           Create account
         </h1>
-        <p className="mt-2 text-gray-600">Start your financial journey today</p>
+        <p className="mt-2 text-gray-600">Start your AI-powered financial journey today</p>
       </motion.div>
 
       <motion.div
@@ -126,6 +146,21 @@ const RegisterPage = () => {
           
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
+              {generalError && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Alert variant="destructive" className="py-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      {generalError}
+                    </AlertDescription>
+                  </Alert>
+                </motion.div>
+              )}
+              
               {/* Name field */}
               <motion.div 
                 className="space-y-2"
@@ -206,7 +241,10 @@ const RegisterPage = () => {
               >
                 <PasswordField
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (generalError) setGeneralError('');
+                  }}
                   id="password"
                   label="Password"
                   showStrength={true}
@@ -232,22 +270,48 @@ const RegisterPage = () => {
                   </Button>
                 </motion.div>
                 
-                <motion.p 
+                <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, delay: 0.7 }}
-                  className="text-center text-sm text-gray-600"
+                  className="space-y-3"
                 >
-                  Already have an account?{' '}
-                  <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
-                    Sign in
-                  </Link>
-                </motion.p>
+                  <ul className="space-y-2">
+                    <li className="flex items-center gap-2 text-xs text-gray-600">
+                      <span className="flex-shrink-0 rounded-full bg-green-100 p-1">
+                        <Check className="h-3 w-3 text-green-600" />
+                      </span>
+                      AI-powered financial insights and recommendations
+                    </li>
+                    <li className="flex items-center gap-2 text-xs text-gray-600">
+                      <span className="flex-shrink-0 rounded-full bg-green-100 p-1">
+                        <Check className="h-3 w-3 text-green-600" />
+                      </span>
+                      Secure and encrypted personal data
+                    </li>
+                  </ul>
+                  
+                  <p className="text-center text-sm text-gray-600 pt-2 border-t border-gray-100">
+                    Already have an account?{' '}
+                    <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
+                      Sign in
+                    </Link>
+                  </p>
+                </motion.div>
               </div>
             </CardFooter>
           </form>
         </Card>
       </motion.div>
+      
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1 }}
+        className="text-center text-xs text-gray-500 mt-8"
+      >
+        By creating an account, you agree to our Terms of Service and Privacy Policy
+      </motion.p>
     </div>
   );
 };
