@@ -13,7 +13,7 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>finAI - AI-Powered Financial Intelligence</title>
+        <title>FinAI - AI-Powered Financial Intelligence</title>
         <meta name="description" content="Visualize, analyze, and optimize your financial journey with intelligent AI insights and beautiful analytics." />
       </Helmet>
       
@@ -117,7 +117,7 @@ const Index = () => {
         <div className="container px-4 sm:px-8 mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to transform your finances with AI?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto text-teal-100">
-            Join thousands of users who have taken control of their financial future with finAI.
+            Join thousands of users who have taken control of their financial future with FinAI.
           </p>
           
           <Link to={isAuthenticated ? "/dashboard" : "/register"}>

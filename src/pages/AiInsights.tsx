@@ -7,7 +7,7 @@ const AiInsights = () => {
   return (
     <div className="w-full mx-auto">
       <Helmet>
-        <title>AI Insights | FinSight</title>
+        <title>AI Insights | FinAI</title>
         <meta name="description" content="Get AI-powered insights about your financial habits" />
       </Helmet>
       <EnhancedAIInsights />

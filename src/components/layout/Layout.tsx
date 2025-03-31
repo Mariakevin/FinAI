@@ -23,7 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <header className="h-14 border-b flex items-center px-4 w-full">
             <SidebarTrigger />
             <div className="ml-4 text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
-              FinSight
+              FinAI
             </div>
           </header>
         )}

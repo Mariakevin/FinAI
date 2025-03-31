@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -111,7 +110,7 @@ const Navbar = () => {
               <span className="text-white font-semibold text-base">F</span>
             </div>
             <span className="text-lg sm:text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
-              FinSight
+              FinAI
             </span>
           </Link>
 
@@ -136,7 +135,7 @@ const Navbar = () => {
                           <span className="text-white font-semibold text-sm">f</span>
                         </div>
                         <span className="text-base font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
-                          finAI
+                          FinAI
                         </span>
                       </Link>
                     </div>

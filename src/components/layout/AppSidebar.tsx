@@ -82,7 +82,7 @@ export function AppSidebar() {
             !expanded && "justify-center"
           )}>
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
-              {expanded ? "FinSight" : "FS"}
+              {expanded ? "FinAI" : "FA"}
             </span>
           </div>
         </SidebarHeader>
