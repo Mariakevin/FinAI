@@ -7,7 +7,7 @@ const Transactions = () => {
   return (
     <div className="w-full">
       <Helmet>
-        <title>Transactions | FinWise</title>
+        <title>Transactions | FinAI</title>
         <meta name="description" content="Manage and track your financial transactions" />
       </Helmet>
       <TransactionPage />

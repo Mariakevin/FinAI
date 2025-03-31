@@ -13,14 +13,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const isPublicRoute = ['/', '/login', '/register'].includes(location.pathname);
   
   return (
-    <div className="min-h-screen flex w-full bg-background">
+    <div className="min-h-screen flex w-full bg-gradient-to-br from-white to-blue-50">
       {isAuthenticated && !isPublicRoute && <AppSidebar />}
       <main className={cn(
         "flex-1 flex flex-col w-full",
         isAuthenticated && !isPublicRoute ? "ml-16" : ""
       )}>
         {isAuthenticated && !isPublicRoute && (
-          <header className="h-14 border-b flex items-center px-4 w-full">
+          <header className="h-14 border-b flex items-center px-4 w-full bg-white/80 backdrop-blur-sm">
             <SidebarTrigger />
             <div className="ml-4 text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
               FinAI

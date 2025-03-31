@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import FinanceSummary from './FinanceSummary';
 import BalanceChart from './BalanceChart';
@@ -17,9 +18,7 @@ import {
   LayoutDashboard, 
   LogIn, 
   Sparkles, 
-  ArrowUpRight,
-  RefreshCw,
-  ExternalLink
+  RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -158,7 +157,7 @@ const DashboardPage = () => {
   };
   
   return (
-    <div className="space-y-6 pb-8 animate-fade-in pt-2">
+    <div className="space-y-6 pb-8 animate-fade-in pt-2 bg-gradient-to-b from-white to-slate-50">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <motion.div {...fadeInAnimation}>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
@@ -310,62 +309,6 @@ const DashboardPage = () => {
           />
         </motion.div>
       </div>
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="mt-6"
-      >
-        <Card className="shadow-md border-gray-200/60 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
-            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-              <ArrowUpRight className="h-5 w-5 text-blue-600" />
-              <span className="bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">Financial Recommendations</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                {
-                  title: "Optimize Spending",
-                  description: "Our AI analysis suggests you could save up to 12% on monthly expenses with small adjustments.",
-                  icon: <Sparkles className="h-5 w-5 text-purple-500" />,
-                  color: "bg-purple-50"
-                },
-                {
-                  title: "Savings Goal",
-                  description: "Set up an automatic savings plan to reach your financial goals faster.",
-                  icon: <Wallet className="h-5 w-5 text-green-500" />,
-                  color: "bg-green-50"
-                },
-                {
-                  title: "Investment Opportunities",
-                  description: "Based on your profile, consider exploring low-risk investment options.",
-                  icon: <TrendingUp className="h-5 w-5 text-blue-500" />,
-                  color: "bg-blue-50"
-                }
-              ].map((item, index) => (
-                <Card key={index} className={cn("p-4 hover:shadow-md transition-all duration-200", item.color)}>
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 rounded-full bg-white">{item.icon}</div>
-                    <div>
-                      <h3 className="font-medium text-gray-800">{item.title}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-            <div className="flex justify-end mt-4">
-              <Button variant="outline" size="sm" className="gap-1 text-xs">
-                <ExternalLink className="h-3 w-3" />
-                View All Recommendations
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
     </div>
   );
 };

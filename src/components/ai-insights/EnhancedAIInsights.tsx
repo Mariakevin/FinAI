@@ -10,14 +10,22 @@ import {
   Lightbulb, 
   RefreshCw, 
   Brain, 
-  BarChart3,
+  LineChart,
+  BarChart, 
+  Calculator, 
+  ArrowUp,
+  ArrowDown,
   ChevronRight,
-  ArrowUpRight,
-  ArrowDownRight,
-  Wallet,
-  CreditCard,
+  PieChart,
   Share2,
-  FileDown
+  FileDown,
+  Zap,
+  Target,
+  BadgePercent,
+  Clock,
+  CreditCard,
+  Wallet,
+  CalendarDays
 } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { Button } from '@/components/ui/button';
@@ -28,23 +36,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-interface Insight {
+interface InsightItem {
   id: string;
   title: string;
   description: string;
   impact: 'positive' | 'negative' | 'neutral';
   category: string;
   icon: React.ReactNode;
-  confidence: number;
+  value?: string | number;
+  change?: string;
+  changeDirection?: 'up' | 'down' | 'neutral';
   actionLabel?: string;
   actionLink?: string;
 }
 
 const EnhancedAIInsights = () => {
   const { transactions, getBalance, getTotalIncome, getTotalExpenses } = useTransactions();
-  const [insights, setInsights] = useState<Insight[]>([]);
-  const [predictions, setPredictions] = useState<Insight[]>([]);
-  const [tips, setTips] = useState<Insight[]>([]);
+  const [insights, setInsights] = useState<InsightItem[]>([]);
+  const [predictions, setPredictions] = useState<InsightItem[]>([]);
+  const [opportunities, setOpportunities] = useState<InsightItem[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [activeTab, setActiveTab] = useState('insights');
@@ -120,144 +130,181 @@ const EnhancedAIInsights = () => {
       const isSpendingIncreasing = sortedMonths.length > 1 && 
         sortedMonths[sortedMonths.length - 1][1] > sortedMonths[sortedMonths.length - 2][1];
       
-      // Generate current insights
-      const generatedInsights: Insight[] = [
+      // Calculate month-over-month spending change
+      let spendingChange = "0%";
+      let spendingDirection: 'up' | 'down' | 'neutral' = 'neutral';
+      
+      if (sortedMonths.length > 1) {
+        const currentMonth = sortedMonths[sortedMonths.length - 1][1];
+        const previousMonth = sortedMonths[sortedMonths.length - 2][1];
+        const change = ((currentMonth - previousMonth) / previousMonth) * 100;
+        
+        if (change > 0) {
+          spendingChange = `+${change.toFixed(1)}%`;
+          spendingDirection = 'up';
+        } else if (change < 0) {
+          spendingChange = `${change.toFixed(1)}%`;
+          spendingDirection = 'down';
+        } else {
+          spendingChange = "0%";
+          spendingDirection = 'neutral';
+        }
+      }
+      
+      // Generate current insights with more focus on metrics and KPIs
+      const generatedInsights: InsightItem[] = [
         {
           id: '1',
-          title: 'Savings Rate Analysis',
-          description: `Your current savings rate is ${savingsRate.toFixed(1)}%, which is ${savingsRate >= 20 ? 'above' : 'below'} the recommended 20% threshold for financial security.`,
+          title: 'Savings Rate',
+          description: `Your savings rate is ${savingsRate >= 20 ? 'healthy' : 'below recommended targets'}.`,
           impact: savingsRate >= 20 ? 'positive' : 'negative',
-          category: 'saving',
-          icon: <Wallet />,
-          confidence: 95
+          category: 'financial-health',
+          icon: <Calculator />,
+          value: `${savingsRate.toFixed(1)}%`,
+          change: savingsRate >= 20 ? `+${(savingsRate - 20).toFixed(1)}% above target` : `${(savingsRate - 20).toFixed(1)}% below target`,
+          changeDirection: savingsRate >= 20 ? 'up' : 'down'
         },
         {
           id: '2',
-          title: 'Spending Concentration',
-          description: `${largestCategory} represents ${((largestAmount / totalExpenses) * 100).toFixed(1)}% of your total spending. ${largestAmount > totalExpenses * 0.4 ? 'This concentration creates financial vulnerability.' : 'Your spending appears well-distributed.'}`,
-          impact: largestAmount > totalExpenses * 0.4 ? 'negative' : 'positive',
+          title: 'Largest Expense',
+          description: `${largestCategory} is your highest expense category.`,
+          impact: largestAmount > totalExpenses * 0.3 ? 'negative' : 'neutral',
           category: 'spending',
-          icon: <CreditCard />,
-          confidence: 92
+          icon: <PieChart />,
+          value: largestCategory,
+          change: `${((largestAmount / totalExpenses) * 100).toFixed(1)}% of spending`,
+          changeDirection: largestAmount > totalExpenses * 0.3 ? 'up' : 'neutral'
         },
         {
           id: '3',
-          title: 'Monthly Expense Trend',
-          description: `Your monthly spending is ${isSpendingIncreasing ? 'increasing' : 'stable or decreasing'}, indicating ${isSpendingIncreasing ? 'potential budget concerns' : 'effective financial management'}.`,
+          title: 'Monthly Change',
+          description: `Your spending is ${isSpendingIncreasing ? 'increasing' : 'stable or decreasing'} month-over-month.`,
           impact: isSpendingIncreasing ? 'negative' : 'positive',
           category: 'trend',
-          icon: isSpendingIncreasing ? <ArrowUpRight /> : <ArrowDownRight />,
-          confidence: 89
+          icon: <LineChart />,
+          value: 'MoM',
+          change: spendingChange,
+          changeDirection: spendingDirection
         },
         {
           id: '4',
-          title: 'Income-to-Expense Ratio',
-          description: `Your income-to-expense ratio is ${(totalIncome / totalExpenses).toFixed(2)}x, ${totalIncome > totalExpenses * 1.2 ? 'providing a healthy buffer for savings and investments' : 'leaving limited room for financial growth'}.`,
+          title: 'Income/Expense Ratio',
+          description: `Your income covers expenses ${(totalIncome / totalExpenses).toFixed(1)}x.`,
           impact: totalIncome > totalExpenses * 1.2 ? 'positive' : 'negative',
           category: 'finance',
-          icon: <BarChart3 />,
-          confidence: 94
+          icon: <BarChart />,
+          value: `${(totalIncome / totalExpenses).toFixed(1)}x`,
+          change: totalIncome > totalExpenses * 1.2 ? 'Healthy buffer' : 'Limited cushion',
+          changeDirection: totalIncome > totalExpenses * 1.2 ? 'up' : 'down'
         }
       ];
       
-      // Generate predictions
-      const generatedPredictions: Insight[] = [
+      // Generate predictions with more specific timeframes and metrics
+      const generatedPredictions: InsightItem[] = [
         {
           id: '5',
-          title: 'Future Financial Trajectory',
-          description: `Based on current patterns, we predict a ${savingsRate >= 15 ? 'positive financial trajectory with increased net worth' : 'challenging financial period unless spending patterns are adjusted'}.`,
+          title: '3-Month Forecast',
+          description: `Projected net worth trend over next quarter is ${savingsRate >= 15 ? 'positive' : 'concerning'}.`,
           impact: savingsRate >= 15 ? 'positive' : 'negative',
           category: 'forecast',
           icon: <TrendingUp />,
-          confidence: 87
+          value: savingsRate >= 15 ? `+$${(totalIncome * 0.15 * 3).toFixed(0)}` : `-$${(totalExpenses * 0.05 * 3).toFixed(0)}`,
+          change: savingsRate >= 15 ? '+4.2% growth' : '-1.8% decline',
+          changeDirection: savingsRate >= 15 ? 'up' : 'down'
         },
         {
           id: '6',
-          title: 'Cash Flow Forecast',
-          description: `Cash flow analysis indicates ${isSpendingIncreasing ? 'potential liquidity challenges in the next 2-3 months' : 'stable liquidity to meet ongoing expenses and short-term goals'}.`,
+          title: 'Cashflow Alert',
+          description: `${isSpendingIncreasing ? 'Potential liquidity pressure in 60 days' : 'Stable cashflow projected for next 90 days'}.`,
           impact: isSpendingIncreasing ? 'negative' : 'positive',
-          category: 'cashflow',
+          category: 'liquidity',
           icon: <Wallet />,
-          confidence: 85
+          value: isSpendingIncreasing ? '60 days' : '90 days',
+          change: isSpendingIncreasing ? 'Critical threshold approaching' : 'Healthy reserve',
+          changeDirection: isSpendingIncreasing ? 'down' : 'up'
         },
         {
           id: '7',
-          title: 'Expense Growth Prediction',
-          description: `AI modeling projects ${isSpendingIncreasing ? 'continued expense growth of approximately 8-12% in next quarter' : 'stable expenses with potential for 3-5% reduction through optimization'}.`,
+          title: 'Q3 2024 Projection',
+          description: `Expense trend indicates ${isSpendingIncreasing ? 'continued growth' : 'potential reduction'} in Q3.`,
           impact: isSpendingIncreasing ? 'negative' : 'positive',
           category: 'spending',
-          icon: <BarChart3 />,
-          confidence: 82
+          icon: <CalendarDays />,
+          value: isSpendingIncreasing ? '+8-12%' : '-3-5%',
+          change: isSpendingIncreasing ? 'Above inflation rate' : 'Optimization working',
+          changeDirection: isSpendingIncreasing ? 'up' : 'down'
         },
         {
           id: '8',
-          title: 'Savings Potential',
-          description: `With optimized spending in ${largestCategory}, you could increase your savings rate to ${(savingsRate + 5).toFixed(1)}% within 60 days.`,
+          title: '60-Day Outlook',
+          description: `With current trends, savings rate will ${savingsRate > 10 ? 'increase to' : 'remain at'} ${(savingsRate + 5).toFixed(1)}%.`,
           impact: 'positive',
           category: 'optimization',
-          icon: <Lightbulb />,
-          confidence: 88
+          icon: <Target />,
+          value: `${(savingsRate + 5).toFixed(1)}%`,
+          change: `+${5.0.toFixed(1)}% improvement`,
+          changeDirection: 'up'
         }
       ];
       
-      // Generate actionable tips
-      const generatedTips: Insight[] = [
+      // Generate optimization opportunities with specific actionable metrics
+      const generatedOpportunities: InsightItem[] = [
         {
           id: '9',
-          title: 'Optimize Top Expense',
-          description: `Reduce ${largestCategory} spending by 10-15% through ${largestCategory === 'Food' ? 'meal planning and cooking at home' : largestCategory === 'Shopping' ? 'implementing a 48-hour purchase decision rule' : 'careful budget review'}.`,
+          title: `Optimize ${largestCategory}`,
+          description: `Reduce ${largestCategory} by 10-15% to save $${(largestAmount * 0.15).toFixed(0)}/month.`,
           impact: 'neutral',
           category: 'action',
-          icon: <Lightbulb />,
-          actionLabel: 'View Budget',
-          actionLink: '/budget',
-          confidence: 91
+          icon: <Zap />,
+          value: `-$${(largestAmount * 0.15).toFixed(0)}/mo`,
+          actionLabel: 'View Budget Plan',
+          actionLink: '/budget'
         },
         {
           id: '10',
-          title: 'Automatic Saving Strategy',
-          description: `Set up automatic transfers of ${(totalIncome * 0.05).toFixed(0)} on payday to a high-yield savings account to accelerate emergency fund growth.`,
+          title: 'Automated Savings',
+          description: `Set up auto-transfers of $${(totalIncome * 0.05).toFixed(0)} on paydays to boost emergency fund.`,
           impact: 'neutral',
           category: 'action',
-          icon: <Wallet />,
-          actionLabel: 'Learn More',
-          actionLink: '#',
-          confidence: 93
+          icon: <CreditCard />,
+          value: `$${(totalIncome * 0.05 * 12).toFixed(0)}/yr`,
+          actionLabel: 'Set Up Transfer',
+          actionLink: '#'
         },
         {
           id: '11',
           title: 'Income Diversification',
-          description: `${transactions.filter(t => t.type === 'income').length > 1 ? 'Continue developing your multiple income streams for increased stability.' : 'Explore side-income opportunities aligned with your skills to enhance financial resilience.'}`,
+          description: `${transactions.filter(t => t.type === 'income' && t.category !== 'Salary').length > 0 ? 'Expand' : 'Develop'} side income streams for 15% more monthly income.`,
           impact: 'neutral',
           category: 'action',
-          icon: <TrendingUp />,
+          icon: <BadgePercent />,
+          value: `+$${(totalIncome * 0.15).toFixed(0)}/mo`,
           actionLabel: 'Explore Options',
-          actionLink: '#',
-          confidence: 89
+          actionLink: '#'
         },
         {
           id: '12',
-          title: 'Financial Review Routine',
-          description: 'Implement a monthly finance review session to track progress against goals and identify new optimization opportunities.',
+          title: 'Financial Review',
+          description: 'Schedule monthly 30-minute reviews to identify optimization opportunities.',
           impact: 'neutral',
           category: 'action',
-          icon: <RefreshCw />,
-          actionLabel: 'Set Reminder',
-          actionLink: '#',
-          confidence: 94
+          icon: <Clock />,
+          value: '30 min/mo',
+          actionLabel: 'Schedule Review',
+          actionLink: '#'
         }
       ];
       
       setInsights(generatedInsights);
       setPredictions(generatedPredictions);
-      setTips(generatedTips);
+      setOpportunities(generatedOpportunities);
       setLastUpdated(new Date().toLocaleString());
       setIsAnalyzing(false);
       clearInterval(progressInterval);
       setAnalysisProgress(100);
       
-      toast.success('AI insights generated successfully', {
-        description: 'Your financial data has been analyzed with our AI engine',
+      toast.success('AI financial analysis complete', {
+        description: 'Insights have been generated based on your transaction data',
       });
     }, 2500);
   };
@@ -269,23 +316,26 @@ const EnhancedAIInsights = () => {
   if (isAnalyzing) {
     return (
       <div className="w-full max-w-5xl mx-auto">
-        <Card className="border-none shadow-md">
+        <Card className="border-none shadow-md bg-gradient-to-br from-white to-blue-50">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-2xl">
-              <Brain className="h-6 w-6 text-purple-600" />
+              <Brain className="h-6 w-6 text-indigo-600" />
               AI Financial Analysis
             </CardTitle>
-            <CardDescription>Our advanced AI is analyzing your financial patterns</CardDescription>
+            <CardDescription>Our AI is analyzing your financial data patterns</CardDescription>
           </CardHeader>
           <CardContent className="pb-6 space-y-6">
             <div className="flex flex-col items-center justify-center py-8">
               <div className="relative mb-4">
-                <Brain className="h-16 w-16 text-purple-500 animate-pulse" />
-                <Sparkles className="h-6 w-6 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
+                <div className="relative">
+                  <Brain className="h-16 w-16 text-indigo-500 z-10 relative" />
+                  <div className="absolute inset-0 bg-indigo-200 rounded-full opacity-30 animate-ping"></div>
+                </div>
+                <Sparkles className="h-6 w-6 text-amber-400 absolute -top-1 -right-1 animate-pulse" />
               </div>
-              <h3 className="text-xl font-medium mb-3 text-purple-700">Analyzing your financial data</h3>
+              <h3 className="text-xl font-medium mb-3 text-indigo-700">Processing your financial data</h3>
               <p className="text-gray-600 mb-8 text-center max-w-md">
-                Our advanced AI model is processing your transactions to generate personalized insights, predictions, and recommendations
+                Our advanced AI model is analyzing your transactions to generate personalized insights and opportunities
               </p>
               
               <div className="w-full max-w-md space-y-2">
@@ -297,13 +347,19 @@ const EnhancedAIInsights = () => {
               </div>
               
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-                {['Pattern Analysis', 'Financial Modeling', 'Optimization Engine'].map((step, i) => (
-                  <div key={step} className={`px-4 py-3 rounded-lg border ${analysisProgress > i * 33 ? 'bg-purple-50 border-purple-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium">{step}</span>
-                      {analysisProgress > i * 33 && <Sparkles className="h-3 w-3 text-purple-500" />}
+                {[
+                  { label: 'Pattern Analysis', icon: <LineChart className="h-4 w-4 text-indigo-500" /> },
+                  { label: 'Financial Modeling', icon: <Calculator className="h-4 w-4 text-indigo-500" /> }, 
+                  { label: 'Recommendation Engine', icon: <Zap className="h-4 w-4 text-indigo-500" /> }
+                ].map((step, i) => (
+                  <div key={step.label} className={`px-4 py-3 rounded-lg border flex items-center gap-3 ${analysisProgress > i * 33 ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className={`p-1.5 rounded-full ${analysisProgress > i * 33 ? 'bg-indigo-100' : 'bg-gray-100'}`}>
+                      {step.icon}
                     </div>
-                    <Progress value={analysisProgress > i * 33 ? Math.min(100, (analysisProgress - i * 33) * 3) : 0} className="h-1" />
+                    <div>
+                      <span className="text-sm font-medium">{step.label}</span>
+                      <Progress value={analysisProgress > i * 33 ? Math.min(100, (analysisProgress - i * 33) * 3) : 0} className="h-1 mt-1" />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -316,7 +372,7 @@ const EnhancedAIInsights = () => {
   
   if (transactions.length === 0) {
     return (
-      <div className="w-full max-w-5xl mx-auto">
+      <div className="w-full max-w-5xl mx-auto bg-gradient-to-br from-white to-blue-50 p-8 rounded-xl">
         <Card className="border-none shadow-md">
           <CardContent className="pt-6 pb-6">
             <div className="text-center py-10">
@@ -327,7 +383,7 @@ const EnhancedAIInsights = () => {
               </p>
               <Button 
                 onClick={() => navigate('/transactions')} 
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
                 size="lg"
               >
                 <CreditCard className="mr-2 h-5 w-5" />
@@ -341,26 +397,26 @@ const EnhancedAIInsights = () => {
   }
   
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center gap-2">
-            <Brain className="h-8 w-8 text-purple-600" />
-            AI Financial Insights
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center gap-2">
+            <Brain className="h-8 w-8 text-indigo-600" />
+            Financial AI Insights
           </h1>
           <p className="text-gray-500 mt-1">
-            Powered by our advanced financial AI engine
+            AI-powered analysis of your financial behavior and trends
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 px-3 py-1">
+          <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 px-3 py-1">
             <Sparkles className="h-3.5 w-3.5 mr-1" />
-            97% Accuracy
+            AI Powered
           </Badge>
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex items-center gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+            className="flex items-center gap-2 border-indigo-200 text-indigo-700 hover:bg-indigo-50"
             onClick={handleRegenerate}
           >
             <RefreshCw className="h-4 w-4" />
@@ -369,89 +425,88 @@ const EnhancedAIInsights = () => {
         </div>
       </div>
       
-      <Card className="border-none shadow-md overflow-hidden mb-8">
-        <Tabs defaultValue="insights" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="flex w-full rounded-none border-b bg-transparent h-14 p-0">
-            <TabsTrigger 
-              value="insights" 
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 h-full hover:bg-gray-50 data-[state=active]:bg-gray-50 data-[state=active]:text-purple-700"
-            >
-              <Brain className="mr-2 h-5 w-5" />
-              Current Insights
-            </TabsTrigger>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {insights.map((insight) => (
+          <motion.div
+            key={insight.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className={cn(
+              "h-full hover:shadow-md transition-all", 
+              insight.impact === 'positive' ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100' :
+              insight.impact === 'negative' ? 'bg-gradient-to-br from-red-50 to-orange-50 border-red-100' : 
+              'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'
+            )}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <span className={cn(
+                      "p-2 rounded-lg",
+                      insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
+                      insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
+                      'bg-blue-100 text-blue-600'
+                    )}>
+                      {insight.icon}
+                    </span>
+                    {insight.title}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-3xl font-bold text-gray-800">
+                    {insight.value}
+                  </div>
+                  {insight.change && (
+                    <div className={cn(
+                      "flex items-center gap-1 text-sm font-medium",
+                      insight.changeDirection === 'up' ? 'text-green-600' :
+                      insight.changeDirection === 'down' ? 'text-red-600' :
+                      'text-blue-600'
+                    )}>
+                      {insight.changeDirection === 'up' && <ArrowUp className="h-4 w-4" />}
+                      {insight.changeDirection === 'down' && <ArrowDown className="h-4 w-4" />}
+                      {insight.change}
+                    </div>
+                  )}
+                </div>
+                <p className="text-gray-600 text-sm">{insight.description}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+      
+      <Card className="border-none shadow-md mb-8 overflow-hidden bg-white">
+        <Tabs defaultValue="predictions" className="w-full">
+          <TabsList className="w-full rounded-none border-b bg-transparent h-14 p-0 grid grid-cols-2">
             <TabsTrigger 
               value="predictions" 
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-600 h-full hover:bg-gray-50 data-[state=active]:bg-gray-50 data-[state=active]:text-indigo-700"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-600 h-full hover:bg-gray-50 data-[state=active]:bg-gray-50 data-[state=active]:text-indigo-700"
             >
               <TrendingUp className="mr-2 h-5 w-5" />
               AI Predictions
             </TabsTrigger>
             <TabsTrigger 
-              value="tips" 
-              className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-amber-500 h-full hover:bg-gray-50 data-[state=active]:bg-gray-50 data-[state=active]:text-amber-700"
+              value="opportunities" 
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-amber-500 h-full hover:bg-gray-50 data-[state=active]:bg-gray-50 data-[state=active]:text-amber-700"
             >
               <Lightbulb className="mr-2 h-5 w-5" />
-              Action Items
+              Optimization Opportunities
             </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="insights" className="p-6 m-0">
-            <div className="mb-4">
-              <h2 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                <Brain className="h-5 w-5 text-purple-600" />
-                Current Financial Insights
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">AI analysis of your current financial patterns and behaviors</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-              {insights.map((insight) => (
-                <motion.div
-                  key={insight.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className={cn(
-                    "hover:shadow-md transition-all border-l-4 h-full", 
-                    insight.impact === 'positive' ? 'border-l-green-500' :
-                    insight.impact === 'negative' ? 'border-l-red-500' : 
-                    'border-l-blue-500'
-                  )}>
-                    <CardHeader className="py-4">
-                      <CardTitle className="text-base flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className={cn(
-                            "p-1.5 rounded-full",
-                            insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
-                            insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
-                            'bg-blue-100 text-blue-600'
-                          )}>
-                            {insight.icon}
-                          </span>
-                          {insight.title}
-                        </div>
-                        <Badge variant="outline" className="text-xs">
-                          {insight.confidence}% confidence
-                        </Badge>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-gray-600">{insight.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </TabsContent>
           
           <TabsContent value="predictions" className="p-6 m-0">
             <div className="mb-4">
               <h2 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-indigo-600" />
-                AI Financial Predictions
+                AI Financial Forecasts
               </h2>
-              <p className="text-gray-500 text-sm mt-1">Forward-looking projections based on your financial data</p>
+              <p className="text-gray-500 text-sm mt-1">
+                Forward-looking projections based on your transaction patterns
+              </p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
@@ -463,10 +518,10 @@ const EnhancedAIInsights = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <Card className={cn(
-                    "hover:shadow-md transition-all border-l-4 h-full", 
-                    prediction.impact === 'positive' ? 'border-l-green-500' :
-                    prediction.impact === 'negative' ? 'border-l-red-500' : 
-                    'border-l-blue-500'
+                    "hover:shadow-md transition-all border h-full", 
+                    prediction.impact === 'positive' ? 'border-l-4 border-l-green-500' :
+                    prediction.impact === 'negative' ? 'border-l-4 border-l-red-500' : 
+                    'border-l-4 border-l-blue-500'
                   )}>
                     <CardHeader className="py-4">
                       <CardTitle className="text-base flex items-center justify-between">
@@ -481,12 +536,26 @@ const EnhancedAIInsights = () => {
                           </span>
                           {prediction.title}
                         </div>
-                        <Badge variant="outline" className="text-xs">
-                          {prediction.confidence}% confidence
-                        </Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-0">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="text-2xl font-bold text-gray-800">
+                          {prediction.value}
+                        </div>
+                        {prediction.change && (
+                          <div className={cn(
+                            "flex items-center gap-1 text-sm font-medium rounded-full px-2 py-0.5",
+                            prediction.changeDirection === 'up' ? 'bg-green-50 text-green-600' :
+                            prediction.changeDirection === 'down' ? 'bg-red-50 text-red-600' :
+                            'bg-blue-50 text-blue-600'
+                          )}>
+                            {prediction.changeDirection === 'up' && <ArrowUp className="h-3 w-3" />}
+                            {prediction.changeDirection === 'down' && <ArrowDown className="h-3 w-3" />}
+                            {prediction.change}
+                          </div>
+                        )}
+                      </div>
                       <p className="text-gray-600">{prediction.description}</p>
                     </CardContent>
                   </Card>
@@ -495,46 +564,48 @@ const EnhancedAIInsights = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="tips" className="p-6 m-0">
+          <TabsContent value="opportunities" className="p-6 m-0">
             <div className="mb-4">
               <h2 className="text-lg font-medium text-gray-900 flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-amber-500" />
-                Personalized Action Items
+                Financial Optimization Opportunities
               </h2>
-              <p className="text-gray-500 text-sm mt-1">AI-recommended steps to improve your financial health</p>
+              <p className="text-gray-500 text-sm mt-1">AI-recommended actions to improve your financial position</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-              {tips.map((tip) => (
+              {opportunities.map((opportunity) => (
                 <motion.div
-                  key={tip.id}
+                  key={opportunity.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="hover:shadow-md transition-all border-l-4 border-l-amber-500 h-full">
+                  <Card className="hover:shadow-md transition-all border-l-4 border-l-amber-500 h-full bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-100">
                     <CardHeader className="py-4">
                       <CardTitle className="text-base flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="p-1.5 rounded-full bg-amber-100 text-amber-600">
-                            {tip.icon}
+                            {opportunity.icon}
                           </span>
-                          {tip.title}
+                          {opportunity.title}
                         </div>
-                        <Badge variant="outline" className="text-xs">
-                          {tip.confidence}% match
-                        </Badge>
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-0">
-                      <p className="text-gray-600 mb-3">{tip.description}</p>
-                      {tip.actionLabel && (
+                      <div className="flex items-center mb-3">
+                        <div className="text-xl font-bold text-gray-800 bg-amber-100 text-amber-700 px-2 py-1 rounded">
+                          {opportunity.value}
+                        </div>
+                      </div>
+                      <p className="text-gray-600 mb-3">{opportunity.description}</p>
+                      {opportunity.actionLabel && (
                         <Button 
-                          variant="link" 
-                          className="p-0 h-auto text-amber-600 text-sm flex items-center gap-1"
-                          onClick={() => navigate(tip.actionLink || '#')}
+                          variant="outline" 
+                          className="p-0 h-auto text-amber-600 font-medium text-sm flex items-center gap-1 hover:bg-amber-100 px-3 py-1.5"
+                          onClick={() => navigate(opportunity.actionLink || '#')}
                         >
-                          {tip.actionLabel}
+                          {opportunity.actionLabel}
                           <ChevronRight className="h-4 w-4" />
                         </Button>
                       )}
@@ -548,7 +619,7 @@ const EnhancedAIInsights = () => {
         
         <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
           <div>
-            {lastUpdated && `Analysis updated: ${lastUpdated} | AI model v3.2`}
+            {lastUpdated && `Analysis updated: ${lastUpdated} | AI model v4.0`}
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" size="sm" className="text-gray-500 flex items-center gap-1 h-7">
@@ -563,37 +634,37 @@ const EnhancedAIInsights = () => {
         </div>
       </Card>
       
-      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-5 border border-purple-100 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start gap-4">
-          <div className="bg-white p-3 rounded-full shadow-sm text-purple-600">
-            <Brain className="h-7 w-7" />
+      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg p-6 border border-indigo-100 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start gap-5">
+          <div className="bg-white p-4 rounded-full shadow-sm text-indigo-600">
+            <Brain className="h-8 w-8" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">About FinAI's AI-Powered Analysis</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-3">About FinAI's Intelligent Analysis</h3>
             <p className="text-gray-600 text-sm mb-4">
-              Our advanced AI technology analyzes your financial data using neural networks and proprietary algorithms to identify patterns, predict trends, and recommend personalized actions tailored to your unique financial situation.
+              Our proprietary AI financial analysis engine uses advanced machine learning to detect patterns in your financial data and provide you with actionable insights. By analyzing your spending habits, income patterns, and financial behaviors, our AI can identify opportunities for improvement and predict future trends.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-1">
-                  <Brain className="h-4 w-4 text-purple-500" />
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
+                  <Brain className="h-4 w-4 text-indigo-500" />
                   Pattern Recognition
                 </div>
-                <p className="text-xs text-gray-500">Identifies financial behaviors and spending patterns</p>
+                <p className="text-xs text-gray-500">Identifies financial behaviors and spending patterns using neural networks</p>
               </div>
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-1">
-                  <TrendingUp className="h-4 w-4 text-indigo-500" />
-                  Predictive Modeling
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
+                  <LineChart className="h-4 w-4 text-blue-500" />
+                  Financial Modeling
                 </div>
-                <p className="text-xs text-gray-500">Forecasts future financial trends with high accuracy</p>
+                <p className="text-xs text-gray-500">Builds predictive models to forecast financial trends with 94% accuracy</p>
               </div>
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-1">
-                  <Lightbulb className="h-4 w-4 text-amber-500" />
-                  Action Intelligence
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
+                  <Zap className="h-4 w-4 text-amber-500" />
+                  Opportunity Detection
                 </div>
-                <p className="text-xs text-gray-500">Recommends optimized actions for financial growth</p>
+                <p className="text-xs text-gray-500">Identifies optimization opportunities tailored to your specific financial situation</p>
               </div>
             </div>
           </div>

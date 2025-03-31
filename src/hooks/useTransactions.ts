@@ -94,113 +94,178 @@ export const useTransactions = () => {
   }, [transactions, filter]);
 
   const connectUpiId = (upiId: string) => {
-    setIsUpiConnected(true);
-    setConnectedUpiId(upiId);
+    setIsUpiConnected(!!upiId);
+    setConnectedUpiId(upiId || null);
     
-    // Generate some random transactions for demo purposes
-    const currentDate = new Date();
-    const randomTransactions = [
-      {
-        id: `upi-${Date.now()}-1`,
-        description: 'Salary Deposit',
-        amount: 4250.00,
-        date: new Date(2023, 9, 15).toISOString(), // Oct 15, 2023
-        category: 'Salary',
-        type: 'income' as const,
-      },
-      {
-        id: `upi-${Date.now()}-2`,
-        description: 'Grocery Shopping',
-        amount: 122.50,
-        date: new Date(2023, 10, 3).toISOString(), // Nov 3, 2023
-        category: 'Groceries',
-        type: 'expense' as const,
-      },
-      {
-        id: `upi-${Date.now()}-3`,
-        description: 'Freelance Payment',
-        amount: 845.00,
-        date: new Date(2023, 11, 7).toISOString(), // Dec 7, 2023
-        category: 'Income',
-        type: 'income' as const,
-      },
-      {
-        id: `upi-${Date.now()}-4`,
-        description: 'Restaurant Dinner',
-        amount: 78.35,
-        date: new Date(2024, 0, 12).toISOString(), // Jan 12, 2024
-        category: 'Dining',
-        type: 'expense' as const,
-      },
-      {
-        id: `upi-${Date.now()}-5`,
-        description: 'Utility Bill Payment',
-        amount: 145.20,
-        date: new Date(2024, 1, 5).toISOString(), // Feb 5, 2024
-        category: 'Utilities',
-        type: 'expense' as const,
-      },
-      {
-        id: `upi-${Date.now()}-6`,
-        description: 'Bonus Payment',
-        amount: 1200.00,
-        date: new Date(2024, 2, 18).toISOString(), // Mar 18, 2024
-        category: 'Bonus',
-        type: 'income' as const,
-      },
-      {
-        id: `upi-${Date.now()}-7`,
-        description: 'Online Shopping',
-        amount: 89.95,
-        date: new Date().toISOString(), // Current date
-        category: 'Shopping',
-        type: 'expense' as const,
-      },
-      // Adding more transactions across different months
-      {
-        id: `upi-${Date.now()}-8`,
-        description: 'Internet Bill',
-        amount: 59.99,
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth()-1, 10).toISOString(),
-        category: 'Utilities',
-        type: 'expense' as const,
-      },
-      {
-        id: `upi-${Date.now()}-9`,
-        description: 'Side Project Income',
-        amount: 350.00,
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth()-2, 22).toISOString(),
-        category: 'Income',
-        type: 'income' as const,
-      },
-      {
-        id: `upi-${Date.now()}-10`,
-        description: 'Coffee Shop',
-        amount: 12.85,
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 5).toISOString(),
-        category: 'Food & Dining',
-        type: 'expense' as const,
-      },
-      {
-        id: `upi-${Date.now()}-11`,
-        description: 'Tax Refund',
-        amount: 780.25,
-        date: new Date(currentDate.getFullYear(), 3, 15).toISOString(), // April 15
-        category: 'Income',
-        type: 'income' as const,
-      },
-      {
-        id: `upi-${Date.now()}-12`,
-        description: 'Health Insurance',
-        amount: 189.50,
-        date: new Date(currentDate.getFullYear(), 4, 2).toISOString(), // May 2
-        category: 'Health & Fitness',
-        type: 'expense' as const,
+    if (!upiId) return;
+    
+    // Generate more transactions across different dates for demo purposes
+    const generateRandomTransactions = () => {
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      
+      // Create array with months from the past year
+      const months = [];
+      for (let i = 12; i >= 0; i--) {
+        let targetMonth = currentMonth - i;
+        let targetYear = currentYear;
+        
+        if (targetMonth < 0) {
+          targetMonth = 12 + targetMonth;
+          targetYear = currentYear - 1;
+        }
+        
+        months.push({ month: targetMonth, year: targetYear });
       }
-    ];
+      
+      // Categories for income
+      const incomeCategories = ['Salary', 'Freelance', 'Investment', 'Bonus', 'Gift', 'Side Project', 'Refund', 'Dividend', 'Rental Income'];
+      
+      // Categories for expenses
+      const expenseCategories = ['Groceries', 'Dining', 'Transport', 'Shopping', 'Utilities', 'Entertainment', 'Health', 'Education', 'Travel', 'Housing', 'Insurance', 'Subscriptions'];
+      
+      // Transaction descriptions
+      const incomeDescriptions = {
+        'Salary': ['Monthly Salary', 'Paycheck', 'Employment Income', 'Direct Deposit - Employer'],
+        'Freelance': ['Client Payment', 'Freelance Project', 'Consulting Fee', 'Contract Work'],
+        'Investment': ['Stock Dividend', 'ETF Return', 'Investment Growth', 'Portfolio Income'],
+        'Bonus': ['Performance Bonus', 'Year-End Bonus', 'Holiday Bonus', 'Incentive Payment'],
+        'Gift': ['Birthday Gift', 'Holiday Gift', 'Family Support', 'Friend Gift'],
+        'Side Project': ['Side Business Income', 'Part-time Work', 'Online Store Sales', 'Digital Product Sale'],
+        'Refund': ['Tax Refund', 'Product Return', 'Service Refund', 'Deposit Return'],
+        'Dividend': ['Company Dividend', 'Stock Yield', 'Investment Return', 'Profit Share'],
+        'Rental Income': ['Property Rent', 'Space Rental', 'Equipment Rental', 'Rental Deposit']
+      };
+      
+      const expenseDescriptions = {
+        'Groceries': ['Supermarket', 'Grocery Shopping', 'Fresh Market', 'Local Store'],
+        'Dining': ['Restaurant Bill', 'Cafe Visit', 'Fast Food', 'Food Delivery'],
+        'Transport': ['Fuel', 'Public Transport', 'Taxi Ride', 'Car Maintenance'],
+        'Shopping': ['Clothing Purchase', 'Electronics Store', 'Home Items', 'Online Shopping'],
+        'Utilities': ['Electricity Bill', 'Water Bill', 'Internet Bill', 'Gas Bill'],
+        'Entertainment': ['Movie Tickets', 'Concert', 'Game Purchase', 'Streaming Subscription'],
+        'Health': ['Pharmacy', 'Doctor Visit', 'Health Insurance', 'Fitness Membership'],
+        'Education': ['Course Fee', 'Book Purchase', 'Learning Materials', 'Tuition'],
+        'Travel': ['Flight Tickets', 'Hotel Booking', 'Vacation Expense', 'Travel Insurance'],
+        'Housing': ['Rent Payment', 'Mortgage', 'Home Repair', 'Property Tax'],
+        'Insurance': ['Car Insurance', 'Health Insurance Premium', 'Life Insurance', 'Property Insurance'],
+        'Subscriptions': ['Streaming Service', 'Software Subscription', 'News Subscription', 'App Purchase']
+      };
+      
+      // Generate transactions for each month
+      const transactions = [];
+      
+      months.forEach(({ month, year }) => {
+        // Number of transactions per month (between 1-3)
+        const incomeCount = Math.floor(Math.random() * 2) + 1;
+        
+        // Generate income transactions
+        for (let i = 0; i < incomeCount; i++) {
+          const categoryIndex = Math.floor(Math.random() * incomeCategories.length);
+          const category = incomeCategories[categoryIndex];
+          
+          const descriptions = incomeDescriptions[category as keyof typeof incomeDescriptions];
+          const descriptionIndex = Math.floor(Math.random() * descriptions.length);
+          const description = descriptions[descriptionIndex];
+          
+          // Random day of month (1-28 to avoid date issues)
+          const day = Math.floor(Math.random() * 28) + 1;
+          
+          // Amount range based on category
+          let amountMin = 0;
+          let amountMax = 0;
+          
+          if (category === 'Salary') {
+            amountMin = 2000;
+            amountMax = 5000;
+          } else if (category === 'Bonus') {
+            amountMin = 500;
+            amountMax = 2000;
+          } else if (category === 'Investment' || category === 'Dividend') {
+            amountMin = 100;
+            amountMax = 800;
+          } else if (category === 'Rental Income') {
+            amountMin = 1000;
+            amountMax = 3000;
+          } else {
+            amountMin = 50;
+            amountMax = 500;
+          }
+          
+          const amount = Math.floor(Math.random() * (amountMax - amountMin + 1)) + amountMin;
+          
+          transactions.push({
+            id: `upi-${Date.now()}-income-${i}-${month}-${year}`,
+            description,
+            amount,
+            date: new Date(year, month, day).toISOString(),
+            category,
+            type: 'income' as const
+          });
+        }
+        
+        // Generate expense transactions (3-6 per month)
+        const expenseCount = Math.floor(Math.random() * 4) + 3;
+        
+        for (let i = 0; i < expenseCount; i++) {
+          const categoryIndex = Math.floor(Math.random() * expenseCategories.length);
+          const category = expenseCategories[categoryIndex];
+          
+          const descriptions = expenseDescriptions[category as keyof typeof expenseDescriptions];
+          const descriptionIndex = Math.floor(Math.random() * descriptions.length);
+          const description = descriptions[descriptionIndex];
+          
+          // Random day of month (1-28 to avoid date issues)
+          const day = Math.floor(Math.random() * 28) + 1;
+          
+          // Amount range based on category
+          let amountMin = 0;
+          let amountMax = 0;
+          
+          if (category === 'Housing') {
+            amountMin = 800;
+            amountMax = 2500;
+          } else if (category === 'Travel') {
+            amountMin = 200;
+            amountMax = 1000;
+          } else if (category === 'Shopping') {
+            amountMin = 50;
+            amountMax = 300;
+          } else if (category === 'Groceries') {
+            amountMin = 40;
+            amountMax = 200;
+          } else if (category === 'Dining') {
+            amountMin = 20;
+            amountMax = 150;
+          } else if (category === 'Utilities' || category === 'Insurance') {
+            amountMin = 50;
+            amountMax = 250;
+          } else {
+            amountMin = 10;
+            amountMax = 100;
+          }
+          
+          const amount = Math.floor(Math.random() * (amountMax - amountMin + 1)) + amountMin;
+          
+          transactions.push({
+            id: `upi-${Date.now()}-expense-${i}-${month}-${year}`,
+            description,
+            amount,
+            date: new Date(year, month, day).toISOString(),
+            category,
+            type: 'expense' as const
+          });
+        }
+      });
+      
+      return transactions;
+    };
     
-    setTransactions((prev) => [...prev, ...randomTransactions]);
+    const newTransactions = generateRandomTransactions();
+    setTransactions((prev) => [...prev, ...newTransactions]);
     toast.success(`UPI ID ${upiId} connected successfully`);
+    toast.success(`Imported ${newTransactions.length} transactions`);
   };
 
   return {
@@ -215,7 +280,7 @@ export const useTransactions = () => {
     connectUpiId,
     isUpiConnected,
     connectedUpiId,
-    clearAllTransactions, // Add the missing function to the returned object
-    isLoading: false, // Mock loading state
+    clearAllTransactions,
+    isLoading: false,
   };
 };
