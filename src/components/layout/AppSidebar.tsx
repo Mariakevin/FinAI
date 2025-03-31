@@ -1,5 +1,5 @@
 
-import { Home, PieChart, DollarSign, TrendingUp, Settings, LogOut, User, Lightbulb } from 'lucide-react';
+import { Home, PieChart, DollarSign, TrendingUp, LogOut, User, Lightbulb } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
@@ -51,19 +51,10 @@ export function AppSidebar() {
       path: '/ai-insights',
       icon: Lightbulb,
     },
-  ];
-
-  // User settings items
-  const userItems = [
     {
       title: 'Profile',
       path: '/profile',
       icon: User,
-    },
-    {
-      title: 'Settings',
-      path: '/settings',
-      icon: Settings,
     },
   ];
 
@@ -81,30 +72,9 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton
-                    className={cn(
-                      isActive(item.path) && "bg-accent text-accent-foreground"
-                    )}
-                    onClick={() => navigate(item.path)}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Settings</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {userItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
                     className={cn(

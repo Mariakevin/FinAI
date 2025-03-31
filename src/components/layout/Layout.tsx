@@ -24,7 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <SidebarTrigger />
           </header>
         )}
-        <div className="flex-1 p-4 md:p-6 lg:p-8">
+        <div className="flex-1 p-4 md:p-6 lg:p-8 max-w-6xl mx-auto w-full">
           {children}
         </div>
       </main>

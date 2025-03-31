@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Sparkles, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, Target, Wallet, PiggyBank, CreditCard, ArrowRight, RefreshCw, Bot, Brain, ShieldCheck, Clock } from 'lucide-react';
+import { Sparkles, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, Wallet, PiggyBank, CreditCard, ArrowRight, RefreshCw, Bot, Brain } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -28,20 +29,11 @@ interface SpendingPattern {
   change: number;
 }
 
-interface SavingGoal {
-  id: string;
-  name: string;
-  target: number;
-  current: number;
-  deadline?: string;
-}
-
 const EnhancedAIInsights = () => {
   const { transactions, getBalance, getTotalIncome, getTotalExpenses } = useTransactions();
   const [insights, setInsights] = useState<Insight[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [spendingPatterns, setSpendingPatterns] = useState<SpendingPattern[]>([]);
-  const [savingGoals, setSavingGoals] = useState<SavingGoal[]>([]);
   const [selectedTab, setSelectedTab] = useState('insights');
   const [isRegenerating, setIsRegenerating] = useState(false);
   const navigate = useNavigate();
@@ -190,31 +182,8 @@ const EnhancedAIInsights = () => {
         };
       }).sort((a, b) => b.amount - a.amount);
       
-      const generatedGoals: SavingGoal[] = [
-        {
-          id: '1',
-          name: 'Emergency Fund',
-          target: totalIncome * 6,
-          current: balance > 0 ? balance : 0,
-          deadline: '2024-12-31'
-        },
-        {
-          id: '2',
-          name: 'Vacation Fund',
-          target: 50000,
-          current: 15000,
-        },
-        {
-          id: '3',
-          name: 'New Tech Gadget',
-          target: 25000,
-          current: 5000,
-        }
-      ];
-      
       setInsights(generatedInsights);
       setSpendingPatterns(generatedPatterns);
-      setSavingGoals(generatedGoals);
       setIsAnalyzing(false);
       setIsRegenerating(false);
     }, 1500);
@@ -239,12 +208,12 @@ const EnhancedAIInsights = () => {
   };
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto">
       <motion.div 
         initial="hidden"
         animate="visible"
         variants={fadeIn}
-        className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl shadow-md"
+        className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl shadow-sm"
       >
         <div className="flex items-center space-x-4">
           <div className="p-3 bg-purple-100 rounded-full">
@@ -272,24 +241,20 @@ const EnhancedAIInsights = () => {
       </motion.div>
       
       <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-4">
-        <TabsList className="grid grid-cols-3 gap-2 bg-muted/20">
-          <TabsTrigger value="insights" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800">
+        <TabsList className="w-full grid grid-cols-2 gap-2 bg-muted/20 p-1 rounded-lg max-w-md mx-auto">
+          <TabsTrigger value="insights" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800 rounded-md">
             <Lightbulb className="h-4 w-4 mr-2" />
             Insights
           </TabsTrigger>
-          <TabsTrigger value="spending" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800">
+          <TabsTrigger value="spending" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800 rounded-md">
             <CreditCard className="h-4 w-4 mr-2" />
             Spending
           </TabsTrigger>
-          <TabsTrigger value="goals" className="data-[state=active]:bg-green-100 data-[state=active]:text-green-800">
-            <Target className="h-4 w-4 mr-2" />
-            Goals
-          </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="insights" className="space-y-4">
+        <TabsContent value="insights" className="space-y-4 pt-4">
           {isAnalyzing ? (
-            <Card>
+            <Card className="border-none shadow-sm">
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center justify-center py-10">
                   <div className="relative">
@@ -354,7 +319,7 @@ const EnhancedAIInsights = () => {
               >
                 {insights.map((insight) => (
                   <motion.div key={insight.id} variants={fadeIn}>
-                    <Card className={`hover:shadow-md transition-all ${
+                    <Card className={`hover:shadow-md transition-all border border-gray-100 ${
                       insight.impact === 'positive' ? 'border-l-4 border-l-green-500' :
                       insight.impact === 'negative' ? 'border-l-4 border-l-red-500' :
                       'border-l-4 border-l-blue-500'
@@ -372,7 +337,7 @@ const EnhancedAIInsights = () => {
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-gray-600">{insight.description}</p>
+                        <p className="text-gray-600 text-sm">{insight.description}</p>
                         {insight.actionLabel && (
                           <Button 
                             variant="link" 
@@ -389,7 +354,7 @@ const EnhancedAIInsights = () => {
               </motion.div>
             </div>
           ) : (
-            <Card>
+            <Card className="border-none shadow-sm">
               <CardContent className="pt-6">
                 <div className="text-center py-10">
                   <AlertTriangle className="h-10 w-10 text-amber-500 mx-auto mb-4" />
@@ -407,8 +372,8 @@ const EnhancedAIInsights = () => {
           )}
         </TabsContent>
         
-        <TabsContent value="spending" className="space-y-4">
-          <Card>
+        <TabsContent value="spending" className="space-y-4 pt-4">
+          <Card className="border-none shadow-sm">
             <CardHeader>
               <CardTitle>Spending Distribution</CardTitle>
               <CardDescription>
@@ -464,7 +429,7 @@ const EnhancedAIInsights = () => {
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="border-none shadow-sm">
             <CardHeader>
               <CardTitle>AI Recommendations</CardTitle>
               <CardDescription>
@@ -499,72 +464,6 @@ const EnhancedAIInsights = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-        
-        <TabsContent value="goals" className="space-y-4">
-          {!isAnalyzing && savingGoals.length > 0 ? (
-            <>
-              <div className="text-xs text-gray-500 mb-4 bg-green-50 p-3 rounded-md">
-                <div className="flex items-start gap-2">
-                  <Bot className="h-4 w-4 text-green-600 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-green-800">AI Goal Recommendations</p>
-                    <p className="mt-1">Based on your income and spending patterns, I've created personalized savings goals and calculated realistic timeframes for achieving them.</p>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {savingGoals.map((goal) => (
-                  <Card key={goal.id} className="hover:shadow-md transition-all">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg">{goal.name}</CardTitle>
-                      {goal.deadline && (
-                        <CardDescription>Target date: {new Date(goal.deadline).toLocaleDateString()}</CardDescription>
-                      )}
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-gray-500">Progress</span>
-                          <span className="font-medium">{((goal.current / goal.target) * 100).toFixed(0)}%</span>
-                        </div>
-                        <Progress value={(goal.current / goal.target) * 100} className="h-2" />
-                        <div className="flex justify-between text-sm pt-1">
-                          <span>₹{goal.current.toLocaleString()}</span>
-                          <span className="text-gray-500">₹{goal.target.toLocaleString()}</span>
-                        </div>
-                        
-                        <div className="mt-4 pt-4 border-t border-gray-100">
-                          <h4 className="text-sm font-medium mb-2">AI Suggestion</h4>
-                          <p className="text-xs text-gray-600">
-                            {goal.current / goal.target < 0.25
-                              ? `My financial model suggests allocating ₹${((goal.target - goal.current) / 12).toFixed(0)} per month to reach your ${goal.name} goal on schedule. This amount is optimized based on your cash flow patterns.`
-                              : goal.current / goal.target < 0.75
-                              ? `You're making excellent progress! Based on trend analysis, continuing your current saving trajectory will achieve your goal within the projected timeframe.`
-                              : `You're 75%+ toward your target! Just ₹${(goal.target - goal.current).toFixed(0)} more to complete this goal. Consider a final push to accelerate completion and redirect resources to your next priority.`
-                            }
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </>
-          ) : (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center py-10">
-                  <Target className="h-10 w-10 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No savings goals set</h3>
-                  <p className="text-gray-500 mb-4">Create savings goals to track your progress</p>
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    Create Goal
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </TabsContent>
       </Tabs>
     </div>
