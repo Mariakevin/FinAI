@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, memo } from 'react';
 import TransactionList from './TransactionList';
 import TransactionForm from './TransactionForm';
@@ -45,7 +44,6 @@ const TransactionPage = () => {
   const [viewMode, setViewMode] = useState<'list' | 'table'>('list');
   const [showFilters, setShowFilters] = useState(false);
   
-  // Memoize handlers to prevent unnecessary re-renders
   const handleAddTransaction = useCallback((newTransaction: any) => {
     if (!isAuthenticated) {
       toast.error('Please sign in to add transactions');
@@ -53,7 +51,14 @@ const TransactionPage = () => {
       return;
     }
     
-    addTransaction(newTransaction);
+    addTransaction(
+      newTransaction.description, 
+      newTransaction.amount, 
+      newTransaction.date, 
+      newTransaction.category, 
+      newTransaction.type
+    );
+    
     setShowForm(false);
   }, [isAuthenticated, addTransaction, navigate]);
   
@@ -219,7 +224,6 @@ const TransactionPage = () => {
   );
 };
 
-// Extract tabs to a separate component for better readability and performance
 const TransactionTabs = memo(({ 
   transactions, 
   handleDeleteTransaction, 
@@ -299,7 +303,6 @@ const TransactionTabs = memo(({
   )
 });
 
-// Extract transaction view logic to a separate component
 const TransactionView = memo(({
   transactions,
   onDeleteTransaction,
