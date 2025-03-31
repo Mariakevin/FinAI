@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, memo } from 'react';
 import FinanceSummary from './FinanceSummary';
 import BalanceChart from './BalanceChart';
@@ -19,7 +18,6 @@ import {
   LogIn, 
   Sparkles, 
   ArrowUpRight,
-  Calendar,
   RefreshCw,
   ExternalLink
 } from 'lucide-react';
@@ -29,7 +27,6 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
-// QuickAction component for better organization
 const QuickAction = memo(({ 
   title, 
   icon, 
@@ -80,12 +77,10 @@ const DashboardPage = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showRefreshAnimation, setShowRefreshAnimation] = useState(false);
   
-  // Force a refresh of chart components when transactions or UPI connection status changes
   useEffect(() => {
     setRefreshKey(prev => prev + 1);
   }, [isUpiConnected, transactions.length]);
   
-  // Memoize handlers to prevent unnecessary re-renders
   const handleUpiConnect = useCallback((upiId: string) => {
     if (!isAuthenticated) {
       toast.error('Please sign in to connect UPI');
@@ -132,7 +127,6 @@ const DashboardPage = () => {
     navigate('/ai-insights');
   }, [navigate]);
   
-  // Quick actions
   const quickActions = [
     {
       title: 'Add Transaction',
@@ -153,13 +147,6 @@ const DashboardPage = () => {
       icon: <Sparkles className="h-5 w-5" />,
       onClick: navigateToAiInsights,
       color: 'bg-purple-50 text-purple-600 hover:bg-purple-100',
-      disabled: false
-    },
-    {
-      title: 'Calendar',
-      icon: <Calendar className="h-5 w-5" />,
-      onClick: () => toast.info('Calendar feature coming soon!'),
-      color: 'bg-amber-50 text-amber-600 hover:bg-amber-100',
       disabled: false
     }
   ];
