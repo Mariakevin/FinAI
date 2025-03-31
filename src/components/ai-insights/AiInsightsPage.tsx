@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 import GlassCard from '@/components/ui/GlassCard';
@@ -8,6 +9,7 @@ import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/finance';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 const AiInsightsPage = () => {
   const { transactions } = useTransactions();
@@ -17,6 +19,7 @@ const AiInsightsPage = () => {
   const [predictions, setPredictions] = useState<string | null>(null);
   const [tips, setTips] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (transactions.length > 0 && !insights && !loading) {

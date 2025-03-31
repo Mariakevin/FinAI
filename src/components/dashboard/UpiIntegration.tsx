@@ -112,25 +112,25 @@ const UpiIntegration = ({
             </div>
           ) : (
             <form onSubmit={handleConnect} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="upi-id">Enter your UPI ID</Label>
+              <div>
+                <Label htmlFor="upi-id">UPI ID</Label>
                 <Input
                   id="upi-id"
+                  placeholder="yourname@upi"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
-                  placeholder="example@upi"
-                  required
+                  className="mt-1"
                 />
-                <p className="text-xs text-gray-500">
-                  Connect your UPI ID to track all your UPI transactions in one place
+                <p className="text-xs text-gray-500 mt-1">
+                  Enter your UPI ID to connect and track transactions
                 </p>
               </div>
               <Button 
                 type="submit" 
-                className="w-full"
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
                 disabled={isLoading}
               >
-                {isLoading ? 'Connecting...' : 'Connect UPI ID'}
+                {isLoading ? 'Connecting...' : 'Connect UPI'}
               </Button>
             </form>
           )
