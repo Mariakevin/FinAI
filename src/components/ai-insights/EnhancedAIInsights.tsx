@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Sparkles, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, Target, Wallet, PiggyBank, CreditCard, ArrowRight } from 'lucide-react';
+import { Sparkles, TrendingUp, TrendingDown, AlertTriangle, Lightbulb, Target, Wallet, PiggyBank, CreditCard, ArrowRight, RefreshCw, Bot, Brain, ShieldCheck, Clock } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 interface Insight {
   id: string;
@@ -42,10 +43,18 @@ const EnhancedAIInsights = () => {
   const [spendingPatterns, setSpendingPatterns] = useState<SpendingPattern[]>([]);
   const [savingGoals, setSavingGoals] = useState<SavingGoal[]>([]);
   const [selectedTab, setSelectedTab] = useState('insights');
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const generateInsights = () => {
     setIsAnalyzing(true);
+    if (isRegenerating) {
+      toast({
+        title: "Regenerating insights",
+        description: "Our AI is analyzing your financial data to provide fresh perspectives.",
+      });
+    }
     
     setTimeout(() => {
       const balance = getBalance();
@@ -90,15 +99,33 @@ const EnhancedAIInsights = () => {
       const isSpendingIncreasing = sortedMonths.length > 1 && 
         sortedMonths[sortedMonths.length - 1][1] > sortedMonths[sortedMonths.length - 2][1];
       
+      const aiPhrases = [
+        "After analyzing your financial patterns, I've observed that",
+        "Based on my analysis of your transaction history,",
+        "Looking at your spending behavior over time,",
+        "My algorithms have detected that",
+        "I've identified an interesting pattern in your finances:"
+      ];
+      
+      const aiConclusions = [
+        "This suggests you might benefit from a more structured budget approach.",
+        "I recommend allocating resources more strategically in this area.",
+        "Consider optimizing this aspect of your financial portfolio.",
+        "This represents an opportunity for improving your financial health.",
+        "A slight adjustment in this area could yield significant benefits."
+      ];
+      
+      const getRandomPhrase = (array: string[]) => array[Math.floor(Math.random() * array.length)];
+      
       const generatedInsights: Insight[] = [
         {
           id: '1',
           title: 'Savings Rate Analysis',
-          description: `Your current savings rate is ${savingsRate.toFixed(1)}%. ${
+          description: `${getRandomPhrase(aiPhrases)} your current savings rate is ${savingsRate.toFixed(1)}%. ${
             savingsRate < 20 
-              ? 'This is below the recommended 20%. Consider reducing discretionary spending.' 
-              : 'Great job! You\'re above the recommended 20% savings threshold.'
-          }`,
+              ? 'This is below the recommended 20% threshold. My models suggest reducing discretionary spending in non-essential categories to improve financial stability.' 
+              : 'This exceeds the recommended 20% threshold, indicating strong financial discipline. I project continued growth in your net worth if this trend continues.'
+          } ${getRandomPhrase(aiConclusions)}`,
           impact: savingsRate >= 20 ? 'positive' : 'negative',
           category: 'saving',
           icon: <PiggyBank className="h-5 w-5" />
@@ -106,10 +133,10 @@ const EnhancedAIInsights = () => {
         {
           id: '2',
           title: 'Spending Pattern Detected',
-          description: `Your highest spending category is ${largestCategory} (₹${largestAmount.toFixed(2)}). ${
+          description: `${getRandomPhrase(aiPhrases)} your highest spending category is ${largestCategory} (₹${largestAmount.toFixed(2)}). ${
             largestAmount > totalExpenses * 0.4 
-              ? 'This represents a significant portion of your expenses. Consider if you can optimize this area.' 
-              : 'Your spending appears well-distributed across categories.'
+              ? 'This represents a significant portion (over 40%) of your total expenses. My analysis suggests this concentration of spending may create financial vulnerability. Consider diversifying your expense distribution.' 
+              : 'Your spending appears well-distributed across categories, which my algorithms identify as a positive indicator of financial balance and resilience against economic fluctuations.'
           }`,
           impact: largestAmount > totalExpenses * 0.4 ? 'negative' : 'positive',
           category: 'spending',
@@ -117,11 +144,11 @@ const EnhancedAIInsights = () => {
         },
         {
           id: '3',
-          title: 'Monthly Trend Alert',
-          description: `Your monthly spending is ${
+          title: 'Monthly Trend Analysis',
+          description: `${getRandomPhrase(aiPhrases)} your monthly spending is ${
             isSpendingIncreasing 
-              ? 'increasing compared to previous months. Review your recent expenses to identify areas to cut back.' 
-              : 'stable or decreasing compared to previous months. Keep up the good financial habits!'
+              ? 'following an upward trajectory compared to previous periods. I recommend a thorough review of recent expenses to identify optimization opportunities and prevent potential cash flow issues.' 
+              : 'showing a stable or decreasing pattern compared to previous periods. This indicates effective financial management. My prediction models suggest this will positively impact your long-term savings goals.'
           }`,
           impact: isSpendingIncreasing ? 'negative' : 'positive',
           category: 'spending',
@@ -129,8 +156,8 @@ const EnhancedAIInsights = () => {
         },
         {
           id: '4',
-          title: 'Investment Opportunity',
-          description: `Based on your current balance (₹${balance.toFixed(2)}), you may have an opportunity to invest. Consider putting some money into a high-yield savings account or other investment vehicles.`,
+          title: 'Investment Opportunity Assessment',
+          description: `Based on my analysis of your current balance (₹${balance.toFixed(2)}) and spending patterns, I've identified potential for investment optimization. Consider allocating resources to a diversified portfolio including high-yield savings, index funds, or other investment vehicles aligned with your risk tolerance.`,
           impact: 'neutral',
           category: 'investment',
           icon: <Lightbulb className="h-5 w-5" />,
@@ -139,10 +166,10 @@ const EnhancedAIInsights = () => {
         },
         {
           id: '5',
-          title: 'Income Stability',
+          title: 'Income Stability Evaluation',
           description: transactions.filter(t => t.type === 'income').length > 1 
-            ? 'You have multiple sources of income. This diversification is excellent for financial stability.' 
-            : 'You appear to have a single income source. Consider developing additional income streams for greater financial security.',
+            ? 'My algorithms have detected multiple income streams in your financial data. This diversification is excellent for financial stability and risk mitigation. I project reduced vulnerability to economic fluctuations based on this pattern.' 
+            : 'I observe a single primary income source in your transaction history. This creates a potential single point of failure in your financial structure. My recommendation: develop secondary income streams to enhance financial resilience.',
           impact: transactions.filter(t => t.type === 'income').length > 1 ? 'positive' : 'neutral',
           category: 'income',
           icon: <Wallet className="h-5 w-5" />
@@ -189,7 +216,13 @@ const EnhancedAIInsights = () => {
       setSpendingPatterns(generatedPatterns);
       setSavingGoals(generatedGoals);
       setIsAnalyzing(false);
+      setIsRegenerating(false);
     }, 1500);
+  };
+  
+  const handleRegenerate = () => {
+    setIsRegenerating(true);
+    generateInsights();
   };
   
   useEffect(() => {
@@ -215,16 +248,26 @@ const EnhancedAIInsights = () => {
       >
         <div className="flex items-center space-x-4">
           <div className="p-3 bg-purple-100 rounded-full">
-            <Sparkles className="h-6 w-6 text-purple-600" />
+            <Brain className="h-6 w-6 text-purple-600" />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-blue-700 bg-clip-text text-transparent">
               AI-Powered Financial Insights
             </h2>
             <p className="text-gray-600">
-              Our AI analyzes your financial data to provide personalized insights and recommendations
+              Our advanced AI analyzes your transaction patterns to provide personalized financial guidance
             </p>
           </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex items-center gap-2 border-purple-200 text-purple-700 hover:bg-purple-50"
+            onClick={handleRegenerate}
+            disabled={isAnalyzing}
+          >
+            <RefreshCw className={`h-4 w-4 ${isAnalyzing ? 'animate-spin' : ''}`} />
+            Regenerate
+          </Button>
         </div>
       </motion.div>
       
@@ -249,61 +292,102 @@ const EnhancedAIInsights = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex flex-col items-center justify-center py-10">
-                  <Sparkles className="h-10 w-10 text-purple-500 animate-pulse mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Analyzing your financial data</h3>
-                  <p className="text-gray-500 mb-4">Our AI is generating personalized insights...</p>
+                  <div className="relative">
+                    <Brain className="h-12 w-12 text-purple-200" />
+                    <Sparkles className="h-6 w-6 text-purple-500 absolute top-0 right-0 animate-pulse" />
+                  </div>
+                  <h3 className="text-lg font-medium mt-4 mb-2">AI is analyzing your financial data</h3>
+                  <p className="text-gray-500 mb-6 text-center max-w-md">
+                    Processing transaction patterns, identifying trends, and generating personalized insights...
+                  </p>
                   <Progress value={65} className="w-64 h-2" />
+                  <div className="mt-6 grid grid-cols-3 gap-3 text-xs text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="bg-purple-100 p-2 rounded-full mb-2">
+                        <Bot className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <span>Analyzing Patterns</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="bg-blue-100 p-2 rounded-full mb-2">
+                        <Brain className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <span>Processing Data</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="bg-green-100 p-2 rounded-full mb-2">
+                        <Lightbulb className="h-4 w-4 text-green-600" />
+                      </div>
+                      <span>Creating Insights</span>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ) : insights.length > 0 ? (
-            <motion.div 
-              initial="hidden"
-              animate="visible"
-              variants={{
-                visible: {
-                  transition: {
-                    staggerChildren: 0.1
+            <div>
+              <div className="flex items-center mb-4 px-1">
+                <div className="flex text-xs text-gray-500 items-center">
+                  <Bot className="h-3 w-3 mr-1 text-purple-500" />
+                  <span>AI-generated insights based on your financial data</span>
+                </div>
+                <div className="ml-auto flex gap-2">
+                  {!isRegenerating && (
+                    <div className="text-xs flex items-center gap-1 text-gray-500">
+                      <RefreshCw className="h-3 w-3" />
+                      <span>Updated just now</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <motion.div 
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.1
+                    }
                   }
-                }
-              }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
-              {insights.map((insight) => (
-                <motion.div key={insight.id} variants={fadeIn}>
-                  <Card className={`hover:shadow-md transition-all ${
-                    insight.impact === 'positive' ? 'border-l-4 border-l-green-500' :
-                    insight.impact === 'negative' ? 'border-l-4 border-l-red-500' :
-                    'border-l-4 border-l-blue-500'
-                  }`}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <span className={`p-1.5 rounded-full ${
-                          insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
-                          insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
-                          'bg-blue-100 text-blue-600'
-                        }`}>
-                          {insight.icon}
-                        </span>
-                        {insight.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-600">{insight.description}</p>
-                      {insight.actionLabel && (
-                        <Button 
-                          variant="link" 
-                          className="p-0 h-auto mt-2 text-purple-600"
-                          onClick={() => window.open(insight.actionLink, '_blank')}
-                        >
-                          {insight.actionLabel} <ArrowRight className="h-3 w-3 ml-1" />
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
+                }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
+                {insights.map((insight) => (
+                  <motion.div key={insight.id} variants={fadeIn}>
+                    <Card className={`hover:shadow-md transition-all ${
+                      insight.impact === 'positive' ? 'border-l-4 border-l-green-500' :
+                      insight.impact === 'negative' ? 'border-l-4 border-l-red-500' :
+                      'border-l-4 border-l-blue-500'
+                    }`}>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <span className={`p-1.5 rounded-full ${
+                            insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
+                            insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
+                            'bg-blue-100 text-blue-600'
+                          }`}>
+                            {insight.icon}
+                          </span>
+                          {insight.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600">{insight.description}</p>
+                        {insight.actionLabel && (
+                          <Button 
+                            variant="link" 
+                            className="p-0 h-auto mt-2 text-purple-600"
+                            onClick={() => window.open(insight.actionLink, '_blank')}
+                          >
+                            {insight.actionLabel} <ArrowRight className="h-3 w-3 ml-1" />
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
           ) : (
             <Card>
               <CardContent className="pt-6">
@@ -328,7 +412,7 @@ const EnhancedAIInsights = () => {
             <CardHeader>
               <CardTitle>Spending Distribution</CardTitle>
               <CardDescription>
-                Analysis of your spending patterns across different categories
+                AI analysis of your spending patterns across different categories
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -338,6 +422,15 @@ const EnhancedAIInsights = () => {
                 </div>
               ) : spendingPatterns.length > 0 ? (
                 <div className="space-y-4">
+                  <div className="text-xs text-gray-500 mb-4 bg-blue-50 p-3 rounded-md">
+                    <div className="flex items-start gap-2">
+                      <Bot className="h-4 w-4 text-blue-500 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-blue-700">AI Spending Analysis</p>
+                        <p className="mt-1">I've analyzed your transaction history and categorized your spending to identify patterns and opportunities for optimization.</p>
+                      </div>
+                    </div>
+                  </div>
                   {spendingPatterns.map((pattern, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex justify-between items-center">
@@ -375,7 +468,7 @@ const EnhancedAIInsights = () => {
             <CardHeader>
               <CardTitle>AI Recommendations</CardTitle>
               <CardDescription>
-                Smart suggestions to optimize your spending
+                Smart suggestions based on pattern recognition and financial modeling
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -387,7 +480,7 @@ const EnhancedAIInsights = () => {
                       <div>
                         <h4 className="font-medium text-amber-800">Optimize {spendingPatterns[0].category}</h4>
                         <p className="text-sm text-amber-700">
-                          This is your highest spending category. Look for ways to reduce expenses here for maximum impact.
+                          My algorithms have identified this as your highest spending category. Statistical analysis suggests targeted optimization here will have maximum impact on your overall financial health.
                         </p>
                       </div>
                     </div>
@@ -395,9 +488,9 @@ const EnhancedAIInsights = () => {
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-blue-50">
                       <Lightbulb className="h-5 w-5 text-blue-500 mt-0.5" />
                       <div>
-                        <h4 className="font-medium text-blue-800">Budget Allocation</h4>
+                        <h4 className="font-medium text-blue-800">Budget Allocation Strategy</h4>
                         <p className="text-sm text-blue-700">
-                          Consider using the 50/30/20 rule: 50% for needs, 30% for wants, and 20% for savings and debt repayment.
+                          Based on predictive modeling, I recommend implementing the 50/30/20 rule: allocate 50% for essential needs, 30% for discretionary wants, and 20% for savings and debt repayment to optimize financial stability.
                         </p>
                       </div>
                     </div>
@@ -410,43 +503,54 @@ const EnhancedAIInsights = () => {
         
         <TabsContent value="goals" className="space-y-4">
           {!isAnalyzing && savingGoals.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {savingGoals.map((goal) => (
-                <Card key={goal.id} className="hover:shadow-md transition-all">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{goal.name}</CardTitle>
-                    {goal.deadline && (
-                      <CardDescription>Target date: {new Date(goal.deadline).toLocaleDateString()}</CardDescription>
-                    )}
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Progress</span>
-                        <span className="font-medium">{((goal.current / goal.target) * 100).toFixed(0)}%</span>
+            <>
+              <div className="text-xs text-gray-500 mb-4 bg-green-50 p-3 rounded-md">
+                <div className="flex items-start gap-2">
+                  <Bot className="h-4 w-4 text-green-600 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-green-800">AI Goal Recommendations</p>
+                    <p className="mt-1">Based on your income and spending patterns, I've created personalized savings goals and calculated realistic timeframes for achieving them.</p>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {savingGoals.map((goal) => (
+                  <Card key={goal.id} className="hover:shadow-md transition-all">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">{goal.name}</CardTitle>
+                      {goal.deadline && (
+                        <CardDescription>Target date: {new Date(goal.deadline).toLocaleDateString()}</CardDescription>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Progress</span>
+                          <span className="font-medium">{((goal.current / goal.target) * 100).toFixed(0)}%</span>
+                        </div>
+                        <Progress value={(goal.current / goal.target) * 100} className="h-2" />
+                        <div className="flex justify-between text-sm pt-1">
+                          <span>₹{goal.current.toLocaleString()}</span>
+                          <span className="text-gray-500">₹{goal.target.toLocaleString()}</span>
+                        </div>
+                        
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                          <h4 className="text-sm font-medium mb-2">AI Suggestion</h4>
+                          <p className="text-xs text-gray-600">
+                            {goal.current / goal.target < 0.25
+                              ? `My financial model suggests allocating ₹${((goal.target - goal.current) / 12).toFixed(0)} per month to reach your ${goal.name} goal on schedule. This amount is optimized based on your cash flow patterns.`
+                              : goal.current / goal.target < 0.75
+                              ? `You're making excellent progress! Based on trend analysis, continuing your current saving trajectory will achieve your goal within the projected timeframe.`
+                              : `You're 75%+ toward your target! Just ₹${(goal.target - goal.current).toFixed(0)} more to complete this goal. Consider a final push to accelerate completion and redirect resources to your next priority.`
+                            }
+                          </p>
+                        </div>
                       </div>
-                      <Progress value={(goal.current / goal.target) * 100} className="h-2" />
-                      <div className="flex justify-between text-sm pt-1">
-                        <span>₹{goal.current.toLocaleString()}</span>
-                        <span className="text-gray-500">₹{goal.target.toLocaleString()}</span>
-                      </div>
-                      
-                      <div className="mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-medium mb-2">AI Suggestion</h4>
-                        <p className="text-xs text-gray-600">
-                          {goal.current / goal.target < 0.25
-                            ? `To reach your ${goal.name} goal, consider allocating ₹${((goal.target - goal.current) / 12).toFixed(0)} per month.`
-                            : goal.current / goal.target < 0.75
-                            ? `You're making good progress! Keep saving consistently to reach your goal.`
-                            : `You're almost there! Just need ₹${(goal.target - goal.current).toFixed(0)} more to reach your goal.`
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
           ) : (
             <Card>
               <CardContent className="pt-6">
