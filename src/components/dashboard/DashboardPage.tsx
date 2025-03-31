@@ -7,34 +7,58 @@ import UpiIntegration from './UpiIntegration';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LineChart, BarChartBig, PieChart, TrendingUp, Wallet, LayoutDashboard, LogIn, Sparkles } from 'lucide-react';
+import { 
+  LineChart, 
+  BarChartBig, 
+  PieChart, 
+  TrendingUp, 
+  Wallet, 
+  LayoutDashboard, 
+  LogIn, 
+  Sparkles, 
+  ArrowUpRight,
+  Calendar,
+  RefreshCw,
+  ExternalLink
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 // QuickAction component for better organization
 const QuickAction = memo(({ 
   title, 
   icon, 
   onClick, 
-  color 
+  color,
+  disabled = false,
 }: { 
   title: string; 
   icon: React.ReactNode; 
   onClick: () => void; 
   color: string;
+  disabled?: boolean;
 }) => (
-  <Button 
-    variant="outline" 
-    size="sm"
-    onClick={onClick}
-    className={`${color} border-none shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105`}
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.98 }}
+    transition={{ duration: 0.2 }}
   >
-    {icon}
-    <span className="ml-1">{title}</span>
-  </Button>
+    <Button 
+      variant="outline" 
+      size="sm"
+      onClick={onClick}
+      disabled={disabled}
+      className={`${color} border-none shadow-sm hover:shadow-md transition-all duration-200 gap-2`}
+    >
+      {icon}
+      <span>{title}</span>
+    </Button>
+  </motion.div>
 ));
 
 const DashboardPage = () => {
@@ -54,6 +78,7 @@ const DashboardPage = () => {
   const isMobile = useIsMobile();
   const [activeChartView, setActiveChartView] = useState('overview');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showRefreshAnimation, setShowRefreshAnimation] = useState(false);
   
   // Force a refresh of chart components when transactions or UPI connection status changes
   useEffect(() => {
@@ -75,6 +100,15 @@ const DashboardPage = () => {
   const handleChartViewChange = useCallback((view: string) => {
     setActiveChartView(view);
     setTimeout(() => setRefreshKey(prev => prev + 1), 50);
+  }, []);
+
+  const refreshData = useCallback(() => {
+    setShowRefreshAnimation(true);
+    setTimeout(() => {
+      setRefreshKey(prev => prev + 1);
+      setShowRefreshAnimation(false);
+      toast.success('Dashboard data refreshed');
+    }, 800);
   }, []);
 
   const navigateToLogin = useCallback(() => {
@@ -104,69 +138,134 @@ const DashboardPage = () => {
       title: 'Add Transaction',
       icon: <TrendingUp className="h-5 w-5" />,
       onClick: navigateToTransactions,
-      color: 'bg-green-50 text-green-600'
+      color: 'bg-green-50 text-green-600 hover:bg-green-100',
+      disabled: false
     },
     {
       title: 'View Budget',
       icon: <Wallet className="h-5 w-5" />,
       onClick: navigateToBudget,
-      color: 'bg-blue-50 text-blue-600'
+      color: 'bg-blue-50 text-blue-600 hover:bg-blue-100',
+      disabled: false
     },
     {
       title: 'AI Insights',
       icon: <Sparkles className="h-5 w-5" />,
       onClick: navigateToAiInsights,
-      color: 'bg-purple-50 text-purple-600'
+      color: 'bg-purple-50 text-purple-600 hover:bg-purple-100',
+      disabled: false
+    },
+    {
+      title: 'Calendar',
+      icon: <Calendar className="h-5 w-5" />,
+      onClick: () => toast.info('Calendar feature coming soon!'),
+      color: 'bg-amber-50 text-amber-600 hover:bg-amber-100',
+      disabled: false
     }
   ];
+  
+  const fadeInAnimation = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4 }
+  };
   
   return (
     <div className="space-y-6 pb-8 animate-fade-in pt-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+        <motion.div {...fadeInAnimation}>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <LayoutDashboard className="h-6 w-6 text-purple-600" />
-            Dashboard
+            <LayoutDashboard className="h-6 w-6 text-blue-600" />
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Dashboard</span>
           </h1>
-          <p className="text-gray-500 mt-1">Welcome! Here's your financial overview.</p>
-        </div>
+          <p className="text-gray-500 mt-1">Welcome to your financial command center</p>
+        </motion.div>
         
         <div className="flex flex-wrap gap-2">
-          {!isAuthenticated && (
-            <Button 
-              onClick={navigateToLogin}
-              variant="outline"
-              size="sm"
-              className="bg-blue-50 text-blue-600 border-none shadow-sm hover:shadow-md transition-all duration-200"
-            >
-              <LogIn className="h-5 w-5 mr-1" />
-              Sign in to edit
-            </Button>
-          )}
+          <motion.div {...fadeInAnimation} transition={{ delay: 0.1 }}>
+            {!isAuthenticated && (
+              <Button 
+                onClick={navigateToLogin}
+                variant="outline"
+                size="sm"
+                className="bg-blue-50 text-blue-600 border-none shadow-sm hover:shadow-md transition-all duration-200 hover:bg-blue-100"
+              >
+                <LogIn className="h-5 w-5 mr-1" />
+                Sign in to edit
+              </Button>
+            )}
+          </motion.div>
           
-          {quickActions.map((action, index) => (
-            <QuickAction
-              key={index}
-              title={action.title}
-              icon={action.icon}
-              onClick={action.onClick}
-              color={action.color}
-            />
-          ))}
+          <motion.div 
+            className="flex flex-wrap gap-2"
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            initial="hidden"
+            animate="show"
+          >
+            {quickActions.map((action, index) => (
+              <motion.div
+                key={index}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 }
+                }}
+              >
+                <QuickAction
+                  title={action.title}
+                  icon={action.icon}
+                  onClick={action.onClick}
+                  color={action.color}
+                  disabled={action.disabled}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
       
-      <FinanceSummary 
-        balance={getBalance()}
-        income={getTotalIncome()}
-        expenses={getTotalExpenses()}
-        isLoading={isLoading}
-        key={`summary-${refreshKey}`}
-      />
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <FinanceSummary 
+          balance={getBalance()}
+          income={getTotalIncome()}
+          expenses={getTotalExpenses()}
+          isLoading={isLoading}
+          key={`summary-${refreshKey}`}
+        />
+      </motion.div>
       
-      <div className="bg-white p-4 rounded-xl shadow-md border border-gray-100/80 hover:shadow-lg transition-all duration-300">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="bg-white p-4 rounded-xl shadow-md border border-gray-100/80 hover:shadow-lg transition-all duration-300"
+      >
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-          <h2 className="text-lg font-semibold text-gray-800">Financial Overview</h2>
+          <div className="flex items-center">
+            <h2 className="text-lg font-semibold text-gray-800">Financial Overview</h2>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className={`ml-2 h-8 w-8 text-gray-500 hover:text-blue-600 ${showRefreshAnimation ? 'animate-spin' : ''}`}
+              onClick={refreshData}
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            <span className="ml-2 text-xs text-gray-500">
+              Last updated: {new Date().toLocaleTimeString()}
+            </span>
+          </div>
           
           <Tabs value={activeChartView} onValueChange={handleChartViewChange} className="w-auto">
             <TabsList className="bg-gray-100/70 p-1">
@@ -194,26 +293,92 @@ const DashboardPage = () => {
             key={`chart-${activeChartView}-${refreshKey}`}
           />
         </div>
-      </div>
+      </motion.div>
       
       <div className={`grid ${isMobile ? 'grid-cols-1 gap-6' : 'grid-cols-7 gap-6'}`}>
-        <div className={`${isMobile ? '' : 'col-span-4'}`}>
+        <motion.div 
+          className={`${isMobile ? '' : 'col-span-4'}`}
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
           <RecentTransactions 
             transactions={transactions}
             isLoading={isLoading}
             key={`transactions-${refreshKey}`}
             isReadOnly={!isAuthenticated}
           />
-        </div>
-        <div className={`${isMobile ? '' : 'col-span-3'}`}>
+        </motion.div>
+        <motion.div 
+          className={`${isMobile ? '' : 'col-span-3'}`}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+        >
           <UpiIntegration 
             onUpiConnect={handleUpiConnect}
             isConnected={isUpiConnected}
             connectedUpiId={connectedUpiId}
             isReadOnly={!isAuthenticated}
           />
-        </div>
+        </motion.div>
       </div>
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+        className="mt-6"
+      >
+        <Card className="shadow-md border-gray-200/60 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+              <ArrowUpRight className="h-5 w-5 text-blue-600" />
+              <span className="bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">Financial Recommendations</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                {
+                  title: "Optimize Spending",
+                  description: "Our AI analysis suggests you could save up to 12% on monthly expenses with small adjustments.",
+                  icon: <Sparkles className="h-5 w-5 text-purple-500" />,
+                  color: "bg-purple-50"
+                },
+                {
+                  title: "Savings Goal",
+                  description: "Set up an automatic savings plan to reach your financial goals faster.",
+                  icon: <Wallet className="h-5 w-5 text-green-500" />,
+                  color: "bg-green-50"
+                },
+                {
+                  title: "Investment Opportunities",
+                  description: "Based on your profile, consider exploring low-risk investment options.",
+                  icon: <TrendingUp className="h-5 w-5 text-blue-500" />,
+                  color: "bg-blue-50"
+                }
+              ].map((item, index) => (
+                <Card key={index} className={cn("p-4 hover:shadow-md transition-all duration-200", item.color)}>
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-full bg-white">{item.icon}</div>
+                    <div>
+                      <h3 className="font-medium text-gray-800">{item.title}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+            <div className="flex justify-end mt-4">
+              <Button variant="outline" size="sm" className="gap-1 text-xs">
+                <ExternalLink className="h-3 w-3" />
+                View All Recommendations
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 };
