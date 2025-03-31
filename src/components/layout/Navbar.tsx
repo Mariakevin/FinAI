@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -10,7 +11,6 @@ import {
   Calculator,
   Bot,
   Menu,
-  X
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -108,10 +108,10 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-full">
           <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 flex items-center justify-center shadow-sm">
-              <span className="text-white font-semibold text-base">f</span>
+              <span className="text-white font-semibold text-base">F</span>
             </div>
             <span className="text-lg sm:text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">
-              finAI
+              FinSight
             </span>
           </Link>
 
