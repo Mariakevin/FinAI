@@ -54,10 +54,8 @@ const EnhancedAIInsights = () => {
   const { transactions, getBalance, getTotalIncome, getTotalExpenses } = useTransactions();
   const [insights, setInsights] = useState<InsightItem[]>([]);
   const [predictions, setPredictions] = useState<InsightItem[]>([]);
-  const [opportunities, setOpportunities] = useState<InsightItem[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [analysisProgress, setAnalysisProgress] = useState(0);
-  const [activeTab, setActiveTab] = useState('insights');
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -185,17 +183,6 @@ const EnhancedAIInsights = () => {
           value: 'MoM',
           change: spendingChange,
           changeDirection: spendingDirection
-        },
-        {
-          id: '4',
-          title: 'Income/Expense Ratio',
-          description: `Your income covers expenses ${(totalIncome / totalExpenses).toFixed(1)}x.`,
-          impact: totalIncome > totalExpenses * 1.2 ? 'positive' : 'negative',
-          category: 'finance',
-          icon: <BarChart />,
-          value: `${(totalIncome / totalExpenses).toFixed(1)}x`,
-          change: totalIncome > totalExpenses * 1.2 ? 'Healthy buffer' : 'Limited cushion',
-          changeDirection: totalIncome > totalExpenses * 1.2 ? 'up' : 'down'
         }
       ];
       
@@ -247,57 +234,8 @@ const EnhancedAIInsights = () => {
         }
       ];
       
-      // Generate optimization opportunities with specific actionable metrics
-      const generatedOpportunities: InsightItem[] = [
-        {
-          id: '9',
-          title: `Optimize ${largestCategory}`,
-          description: `Reduce ${largestCategory} by 10-15% to save $${(largestAmount * 0.15).toFixed(0)}/month.`,
-          impact: 'neutral',
-          category: 'action',
-          icon: <Zap />,
-          value: `-$${(largestAmount * 0.15).toFixed(0)}/mo`,
-          actionLabel: 'View Budget Plan',
-          actionLink: '/budget'
-        },
-        {
-          id: '10',
-          title: 'Automated Savings',
-          description: `Set up auto-transfers of $${(totalIncome * 0.05).toFixed(0)} on paydays to boost emergency fund.`,
-          impact: 'neutral',
-          category: 'action',
-          icon: <CreditCard />,
-          value: `$${(totalIncome * 0.05 * 12).toFixed(0)}/yr`,
-          actionLabel: 'Set Up Transfer',
-          actionLink: '#'
-        },
-        {
-          id: '11',
-          title: 'Income Diversification',
-          description: `${transactions.filter(t => t.type === 'income' && t.category !== 'Salary').length > 0 ? 'Expand' : 'Develop'} side income streams for 15% more monthly income.`,
-          impact: 'neutral',
-          category: 'action',
-          icon: <BadgePercent />,
-          value: `+$${(totalIncome * 0.15).toFixed(0)}/mo`,
-          actionLabel: 'Explore Options',
-          actionLink: '#'
-        },
-        {
-          id: '12',
-          title: 'Financial Review',
-          description: 'Schedule monthly 30-minute reviews to identify optimization opportunities.',
-          impact: 'neutral',
-          category: 'action',
-          icon: <Clock />,
-          value: '30 min/mo',
-          actionLabel: 'Schedule Review',
-          actionLink: '#'
-        }
-      ];
-      
       setInsights(generatedInsights);
       setPredictions(generatedPredictions);
-      setOpportunities(generatedOpportunities);
       setLastUpdated(new Date().toLocaleString());
       setIsAnalyzing(false);
       clearInterval(progressInterval);
@@ -480,142 +418,69 @@ const EnhancedAIInsights = () => {
       </div>
       
       <Card className="border-none shadow-md mb-8 overflow-hidden bg-white">
-        <Tabs defaultValue="predictions" className="w-full">
-          <TabsList className="w-full rounded-none border-b bg-transparent h-14 p-0 grid grid-cols-2">
-            <TabsTrigger 
-              value="predictions" 
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-indigo-600 h-full hover:bg-gray-50 data-[state=active]:bg-gray-50 data-[state=active]:text-indigo-700"
-            >
-              <TrendingUp className="mr-2 h-5 w-5" />
-              AI Predictions
-            </TabsTrigger>
-            <TabsTrigger 
-              value="opportunities" 
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-amber-500 h-full hover:bg-gray-50 data-[state=active]:bg-gray-50 data-[state=active]:text-amber-700"
-            >
-              <Lightbulb className="mr-2 h-5 w-5" />
-              Optimization Opportunities
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="predictions" className="p-6 m-0">
-            <div className="mb-4">
-              <h2 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-indigo-600" />
-                AI Financial Forecasts
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                Forward-looking projections based on your transaction patterns
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-              {predictions.map((prediction) => (
-                <motion.div
-                  key={prediction.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className={cn(
-                    "hover:shadow-md transition-all border h-full", 
-                    prediction.impact === 'positive' ? 'border-l-4 border-l-green-500' :
-                    prediction.impact === 'negative' ? 'border-l-4 border-l-red-500' : 
-                    'border-l-4 border-l-blue-500'
-                  )}>
-                    <CardHeader className="py-4">
-                      <CardTitle className="text-base flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className={cn(
-                            "p-1.5 rounded-full",
-                            prediction.impact === 'positive' ? 'bg-green-100 text-green-600' :
-                            prediction.impact === 'negative' ? 'bg-red-100 text-red-600' :
-                            'bg-blue-100 text-blue-600'
-                          )}>
-                            {prediction.icon}
-                          </span>
-                          {prediction.title}
-                        </div>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="text-2xl font-bold text-gray-800">
-                          {prediction.value}
-                        </div>
-                        {prediction.change && (
-                          <div className={cn(
-                            "flex items-center gap-1 text-sm font-medium rounded-full px-2 py-0.5",
-                            prediction.changeDirection === 'up' ? 'bg-green-50 text-green-600' :
-                            prediction.changeDirection === 'down' ? 'bg-red-50 text-red-600' :
-                            'bg-blue-50 text-blue-600'
-                          )}>
-                            {prediction.changeDirection === 'up' && <ArrowUp className="h-3 w-3" />}
-                            {prediction.changeDirection === 'down' && <ArrowDown className="h-3 w-3" />}
-                            {prediction.change}
-                          </div>
-                        )}
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp className="h-5 w-5 text-indigo-600" />
+            <CardTitle className="text-lg">AI Financial Forecasts</CardTitle>
+          </div>
+          <CardDescription>Forward-looking projections based on your transaction patterns</CardDescription>
+        </CardHeader>
+        
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+            {predictions.map((prediction) => (
+              <motion.div
+                key={prediction.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className={cn(
+                  "hover:shadow-md transition-all border h-full", 
+                  prediction.impact === 'positive' ? 'border-l-4 border-l-green-500' :
+                  prediction.impact === 'negative' ? 'border-l-4 border-l-red-500' : 
+                  'border-l-4 border-l-blue-500'
+                )}>
+                  <CardHeader className="py-4">
+                    <CardTitle className="text-base flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          "p-1.5 rounded-full",
+                          prediction.impact === 'positive' ? 'bg-green-100 text-green-600' :
+                          prediction.impact === 'negative' ? 'bg-red-100 text-red-600' :
+                          'bg-blue-100 text-blue-600'
+                        )}>
+                          {prediction.icon}
+                        </span>
+                        {prediction.title}
                       </div>
-                      <p className="text-gray-600">{prediction.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="opportunities" className="p-6 m-0">
-            <div className="mb-4">
-              <h2 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-amber-500" />
-                Financial Optimization Opportunities
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">AI-recommended actions to improve your financial position</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-              {opportunities.map((opportunity) => (
-                <motion.div
-                  key={opportunity.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="hover:shadow-md transition-all border-l-4 border-l-amber-500 h-full bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-100">
-                    <CardHeader className="py-4">
-                      <CardTitle className="text-base flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="p-1.5 rounded-full bg-amber-100 text-amber-600">
-                            {opportunity.icon}
-                          </span>
-                          {opportunity.title}
-                        </div>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex items-center mb-3">
-                        <div className="text-xl font-bold text-gray-800 bg-amber-100 text-amber-700 px-2 py-1 rounded">
-                          {opportunity.value}
-                        </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="text-2xl font-bold text-gray-800">
+                        {prediction.value}
                       </div>
-                      <p className="text-gray-600 mb-3">{opportunity.description}</p>
-                      {opportunity.actionLabel && (
-                        <Button 
-                          variant="outline" 
-                          className="p-0 h-auto text-amber-600 font-medium text-sm flex items-center gap-1 hover:bg-amber-100 px-3 py-1.5"
-                          onClick={() => navigate(opportunity.actionLink || '#')}
-                        >
-                          {opportunity.actionLabel}
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
+                      {prediction.change && (
+                        <div className={cn(
+                          "flex items-center gap-1 text-sm font-medium rounded-full px-2 py-0.5",
+                          prediction.changeDirection === 'up' ? 'bg-green-50 text-green-600' :
+                          prediction.changeDirection === 'down' ? 'bg-red-50 text-red-600' :
+                          'bg-blue-50 text-blue-600'
+                        )}>
+                          {prediction.changeDirection === 'up' && <ArrowUp className="h-3 w-3" />}
+                          {prediction.changeDirection === 'down' && <ArrowDown className="h-3 w-3" />}
+                          {prediction.change}
+                        </div>
                       )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+                    </div>
+                    <p className="text-gray-600">{prediction.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </CardContent>
         
         <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
           <div>

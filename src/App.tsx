@@ -38,7 +38,7 @@ const queryClient = new QueryClient({
 // Loading component for Suspense
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-pulse text-lg text-gray-600">Loading FinSight...</div>
+    <div className="animate-pulse text-lg text-gray-600">Loading FinAI...</div>
   </div>
 );
 

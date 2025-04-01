@@ -1,11 +1,11 @@
 
-# FinWise - AI-Powered Personal Finance Management System
+# FinAI - AI-Powered Personal Finance Management System
 
 ## ABSTRACT
-FinWise is an intelligent personal finance management application designed to help users track, analyze, and optimize their financial activities. Leveraging artificial intelligence and advanced data analytics, FinWise provides personalized insights and recommendations to improve users' financial health. The system aims to democratize financial literacy and empower users to make informed decisions about their money through intuitive visualizations, smart budgeting tools, and AI-driven insights.
+FinAI is an intelligent personal finance management application designed to help users track, analyze, and optimize their financial activities. Leveraging artificial intelligence and advanced data analytics, FinAI provides personalized insights and recommendations to improve users' financial health. The system aims to democratize financial literacy and empower users to make informed decisions about their money through intuitive visualizations, smart budgeting tools, and AI-driven insights.
 
 ## PROJECT DESCRIPTION
-FinWise addresses the growing need for sophisticated yet user-friendly personal finance management tools in an increasingly complex financial landscape. The application combines transaction tracking, budgeting, financial analytics, and AI-powered insights in a cohesive platform accessible through web browsers. The primary goal is to provide users with a comprehensive view of their financial health while offering actionable recommendations for improvement.
+FinAI addresses the growing need for sophisticated yet user-friendly personal finance management tools in an increasingly complex financial landscape. The application combines transaction tracking, budgeting, financial analytics, and AI-powered insights in a cohesive platform accessible through web browsers. The primary goal is to provide users with a comprehensive view of their financial health while offering actionable recommendations for improvement.
 
 Key features include:
 - Transaction tracking and categorization
@@ -27,7 +27,7 @@ Current personal finance management solutions suffer from several limitations:
 6. **Limited Integration**: Many tools don't integrate with local payment systems like UPI (Unified Payments Interface).
 
 ## PROPOSED SYSTEM
-FinWise addresses these limitations through:
+FinAI addresses these limitations through:
 
 1. **AI-Driven Analysis**: Advanced algorithms analyze spending patterns, identify trends, and generate personalized insights.
 2. **Intuitive User Interface**: Clean, accessible design with interactive visualizations makes financial data approachable.
@@ -234,4 +234,4 @@ FinWise addresses these limitations through:
 +-------+ +-----+ +-----+  +----------------+
 ```
 
-FinWise represents a comprehensive solution to personal finance management, combining modern web technologies with intelligent data analysis to empower users in making better financial decisions. The application's architecture emphasizes user experience, data security, and actionable insights, providing a platform that grows with users throughout their financial journey.
+FinAI represents a comprehensive solution to personal finance management, combining modern web technologies with intelligent data analysis to empower users in making better financial decisions. The application's architecture emphasizes user experience, data security, and actionable insights, providing a platform that grows with users throughout their financial journey.

@@ -73,32 +73,6 @@ const LoginPage = () => {
     }
   };
 
-  const handleDemoLogin = async () => {
-    setEmail('demo@example.com');
-    setPassword('password123');
-    
-    setIsSubmitting(true);
-    setTimeout(async () => {
-      try {
-        const success = await login('demo@example.com', 'password123');
-        if (success) {
-          toast.success('Logged in as demo user!');
-          navigate('/dashboard');
-        } else {
-          // Create a demo account if login fails
-          await new Promise(resolve => setTimeout(resolve, 500));
-          toast.success('Created and logged in as demo user!');
-          navigate('/dashboard');
-        }
-      } catch (err) {
-        console.error('Demo login error:', err);
-        setError('Could not log in with demo account.');
-      } finally {
-        setIsSubmitting(false);
-      }
-    }, 800);
-  };
-
   return (
     <div className="w-full max-w-md mx-auto px-4 sm:px-0">
       <motion.div 
@@ -229,18 +203,7 @@ const LoginPage = () => {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3, delay: 0.7 }}
                   className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm"
-                >
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="sm"
-                    className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 transition-all"
-                    onClick={handleDemoLogin}
-                    disabled={isSubmitting}
-                  >
-                    Try demo account
-                  </Button>
-                  
+                >                  
                   <p className="text-center text-gray-600">
                     Need an account?{' '}
                     <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors duration-200">
