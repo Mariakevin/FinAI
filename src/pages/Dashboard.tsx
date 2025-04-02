@@ -7,7 +7,7 @@ const Dashboard = () => {
   return (
     <div className="w-full">
       <Helmet>
-        <title>Dashboard | FinAI</title>
+        <title>Dashboard | FinWise</title>
         <meta name="description" content="Your financial overview dashboard" />
       </Helmet>
       <DashboardPage />

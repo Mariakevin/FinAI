@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 
@@ -14,10 +14,52 @@ export interface Transaction {
   date: string;  // Changed from Date to string for compatibility
   category: string;
   type: TransactionType;
+  upiId?: string;
 }
 
 // Define the type for the filter
 export type FilterType = 'all' | 'income' | 'expense';
+
+// Create TransactionsContext
+interface TransactionsContextType {
+  transactions: Transaction[];
+  addTransaction: (description: string, amount: number, date: string, category: string, type: TransactionType) => void;
+  deleteTransaction: (id: string) => void;
+  getBalance: () => number;
+  getTotalIncome: () => number;
+  getTotalExpenses: () => number;
+  filter: FilterType;
+  setFilter: (filter: FilterType) => void;
+  connectUpiId: (upiId: string) => void;
+  isUpiConnected: boolean;
+  connectedUpiId: string | null;
+  clearAllTransactions: () => void;
+  isLoading: boolean;
+}
+
+export const TransactionsContext = createContext<TransactionsContextType | undefined>(undefined);
+
+// TransactionsProvider component
+export const TransactionsProvider = ({ children }: { children: ReactNode }) => {
+  const transactionsData = useTransactions();
+  
+  return (
+    <TransactionsContext.Provider value={transactionsData}>
+      {children}
+    </TransactionsContext.Provider>
+  );
+};
+
+// Custom hook to use the transactions context
+export const useTransactionsContext = () => {
+  const context = useContext(TransactionsContext);
+  
+  if (context === undefined) {
+    throw new Error('useTransactionsContext must be used within a TransactionsProvider');
+  }
+  
+  return context;
+};
 
 export const useTransactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {

@@ -1,36 +1,32 @@
 
-import { SidebarTrigger } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/layout/AppSidebar';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/useAuth';
+import AppSidebar from './AppSidebar';
+import Navbar from './Navbar';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { TransactionsProvider } from '@/hooks/useTransactions';
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
-  
-  // Check if the current path is a public route (login, register, home)
-  const isPublicRoute = ['/', '/login', '/register'].includes(location.pathname);
-  
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/';
+
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
+
   return (
-    <div className="min-h-screen flex w-full bg-gradient-to-br from-white to-blue-50">
-      {isAuthenticated && !isPublicRoute && <AppSidebar />}
-      <main className={cn(
-        "flex-1 flex flex-col w-full",
-        isAuthenticated && !isPublicRoute ? "ml-16" : ""
-      )}>
-        {isAuthenticated && !isPublicRoute && (
-          <header className="h-14 border-b flex items-center px-4 w-full bg-white/80 backdrop-blur-sm">
-            <SidebarTrigger />
-            <div className="ml-4 text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
-              FinAI
-            </div>
-          </header>
-        )}
-        <div className="flex-1 p-4 md:p-6 lg:p-8 w-full max-w-none">
-          {children}
-        </div>
-      </main>
-    </div>
+    <TransactionsProvider>
+      <div className="flex h-screen bg-gray-100/40 dark:bg-gray-900/40">
+        <SidebarProvider>
+          <AppSidebar />
+          <div className="flex-1 overflow-auto">
+            <Navbar />
+            <main className="container mx-auto px-4 py-6">
+              {children}
+            </main>
+          </div>
+        </SidebarProvider>
+      </div>
+    </TransactionsProvider>
   );
-}
+};

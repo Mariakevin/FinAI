@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useTransactions } from '@/hooks/useTransactions';
+import { useTransactionsContext } from '@/hooks/useTransactions';
 import GlassCard from '@/components/ui/GlassCard';
 import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { getCategoryTotals, formatCurrency } from '@/lib/finance';
@@ -25,7 +25,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const AnalyticsPage = () => {
-  const { transactions, isLoading } = useTransactions();
+  const { transactions, isLoading } = useTransactionsContext();
   
   const categoryData = getCategoryTotals(transactions);
   
@@ -115,9 +115,9 @@ const AnalyticsPage = () => {
                       margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                      <XAxis type="number" tickFormatter={(value) => `$${value}`} />
+                      <XAxis type="number" tickFormatter={(value) => `₹${value}`} />
                       <YAxis dataKey="name" type="category" width={100} />
-                      <Tooltip formatter={(value) => [`${formatCurrency(value)}`, 'Amount']} />
+                      <Tooltip formatter={(value: number) => [`${formatCurrency(value)}`, 'Amount']} />
                       <Bar dataKey="total" radius={[0, 4, 4, 0]}>
                         {categoryData.slice(0, 5).map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
