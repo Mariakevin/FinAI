@@ -7,7 +7,6 @@ import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
 import { useEffect, lazy, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { GeminiAIProvider } from '@/hooks/useGeminiAI';
 
 // Use lazy loading for better performance
 const Index = lazy(() => import('@/pages/Index'));
@@ -90,14 +89,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <GeminiAIProvider>
-            <HelmetProvider>
-              <Router>
-                <AppRoutes />
-                <Toaster position="top-right" richColors />
-              </Router>
-            </HelmetProvider>
-          </GeminiAIProvider>
+          <HelmetProvider>
+            <Router>
+              <AppRoutes />
+              <Toaster position="top-right" richColors />
+            </Router>
+          </HelmetProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
