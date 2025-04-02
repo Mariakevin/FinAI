@@ -5,21 +5,21 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
-// Use lazy loading for better performance
-const Index = lazy(() => import('@/pages/Index'));
-const Dashboard = lazy(() => import('@/pages/Dashboard'));
-const Transactions = lazy(() => import('@/pages/Transactions'));
-const Budget = lazy(() => import('@/pages/Budget'));
-const AiInsights = lazy(() => import('@/pages/AiInsights'));
-const Profile = lazy(() => import('@/pages/Profile'));
-const Settings = lazy(() => import('@/pages/Settings'));
-const NotFound = lazy(() => import('@/pages/NotFound'));
-const Login = lazy(() => import('@/pages/Login'));
-const Register = lazy(() => import('@/pages/Register'));
+// Import pages directly instead of using lazy loading
+import Index from '@/pages/Index';
+import Dashboard from '@/pages/Dashboard';
+import Transactions from '@/pages/Transactions';
+import Budget from '@/pages/Budget';
+import AiInsights from '@/pages/AiInsights';
+import Profile from '@/pages/Profile';
+import Settings from '@/pages/Settings';
+import NotFound from '@/pages/NotFound';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
 
 import './App.css';
 

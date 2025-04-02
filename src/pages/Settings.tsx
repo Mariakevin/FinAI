@@ -1,17 +1,24 @@
 
 import React from 'react';
-import SettingsPage from '@/components/settings/SettingsPage';
 import { Helmet } from 'react-helmet-async';
 
 const Settings = () => {
   return (
-    <div className="container mx-auto px-4 py-6">
+    <>
       <Helmet>
-        <title>Settings | FinWise</title>
-        <meta name="description" content="Manage your account preferences and settings" />
+        <title>Settings | FinAI</title>
       </Helmet>
-      <SettingsPage />
-    </div>
+      
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+        <p className="text-gray-500">Configure your account preferences</p>
+        
+        <div className="p-8 text-center bg-white rounded-lg shadow">
+          <p className="text-lg text-gray-600">Settings feature coming soon</p>
+          <p className="mt-2 text-gray-500">This feature is under development</p>
+        </div>
+      </div>
+    </>
   );
 };
 

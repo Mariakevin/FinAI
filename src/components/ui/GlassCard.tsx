@@ -1,21 +1,19 @@
 
-import React, { ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
+import React from "react";
 
-interface GlassCardProps {
-  children: ReactNode;
-  className?: string;
-  hoverEffect?: boolean;
+interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
 }
 
-const GlassCard = ({ children, className, hoverEffect = false }: GlassCardProps) => {
+const GlassCard: React.FC<GlassCardProps> = ({ children, className, ...props }) => {
   return (
-    <div 
+    <div
       className={cn(
-        "glass rounded-2xl border border-white/20 p-6 animate-fade-in", 
-        hoverEffect && "transition-all duration-300 hover:shadow-lg hover:-translate-y-1",
+        "rounded-xl bg-white bg-opacity-80 backdrop-blur-sm border border-gray-200 shadow-md p-6",
         className
       )}
+      {...props}
     >
       {children}
     </div>
