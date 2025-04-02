@@ -9,15 +9,13 @@ interface GeminiAIContextType {
 }
 
 const GeminiAIContext = createContext<GeminiAIContextType>({
-  apiKey: '',
+  apiKey: 'AIzaSyBNeYX79TrMw8Qca_dz46Ds9mF_wlrIeHQ',
   setApiKey: () => {},
-  isConfigured: false,
+  isConfigured: true,
 });
 
 export const GeminiAIProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [apiKey, setApiKey] = useState<string>(() => {
-    return localStorage.getItem('gemini_api_key') || '';
-  });
+  const [apiKey, setApiKey] = useState<string>('AIzaSyBNeYX79TrMw8Qca_dz46Ds9mF_wlrIeHQ');
 
   const isConfigured = Boolean(apiKey);
 

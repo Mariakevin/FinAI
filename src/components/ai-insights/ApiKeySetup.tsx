@@ -78,7 +78,7 @@ const ApiKeySetup = () => {
               <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
               <div className="text-sm text-amber-800">
                 <p className="font-medium">Important</p>
-                <p className="mt-1">Your API key is stored locally in your browser and is not sent to our servers.</p>
+                <p className="mt-1">Your API key is configured automatically. You can update it here if needed.</p>
               </div>
             </div>
           </div>

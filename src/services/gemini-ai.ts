@@ -103,6 +103,5 @@ export class GeminiAIService {
   }
 }
 
-// Create and export singleton instance with a placeholder API key
-// The actual API key will be set from the UI
-export const geminiAI = new GeminiAIService('YOUR_API_KEY_PLACEHOLDER');
+// Create and export singleton instance with the provided API key
+export const geminiAI = new GeminiAIService('AIzaSyBNeYX79TrMw8Qca_dz46Ds9mF_wlrIeHQ');
