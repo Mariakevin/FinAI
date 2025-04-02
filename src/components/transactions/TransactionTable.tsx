@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Transaction, formatCurrency, formatDate, CATEGORIES } from '@/lib/finance';
 import { Search, Filter, CalendarRange, ArrowUpDown, Trash2 } from 'lucide-react';
@@ -349,7 +348,7 @@ const TransactionTable = ({
               </TableRow>
             ) : (
               paginatedTransactions.map(transaction => {
-                const categoryColor = CATEGORIES[transaction.category as keyof typeof CATEGORIES] || CATEGORIES['Other'];
+                const categoryColor = CATEGORIES[transaction.category] || CATEGORIES['Other'];
                 
                 return (
                   <TableRow key={transaction.id} className="group">

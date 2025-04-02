@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useForm } from 'react-hook-form';
@@ -12,7 +12,7 @@ import { PlusCircle } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
-import { CATEGORIES } from '@/lib/categories';
+import { CATEGORIES } from '@/lib/finance';
 
 const formSchema = z.object({
   description: z.string().min(2, {
@@ -144,9 +144,9 @@ const AddTransactionModal = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {CATEGORIES.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
+                      {Object.keys(CATEGORIES).map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
                         </SelectItem>
                       ))}
                     </SelectContent>

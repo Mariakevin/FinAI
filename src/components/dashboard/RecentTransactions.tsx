@@ -6,8 +6,13 @@ import { ArrowUpRight, ArrowDownRight, CreditCard, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
+// Extend Transaction type with optional upiId field for this component
+interface ExtendedTransaction extends Transaction {
+  upiId?: string;
+}
+
 interface RecentTransactionsProps {
-  transactions: Transaction[];
+  transactions: ExtendedTransaction[];
   isLoading: boolean;
   isReadOnly?: boolean;
 }

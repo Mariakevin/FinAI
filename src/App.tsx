@@ -7,7 +7,7 @@ import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
 import { useEffect, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { TransactionsProvider } from '@/hooks/useTransactions';
 
 // Import pages directly instead of using lazy loading
 import Index from '@/pages/Index';
@@ -90,14 +90,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <HelmetProvider>
-            <SidebarProvider>
+          <TransactionsProvider>
+            <HelmetProvider>
               <Router>
                 <AppRoutes />
                 <Toaster position="top-right" richColors />
               </Router>
-            </SidebarProvider>
-          </HelmetProvider>
+            </HelmetProvider>
+          </TransactionsProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

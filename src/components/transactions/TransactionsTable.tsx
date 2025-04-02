@@ -134,7 +134,7 @@ const TransactionsTable = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <Badge
-                          variant={transaction.type === 'income' ? 'success' : 'destructive'}
+                          variant={transaction.type === 'income' ? 'outline' : 'destructive'}
                           className="font-mono"
                         >
                           {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}

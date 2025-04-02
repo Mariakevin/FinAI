@@ -13,7 +13,7 @@ interface TransactionItemProps {
 const TransactionItem = ({ transaction, onDelete, isReadOnly = false }: TransactionItemProps) => {
   const { id, description, amount, category, date, type } = transaction;
   
-  const categoryColor = CATEGORIES[category as keyof typeof CATEGORIES] || CATEGORIES['Other'];
+  const categoryColor = CATEGORIES[category] || CATEGORIES['Other'];
   
   return (
     <div className="transition-all duration-300 hover:bg-gray-50/80 rounded-lg p-3 animate-fade-in">
