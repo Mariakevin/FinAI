@@ -7,7 +7,6 @@ import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
 import { useEffect, lazy, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 // Use lazy loading for better performance
 const Index = lazy(() => import('@/pages/Index'));
@@ -91,12 +90,10 @@ function App() {
       <TooltipProvider>
         <AuthProvider>
           <HelmetProvider>
-            <SidebarProvider>
-              <Router>
-                <AppRoutes />
-                <Toaster position="top-right" richColors />
-              </Router>
-            </SidebarProvider>
+            <Router>
+              <AppRoutes />
+              <Toaster position="top-right" richColors />
+            </Router>
           </HelmetProvider>
         </AuthProvider>
       </TooltipProvider>
