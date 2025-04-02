@@ -2,6 +2,17 @@
 import { Home, PieChart, DollarSign, LogOut, Lightbulb, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useEffect } from 'react';
@@ -58,11 +69,11 @@ export function AppSidebar() {
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
     >
-      <div className={cn(
-        "h-full border-r transition-all duration-300 ease-in-out bg-white", 
+      <Sidebar className={cn(
+        "border-r transition-all duration-300 ease-in-out", 
         expanded ? "w-64" : "w-16"
       )}>
-        <div className={cn(
+        <SidebarHeader className={cn(
           "px-6 py-4",
           !expanded && "flex justify-center px-2"
         )}>
@@ -74,26 +85,31 @@ export function AppSidebar() {
               {expanded ? "FinAI" : "FA"}
             </span>
           </div>
-        </div>
-        <div className="px-2 py-2">
-          <nav className="space-y-1">
-            {navItems.map((item) => (
-              <Button
-                key={item.path}
-                variant={isActive(item.path) ? "secondary" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  !expanded && "justify-center px-2"
-                )}
-                onClick={() => navigate(item.path)}
-              >
-                <item.icon className="h-4 w-4" />
-                {expanded && <span className="ml-2">{item.title}</span>}
-              </Button>
-            ))}
-          </nav>
-        </div>
-        <div className={cn("p-4", !expanded && "flex justify-center p-2")}>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navItems.map((item) => (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton
+                      className={cn(
+                        "flex justify-center",
+                        expanded && "justify-start",
+                        isActive(item.path) && "bg-accent text-accent-foreground"
+                      )}
+                      onClick={() => navigate(item.path)}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      {expanded && <span className="ml-2">{item.title}</span>}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter className={cn("p-4", !expanded && "flex justify-center p-2")}>
           <Button
             variant="outline"
             className={cn(
@@ -105,8 +121,8 @@ export function AppSidebar() {
             <LogOut className="h-4 w-4" />
             {expanded && <span>Logout</span>}
           </Button>
-        </div>
-      </div>
+        </SidebarFooter>
+      </Sidebar>
     </div>
   );
 }

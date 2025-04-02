@@ -1,24 +1,25 @@
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
-import { Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
-// Import pages directly instead of using lazy loading
-import Index from '@/pages/Index';
-import Dashboard from '@/pages/Dashboard';
-import Transactions from '@/pages/Transactions';
-import Budget from '@/pages/Budget';
-import AiInsights from '@/pages/AiInsights';
-import Profile from '@/pages/Profile';
-import Settings from '@/pages/Settings';
-import NotFound from '@/pages/NotFound';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
+// Use lazy loading for better performance
+const Index = lazy(() => import('@/pages/Index'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Transactions = lazy(() => import('@/pages/Transactions'));
+const Budget = lazy(() => import('@/pages/Budget'));
+const AiInsights = lazy(() => import('@/pages/AiInsights'));
+const Profile = lazy(() => import('@/pages/Profile'));
+const Settings = lazy(() => import('@/pages/Settings'));
+const NotFound = lazy(() => import('@/pages/NotFound'));
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
 
 import './App.css';
 
@@ -44,12 +45,23 @@ const PageLoader = () => (
 // RequireAuth component that redirects to login if not authenticated
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/login', { 
+        replace: true,
+        state: { from: location.pathname }
+      });
+    }
+  }, [isAuthenticated, isLoading, navigate, location.pathname]);
   
   if (isLoading) {
     return <PageLoader />;
   }
   
-  return isAuthenticated ? <>{children}</> : <Login />;
+  return isAuthenticated ? <>{children}</> : <PageLoader />;
 };
 
 function AppRoutes() {
@@ -79,10 +91,12 @@ function App() {
       <TooltipProvider>
         <AuthProvider>
           <HelmetProvider>
-            <Router>
-              <AppRoutes />
-              <Toaster position="top-right" richColors />
-            </Router>
+            <SidebarProvider>
+              <Router>
+                <AppRoutes />
+                <Toaster position="top-right" richColors />
+              </Router>
+            </SidebarProvider>
           </HelmetProvider>
         </AuthProvider>
       </TooltipProvider>

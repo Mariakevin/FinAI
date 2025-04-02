@@ -1,17 +1,17 @@
 
 import React from 'react';
+import EnhancedAIInsights from '@/components/ai-insights/EnhancedAIInsights';
 import { Helmet } from 'react-helmet-async';
-import AiInsightsPage from '@/components/ai-insights/AiInsightsPage';
 
 const AiInsights = () => {
   return (
-    <>
+    <div className="w-full mx-auto">
       <Helmet>
         <title>AI Insights | FinAI</title>
+        <meta name="description" content="Get AI-powered insights about your financial habits" />
       </Helmet>
-      
-      <AiInsightsPage />
-    </>
+      <EnhancedAIInsights />
+    </div>
   );
 };
 

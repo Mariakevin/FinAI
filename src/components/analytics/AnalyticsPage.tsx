@@ -7,14 +7,13 @@ import { getCategoryTotals, formatCurrency } from '@/lib/finance';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChartIcon, BarChartIcon, ArrowUpDown } from 'lucide-react';
 
-// Ensure formatter always receives number type
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-100">
         <p className="font-medium text-sm">{payload[0].name}</p>
         <p className="text-sm" style={{ color: payload[0].payload.color }}>
-          {formatCurrency(Number(payload[0].value))}
+          {formatCurrency(payload[0].value)}
         </p>
         <p className="text-xs text-gray-500">
           {payload[0].payload.percentage.toFixed(1)}% of total
@@ -116,9 +115,9 @@ const AnalyticsPage = () => {
                       margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                      <XAxis type="number" tickFormatter={(value) => `$${Number(value)}`} />
+                      <XAxis type="number" tickFormatter={(value) => `$${value}`} />
                       <YAxis dataKey="name" type="category" width={100} />
-                      <Tooltip formatter={(value) => [`${formatCurrency(Number(value))}`, 'Amount']} />
+                      <Tooltip formatter={(value) => [`${formatCurrency(value)}`, 'Amount']} />
                       <Bar dataKey="total" radius={[0, 4, 4, 0]}>
                         {categoryData.slice(0, 5).map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />

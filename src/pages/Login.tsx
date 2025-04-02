@@ -1,20 +1,19 @@
 
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { memo } from 'react';
 import LoginPage from '@/components/auth/LoginPage';
+import AuthLayout from '@/components/layout/AuthLayout';
+import { Helmet } from 'react-helmet-async';
 
 const Login = () => {
   return (
-    <>
+    <AuthLayout>
       <Helmet>
-        <title>Login | FinAI</title>
+        <title>Sign In | FinWise</title>
+        <meta name="description" content="Sign in to your FinWise account to manage your finances" />
       </Helmet>
-      
-      <div className="min-h-screen flex items-center justify-center">
-        <LoginPage />
-      </div>
-    </>
+      <LoginPage />
+    </AuthLayout>
   );
 };
 
-export default Login;
+export default memo(Login);

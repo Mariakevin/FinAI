@@ -1,150 +1,205 @@
+import { toast } from "sonner";
 
-// Add any additional functionality needed for finance.ts
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-// Define the transaction type
-export type TransactionType = 'income' | 'expense';
-
-// Interface for transaction data
-export interface Transaction {
+export type Transaction = {
   id: string;
-  description: string;
   amount: number;
-  date: string;
+  description: string;
   category: string;
-  type: TransactionType;
+  date: string;
+  type: 'income' | 'expense';
   upiId?: string;
-}
+};
 
-// Export format currency function
+export type CategoryWithTotal = {
+  name: string;
+  total: number;
+  percentage: number;
+  color: string;
+};
+
+// Predefined transaction categories with colors
+export const CATEGORIES = {
+  'Food & Dining': '#4CAF50', // Green
+  'Shopping': '#2196F3', // Blue
+  'Transportation': '#FF9800', // Orange
+  'Bills & Utilities': '#9C27B0', // Purple
+  'Entertainment': '#F44336', // Red
+  'Health & Fitness': '#00BCD4', // Cyan
+  'Travel': '#3F51B5', // Indigo
+  'Education': '#795548', // Brown
+  'Personal': '#607D8B', // Blue Grey
+  'Salary': '#4CAF50', // Green
+  'Investment': '#009688', // Teal
+  'Gifts': '#E91E63', // Pink
+  'Other': '#9E9E9E', // Grey
+};
+
+// Helper functions
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    currency: 'INR',
+    minimumFractionDigits: 2,
   }).format(amount);
 };
 
-// Export format date function
-export const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric' 
-  });
+export const formatDate = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
 };
 
-// Categories mapping
-export const CATEGORIES: Record<string, string> = {
-  'Salary': '#4CAF50',      // Green
-  'Freelance': '#8BC34A',   // Light Green
-  'Investment': '#009688',  // Teal
-  'Bonus': '#00BCD4',       // Cyan
-  'Gift': '#03A9F4',        // Light Blue
-  'Side Project': '#3F51B5', // Indigo
-  'Refund': '#2196F3',      // Blue
-  'Dividend': '#673AB7',    // Deep Purple
-  'Rental Income': '#9C27B0', // Purple
-  
-  'Groceries': '#F44336',   // Red
-  'Dining': '#FF5722',      // Deep Orange
-  'Transport': '#FF9800',   // Orange
-  'Shopping': '#FFC107',    // Amber
-  'Utilities': '#FFEB3B',   // Yellow
-  'Entertainment': '#CDDC39', // Lime
-  'Health': '#E91E63',      // Pink
-  'Education': '#9E9E9E',   // Grey
-  'Travel': '#795548',      // Brown
-  'Housing': '#607D8B',     // Blue Grey
-  'Insurance': '#C2185B',   // Dark Pink
-  'Subscriptions': '#D32F2F', // Dark Red
-  'Other': '#757575'        // Dark Grey
+export const generateID = (): string => {
+  return Math.random().toString(36).substring(2, 9);
 };
 
-// Helper function to turn Category and color mapping into array
-export const getCategoryArray = () => {
-  return Object.entries(CATEGORIES).map(([category, color]) => ({
-    name: category,
-    color: color
-  }));
-};
-
-// Format for Monthly totals
-interface MonthData {
-  month: string;
-  income: number;
-  expense: number;
-}
-
-// Calculate monthly totals for transactions
-export const getMonthlyTotals = (transactions: Transaction[]): MonthData[] => {
-  const monthlyData: Record<string, { income: number; expense: number }> = {};
-  
-  // Sort transactions by date
-  const sortedTransactions = [...transactions].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-  
-  // Group transactions by month and calculate totals
-  sortedTransactions.forEach(transaction => {
-    const date = new Date(transaction.date);
-    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    
-    if (!monthlyData[monthYear]) {
-      monthlyData[monthYear] = { income: 0, expense: 0 };
-    }
-    
-    if (transaction.type === 'income') {
-      monthlyData[monthYear].income += transaction.amount;
-    } else {
-      monthlyData[monthYear].expense += transaction.amount;
-    }
-  });
-  
-  // Convert to array format for charts
-  return Object.entries(monthlyData).map(([monthYear, data]) => {
-    const [year, month] = monthYear.split('-');
-    const date = new Date(parseInt(year), parseInt(month) - 1);
-    const monthName = date.toLocaleString('default', { month: 'short' });
-    
-    return {
-      month: `${monthName} ${year}`,
-      income: data.income,
-      expense: data.expense
-    };
-  });
-};
-
-// Mock AI categorization function
+// Get category with AI (mock implementation)
 export const categorizeTransactionWithAI = async (description: string): Promise<string> => {
-  // This would normally call an API, but for now we'll use a simple keyword matching
-  description = description.toLowerCase();
+  // This would normally be an API call to an AI service
+  // For now, we'll simulate it with a simple algorithm
   
-  const categoryKeywords: Record<string, string[]> = {
-    'Salary': ['salary', 'paycheck', 'wage', 'income', 'payday'],
-    'Groceries': ['grocery', 'supermarket', 'food', 'market', 'fruit', 'vegetable'],
-    'Dining': ['restaurant', 'cafe', 'dinner', 'lunch', 'breakfast', 'coffee', 'bar'],
-    'Transport': ['uber', 'lyft', 'taxi', 'bus', 'train', 'metro', 'gas', 'fuel', 'car'],
-    'Shopping': ['mall', 'store', 'shop', 'amazon', 'clothing', 'purchase'],
-    'Utilities': ['electric', 'water', 'gas', 'bill', 'utility', 'internet', 'phone'],
-    'Entertainment': ['movie', 'theater', 'netflix', 'spotify', 'concert', 'game'],
-    'Health': ['doctor', 'medical', 'pharmacy', 'fitness', 'gym', 'healthcare'],
-    'Education': ['school', 'course', 'book', 'class', 'tuition', 'tutorial']
+  const lowerDescription = description.toLowerCase();
+  
+  // Map of keywords to categories
+  const keywordToCategoryMap: Record<string, string> = {
+    'restaurant': 'Food & Dining',
+    'cafe': 'Food & Dining',
+    'coffee': 'Food & Dining',
+    'uber eats': 'Food & Dining',
+    'grocery': 'Food & Dining',
+    'market': 'Food & Dining',
+    
+    'amazon': 'Shopping',
+    'store': 'Shopping',
+    'clothing': 'Shopping',
+    'mall': 'Shopping',
+    
+    'uber': 'Transportation',
+    'lyft': 'Transportation',
+    'gas': 'Transportation',
+    'parking': 'Transportation',
+    'transit': 'Transportation',
+    
+    'netflix': 'Entertainment',
+    'hbo': 'Entertainment',
+    'disney': 'Entertainment',
+    'movie': 'Entertainment',
+    'spotify': 'Entertainment',
+    
+    'rent': 'Bills & Utilities',
+    'electric': 'Bills & Utilities',
+    'water': 'Bills & Utilities',
+    'internet': 'Bills & Utilities',
+    'phone': 'Bills & Utilities',
+    
+    'doctor': 'Health & Fitness',
+    'gym': 'Health & Fitness',
+    'fitness': 'Health & Fitness',
+    'medical': 'Health & Fitness',
+    'pharmacy': 'Health & Fitness',
+    
+    'hotel': 'Travel',
+    'flight': 'Travel',
+    'vacation': 'Travel',
+    'airbnb': 'Travel',
+    
+    'tuition': 'Education',
+    'course': 'Education',
+    'book': 'Education',
+    'school': 'Education',
+    
+    'salary': 'Salary',
+    'paycheck': 'Salary',
+    'wage': 'Salary',
+    'deposit': 'Salary',
+    
+    'stock': 'Investment',
+    'dividend': 'Investment',
+    'interest': 'Investment',
+    'crypto': 'Investment',
   };
   
-  for (const [category, keywords] of Object.entries(categoryKeywords)) {
-    if (keywords.some(keyword => description.includes(keyword))) {
+  // Find matching category
+  for (const [keyword, category] of Object.entries(keywordToCategoryMap)) {
+    if (lowerDescription.includes(keyword)) {
       return category;
     }
   }
   
-  return 'Other';
+  // Simulate some "thinking" time
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  // Random category if no match (simulating AI's best guess)
+  const categoryKeys = Object.keys(CATEGORIES);
+  const randomIndex = Math.floor(Math.random() * (categoryKeys.length - 1)); // Exclude "Other"
+  
+  // This is where you'd actually call an AI API in a real implementation
+  toast.success("AI categorized your transaction!");
+  
+  return categoryKeys[randomIndex];
 };
 
-// Utilities for className merging
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+// Analytics functions
+export const getCategoryTotals = (transactions: Transaction[]): CategoryWithTotal[] => {
+  const expenses = transactions.filter(t => t.type === 'expense');
+  const totalExpense = expenses.reduce((sum, t) => sum + t.amount, 0);
+  
+  const categoryTotals: Record<string, number> = {};
+  
+  // Calculate totals per category
+  for (const transaction of expenses) {
+    const { category, amount } = transaction;
+    categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+  }
+  
+  // Convert to array with percentages and colors
+  return Object.entries(categoryTotals).map(([name, total]) => ({
+    name,
+    total,
+    percentage: totalExpense > 0 ? (total / totalExpense) * 100 : 0,
+    color: CATEGORIES[name as keyof typeof CATEGORIES] || CATEGORIES['Other'],
+  }))
+  .sort((a, b) => b.total - a.total);
+};
+
+export const getMonthlyTotals = (transactions: Transaction[], months = 6) => {
+  const now = new Date();
+  const labels: string[] = [];
+  const incomeData: number[] = [];
+  const expenseData: number[] = [];
+  
+  // Generate the last X months
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthYear = d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+    labels.push(monthYear);
+    
+    // Month boundaries for filtering
+    const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
+    const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    
+    // Filter transactions for this month and calculate totals
+    const monthlyTransactions = transactions.filter(t => {
+      const date = new Date(t.date);
+      return date >= monthStart && date <= monthEnd;
+    });
+    
+    const monthlyIncome = monthlyTransactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+      
+    const monthlyExpense = monthlyTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    incomeData.push(monthlyIncome);
+    expenseData.push(monthlyExpense);
+  }
+  
+  return { labels, incomeData, expenseData };
+};
+
+// We've removed the generateSampleTransactions function since we won't use predefined data anymore

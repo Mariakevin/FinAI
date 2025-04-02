@@ -1,5 +1,5 @@
 
-import { Transaction, formatCurrency, formatDate } from './finance';
+import { Transaction, formatDate } from './finance';
 import { saveAs } from 'file-saver';
 import { toast } from 'sonner';
 
