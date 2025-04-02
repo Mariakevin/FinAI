@@ -1,8 +1,45 @@
 
 import React from 'react';
-import { Transaction, formatCurrency, formatDate, CATEGORIES } from '@/lib/finance';
+import { Transaction, formatCurrency } from '@/lib/finance';
 import { ArrowUpRight, ArrowDownRight, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Format date function that was missing from finance.ts
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+};
+
+// Categories mapping that was missing from finance.ts
+const CATEGORIES: Record<string, string> = {
+  'Salary': '#4CAF50',      // Green
+  'Freelance': '#8BC34A',   // Light Green
+  'Investment': '#009688',  // Teal
+  'Bonus': '#00BCD4',       // Cyan
+  'Gift': '#03A9F4',        // Light Blue
+  'Side Project': '#3F51B5', // Indigo
+  'Refund': '#2196F3',      // Blue
+  'Dividend': '#673AB7',    // Deep Purple
+  'Rental Income': '#9C27B0', // Purple
+  
+  'Groceries': '#F44336',   // Red
+  'Dining': '#FF5722',      // Deep Orange
+  'Transport': '#FF9800',   // Orange
+  'Shopping': '#FFC107',    // Amber
+  'Utilities': '#FFEB3B',   // Yellow
+  'Entertainment': '#CDDC39', // Lime
+  'Health': '#E91E63',      // Pink
+  'Education': '#9E9E9E',   // Grey
+  'Travel': '#795548',      // Brown
+  'Housing': '#607D8B',     // Blue Grey
+  'Insurance': '#C2185B',   // Dark Pink
+  'Subscriptions': '#D32F2F', // Dark Red
+  'Other': '#757575'        // Dark Grey
+};
 
 interface TransactionItemProps {
   transaction: Transaction;

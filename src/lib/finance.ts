@@ -1,148 +1,150 @@
 
-import { getCategoryColor } from './categories';
+// Add any additional functionality needed for finance.ts
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
+// Define the transaction type
+export type TransactionType = 'income' | 'expense';
+
+// Interface for transaction data
 export interface Transaction {
   id: string;
   description: string;
   amount: number;
   date: string;
   category: string;
-  type: 'income' | 'expense';
+  type: TransactionType;
+  upiId?: string;
 }
 
-// Add missing CATEGORIES export
-export const CATEGORIES: Record<string, string> = {
-  'Food & Dining': '#FF5733',
-  'Groceries': '#33FF57',
-  'Transportation': '#3357FF',
-  'Entertainment': '#F033FF',
-  'Shopping': '#FF33A8',
-  'Utilities': '#33FFF0',
-  'Housing': '#FFB533',
-  'Healthcare': '#33FFAA',
-  'Education': '#AA33FF',
-  'Personal': '#FF3366',
-  'Travel': '#33AAFF',
-  'Insurance': '#FFFF33',
-  'Investments': '#33FF33',
-  'Income': '#33FF57',
-  'Other': '#C0C0C0'
-};
-
+// Export format currency function
 export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(amount);
 };
 
-// Add missing formatDate function
+// Export format date function
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
   });
 };
 
-export const getCategoryTotals = (transactions: Transaction[]) => {
-  // Only include expense transactions
-  const expenseTransactions = transactions.filter(t => t.type === 'expense');
+// Categories mapping
+export const CATEGORIES: Record<string, string> = {
+  'Salary': '#4CAF50',      // Green
+  'Freelance': '#8BC34A',   // Light Green
+  'Investment': '#009688',  // Teal
+  'Bonus': '#00BCD4',       // Cyan
+  'Gift': '#03A9F4',        // Light Blue
+  'Side Project': '#3F51B5', // Indigo
+  'Refund': '#2196F3',      // Blue
+  'Dividend': '#673AB7',    // Deep Purple
+  'Rental Income': '#9C27B0', // Purple
   
-  // Calculate total for each category
-  const categoryTotals: Record<string, number> = {};
-  expenseTransactions.forEach(transaction => {
-    if (!categoryTotals[transaction.category]) {
-      categoryTotals[transaction.category] = 0;
-    }
-    categoryTotals[transaction.category] += transaction.amount;
-  });
-  
-  // Calculate total expenses
-  const totalExpenses = Object.values(categoryTotals).reduce((sum, value) => sum + value, 0);
-  
-  // Convert to array and add percentage and color
-  const result = Object.entries(categoryTotals).map(([name, total]) => {
-    const percentage = totalExpenses > 0 ? (total / totalExpenses) * 100 : 0;
-    const color = getCategoryColor(name);
-    
-    return {
-      name,
-      total,
-      percentage,
-      color,
-    };
-  });
-  
-  // Sort by total (descending)
-  return result.sort((a, b) => b.total - a.total);
+  'Groceries': '#F44336',   // Red
+  'Dining': '#FF5722',      // Deep Orange
+  'Transport': '#FF9800',   // Orange
+  'Shopping': '#FFC107',    // Amber
+  'Utilities': '#FFEB3B',   // Yellow
+  'Entertainment': '#CDDC39', // Lime
+  'Health': '#E91E63',      // Pink
+  'Education': '#9E9E9E',   // Grey
+  'Travel': '#795548',      // Brown
+  'Housing': '#607D8B',     // Blue Grey
+  'Insurance': '#C2185B',   // Dark Pink
+  'Subscriptions': '#D32F2F', // Dark Red
+  'Other': '#757575'        // Dark Grey
 };
 
-// Add missing getMonthlyTotals function
-export const getMonthlyTotals = (transactions: Transaction[]) => {
+// Helper function to turn Category and color mapping into array
+export const getCategoryArray = () => {
+  return Object.entries(CATEGORIES).map(([category, color]) => ({
+    name: category,
+    color: color
+  }));
+};
+
+// Format for Monthly totals
+interface MonthData {
+  month: string;
+  income: number;
+  expense: number;
+}
+
+// Calculate monthly totals for transactions
+export const getMonthlyTotals = (transactions: Transaction[]): MonthData[] => {
   const monthlyData: Record<string, { income: number; expense: number }> = {};
   
-  // Process transactions by month
-  transactions.forEach(transaction => {
+  // Sort transactions by date
+  const sortedTransactions = [...transactions].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+  
+  // Group transactions by month and calculate totals
+  sortedTransactions.forEach(transaction => {
     const date = new Date(transaction.date);
-    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
-    const monthLabel = date.toLocaleString('default', { month: 'short', year: '2-digit' });
+    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     
-    if (!monthlyData[monthKey]) {
-      monthlyData[monthKey] = { 
-        income: 0, 
-        expense: 0,
-        label: monthLabel
-      };
+    if (!monthlyData[monthYear]) {
+      monthlyData[monthYear] = { income: 0, expense: 0 };
     }
     
     if (transaction.type === 'income') {
-      monthlyData[monthKey].income += transaction.amount;
+      monthlyData[monthYear].income += transaction.amount;
     } else {
-      monthlyData[monthKey].expense += transaction.amount;
+      monthlyData[monthYear].expense += transaction.amount;
     }
   });
   
-  // Convert to arrays for charting
-  const sortedKeys = Object.keys(monthlyData).sort();
-  const labels = sortedKeys.map(key => monthlyData[key].label);
-  const incomeData = sortedKeys.map(key => monthlyData[key].income);
-  const expenseData = sortedKeys.map(key => monthlyData[key].expense);
-  
-  return {
-    labels,
-    incomeData,
-    expenseData
-  };
+  // Convert to array format for charts
+  return Object.entries(monthlyData).map(([monthYear, data]) => {
+    const [year, month] = monthYear.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    const monthName = date.toLocaleString('default', { month: 'short' });
+    
+    return {
+      month: `${monthName} ${year}`,
+      income: data.income,
+      expense: data.expense
+    };
+  });
 };
 
-// Add missing categorizeTransactionWithAI function (simplified mock implementation)
+// Mock AI categorization function
 export const categorizeTransactionWithAI = async (description: string): Promise<string> => {
-  // In a real app, this would call an AI service
-  // This is a mock implementation that does basic keyword matching
-  const lowerDesc = description.toLowerCase();
+  // This would normally call an API, but for now we'll use a simple keyword matching
+  description = description.toLowerCase();
   
-  if (lowerDesc.includes('grocery') || lowerDesc.includes('supermarket')) {
-    return 'Groceries';
-  } else if (lowerDesc.includes('restaurant') || lowerDesc.includes('food')) {
-    return 'Food & Dining';
-  } else if (lowerDesc.includes('uber') || lowerDesc.includes('lyft') || lowerDesc.includes('taxi')) {
-    return 'Transportation';
-  } else if (lowerDesc.includes('movie') || lowerDesc.includes('netflix')) {
-    return 'Entertainment';
-  } else if (lowerDesc.includes('amazon') || lowerDesc.includes('shop')) {
-    return 'Shopping';
-  } else if (lowerDesc.includes('electric') || lowerDesc.includes('water') || lowerDesc.includes('gas')) {
-    return 'Utilities';
-  } else if (lowerDesc.includes('rent') || lowerDesc.includes('mortgage')) {
-    return 'Housing';
-  } else if (lowerDesc.includes('doctor') || lowerDesc.includes('hospital')) {
-    return 'Healthcare';
-  } else if (lowerDesc.includes('school') || lowerDesc.includes('course')) {
-    return 'Education';
+  const categoryKeywords: Record<string, string[]> = {
+    'Salary': ['salary', 'paycheck', 'wage', 'income', 'payday'],
+    'Groceries': ['grocery', 'supermarket', 'food', 'market', 'fruit', 'vegetable'],
+    'Dining': ['restaurant', 'cafe', 'dinner', 'lunch', 'breakfast', 'coffee', 'bar'],
+    'Transport': ['uber', 'lyft', 'taxi', 'bus', 'train', 'metro', 'gas', 'fuel', 'car'],
+    'Shopping': ['mall', 'store', 'shop', 'amazon', 'clothing', 'purchase'],
+    'Utilities': ['electric', 'water', 'gas', 'bill', 'utility', 'internet', 'phone'],
+    'Entertainment': ['movie', 'theater', 'netflix', 'spotify', 'concert', 'game'],
+    'Health': ['doctor', 'medical', 'pharmacy', 'fitness', 'gym', 'healthcare'],
+    'Education': ['school', 'course', 'book', 'class', 'tuition', 'tutorial']
+  };
+  
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    if (keywords.some(keyword => description.includes(keyword))) {
+      return category;
+    }
   }
   
   return 'Other';
 };
+
+// Utilities for className merging
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}

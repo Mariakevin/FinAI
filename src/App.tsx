@@ -1,13 +1,12 @@
 
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
-import { useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
-import { TransactionsProvider } from '@/hooks/useTransactions';
 
 // Import pages directly instead of using lazy loading
 import Index from '@/pages/Index';
@@ -45,23 +44,12 @@ const PageLoader = () => (
 // RequireAuth component that redirects to login if not authenticated
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      navigate('/login', { 
-        replace: true,
-        state: { from: location.pathname }
-      });
-    }
-  }, [isAuthenticated, isLoading, navigate, location.pathname]);
   
   if (isLoading) {
     return <PageLoader />;
   }
   
-  return isAuthenticated ? <>{children}</> : <PageLoader />;
+  return isAuthenticated ? <>{children}</> : <Login />;
 };
 
 function AppRoutes() {
@@ -90,14 +78,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>
-          <TransactionsProvider>
-            <HelmetProvider>
-              <Router>
-                <AppRoutes />
-                <Toaster position="top-right" richColors />
-              </Router>
-            </HelmetProvider>
-          </TransactionsProvider>
+          <HelmetProvider>
+            <Router>
+              <AppRoutes />
+              <Toaster position="top-right" richColors />
+            </Router>
+          </HelmetProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

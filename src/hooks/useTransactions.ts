@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 
@@ -14,12 +14,34 @@ export interface Transaction {
   date: string;  // Changed from Date to string for compatibility
   category: string;
   type: TransactionType;
+  upiId?: string; // Optional upiId field for transactions connected to UPI
 }
 
 // Define the type for the filter
 export type FilterType = 'all' | 'income' | 'expense';
 
-export const useTransactions = () => {
+// Create context type
+interface TransactionsContextType {
+  transactions: Transaction[];
+  addTransaction: (description: string, amount: number, date: string, category: string, type: TransactionType) => void;
+  deleteTransaction: (id: string) => void;
+  clearAllTransactions: () => void;
+  getBalance: () => number;
+  getTotalIncome: () => number;
+  getTotalExpenses: () => number;
+  filter: FilterType;
+  setFilter: React.Dispatch<React.SetStateAction<FilterType>>;
+  connectUpiId: (upiId: string) => void;
+  isUpiConnected: boolean;
+  connectedUpiId: string | null;
+  isLoading: boolean;
+}
+
+// Create the context with a default value
+const TransactionsContext = createContext<TransactionsContextType | undefined>(undefined);
+
+// Create the TransactionsProvider component
+export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
     const storedTransactions = localStorage.getItem('transactions');
     
@@ -36,6 +58,7 @@ export const useTransactions = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [isUpiConnected, setIsUpiConnected] = useState<boolean>(false);
   const [connectedUpiId, setConnectedUpiId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('transactions', JSON.stringify(transactions));
@@ -62,7 +85,6 @@ export const useTransactions = () => {
     toast.success('Transaction deleted successfully');
   }, []);
 
-  // Add the missing clearAllTransactions function
   const clearAllTransactions = useCallback(() => {
     setTransactions([]);
     toast.success('All transactions have been cleared');
@@ -93,7 +115,7 @@ export const useTransactions = () => {
     return transactions.filter((transaction) => transaction.type === filter);
   }, [transactions, filter]);
 
-  const connectUpiId = (upiId: string) => {
+  const connectUpiId = useCallback((upiId: string) => {
     setIsUpiConnected(!!upiId);
     setConnectedUpiId(upiId || null);
     
@@ -201,7 +223,8 @@ export const useTransactions = () => {
             amount,
             date: new Date(year, month, day).toISOString(),
             category,
-            type: 'income' as const
+            type: 'income' as const,
+            upiId
           });
         }
         
@@ -254,7 +277,8 @@ export const useTransactions = () => {
             amount,
             date: new Date(year, month, day).toISOString(),
             category,
-            type: 'expense' as const
+            type: 'expense' as const,
+            upiId
           });
         }
       });
@@ -266,21 +290,35 @@ export const useTransactions = () => {
     setTransactions((prev) => [...prev, ...newTransactions]);
     toast.success(`UPI ID ${upiId} connected successfully`);
     toast.success(`Imported ${newTransactions.length} transactions`);
-  };
+  }, []);
 
-  return {
-    transactions: filteredTransactions(),
-    addTransaction,
-    deleteTransaction,
-    getBalance,
-    getTotalIncome,
-    getTotalExpenses,
-    filter,
-    setFilter,
-    connectUpiId,
-    isUpiConnected,
-    connectedUpiId,
-    clearAllTransactions,
-    isLoading: false,
-  };
+  return (
+    <TransactionsContext.Provider 
+      value={{
+        transactions: filteredTransactions(),
+        addTransaction,
+        deleteTransaction,
+        getBalance,
+        getTotalIncome,
+        getTotalExpenses,
+        filter,
+        setFilter,
+        connectUpiId,
+        isUpiConnected,
+        connectedUpiId,
+        clearAllTransactions,
+        isLoading,
+      }}
+    >
+      {children}
+    </TransactionsContext.Provider>
+  );
+};
+
+export const useTransactions = () => {
+  const context = useContext(TransactionsContext);
+  if (!context) {
+    throw new Error('useTransactions must be used within a TransactionsProvider');
+  }
+  return context;
 };
