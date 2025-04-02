@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import AppSidebar from './AppSidebar';
+import { AppSidebar } from './AppSidebar';
 import Navbar from './Navbar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { TransactionsProvider } from '@/hooks/useTransactions';
