@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { Transaction, formatCurrency, getCategoryTotals } from '@/lib/finance';
+import { Transaction, formatCurrency } from '@/lib/finance';
 import GlassCard from '@/components/ui/GlassCard';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
@@ -15,6 +14,43 @@ interface MonthlyData {
   expense: number;
   name: string; // Added name property to the interface
 }
+
+// Helper function to get category totals
+const getCategoryTotals = (transactions: Transaction[]) => {
+  const categoryTotals: Record<string, number> = {};
+  const categoryColors: Record<string, string> = {};
+  const colors = [
+    '#4caf50', '#8bc34a', '#009688', '#00bcd4', '#3f51b5',
+    '#673ab7', '#9c27b0', '#e91e63', '#f44336', '#ff9800',
+    '#ff5722', '#795548', '#607d8b', '#9e9e9e', '#ffc107',
+  ];
+  
+  let colorIndex = 0;
+  
+  transactions.forEach(transaction => {
+    if (!categoryTotals[transaction.category]) {
+      categoryTotals[transaction.category] = 0;
+      categoryColors[transaction.category] = colors[colorIndex % colors.length];
+      colorIndex++;
+    }
+    
+    if (transaction.type === 'expense') {
+      categoryTotals[transaction.category] += transaction.amount;
+    }
+  });
+  
+  // Calculate total for percentages
+  const total = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
+  
+  // Convert to array format for charts
+  return Object.keys(categoryTotals).map(category => ({
+    category,
+    total: categoryTotals[category],
+    color: categoryColors[category],
+    percentage: (categoryTotals[category] / total) * 100,
+    name: category
+  }));
+};
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {

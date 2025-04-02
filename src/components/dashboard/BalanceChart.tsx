@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { 
   AreaChart, 
@@ -15,7 +14,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Transaction, getMonthlyTotals, formatCurrency, getCategoryTotals } from '@/lib/finance';
+import { Transaction, formatCurrency } from '@/lib/finance';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BalanceChartProps {
@@ -35,6 +34,70 @@ const CHART_COLORS = {
   category5: '#a4de6c',
   category6: '#d0ed57',
   category7: '#ffc658',
+};
+
+// Helper function to get monthly totals since getMonthlyTotals isn't available
+const getMonthlyTotals = (transactions: Transaction[]) => {
+  const monthlyData: Record<string, { income: number, expense: number }> = {};
+  
+  transactions.forEach(transaction => {
+    const date = new Date(transaction.date);
+    const monthYear = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+    
+    if (!monthlyData[monthYear]) {
+      monthlyData[monthYear] = { income: 0, expense: 0 };
+    }
+    
+    if (transaction.type === 'income') {
+      monthlyData[monthYear].income += transaction.amount;
+    } else {
+      monthlyData[monthYear].expense += transaction.amount;
+    }
+  });
+  
+  // Convert to arrays for chart consumption
+  const labels = Object.keys(monthlyData);
+  const incomeData = labels.map(label => monthlyData[label].income);
+  const expenseData = labels.map(label => monthlyData[label].expense);
+  
+  return { labels, incomeData, expenseData };
+};
+
+// Helper function to get category totals
+const getCategoryTotals = (transactions: Transaction[]) => {
+  const categoryTotals: Record<string, number> = {};
+  const categoryColors: Record<string, string> = {};
+  const colors = [
+    '#4caf50', '#8bc34a', '#009688', '#00bcd4', '#3f51b5',
+    '#673ab7', '#9c27b0', '#e91e63', '#f44336', '#ff9800',
+    '#ff5722', '#795548', '#607d8b', '#9e9e9e', '#ffc107',
+  ];
+  
+  let colorIndex = 0;
+  
+  transactions.forEach(transaction => {
+    if (!categoryTotals[transaction.category]) {
+      categoryTotals[transaction.category] = 0;
+      categoryColors[transaction.category] = colors[colorIndex % colors.length];
+      colorIndex++;
+    }
+    
+    if (transaction.type === 'expense') {
+      categoryTotals[transaction.category] += transaction.amount;
+    }
+  });
+  
+  // Calculate total for percentages
+  const total = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
+  
+  // Convert to array format for charts
+  return Object.keys(categoryTotals).map(category => ({
+    category,
+    total: categoryTotals[category],
+    color: categoryColors[category],
+    percentage: (categoryTotals[category] / total) * 100,
+    name: category
+  }));
 };
 
 const CustomTooltip = ({ active, payload, label }: any) => {
