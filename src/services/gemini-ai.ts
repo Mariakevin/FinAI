@@ -33,7 +33,8 @@ export class GeminiAIService {
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
-    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    // Updated API endpoint using the latest version and model
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent';
   }
 
   async generateFinancialInsights(financialData: any): Promise<string> {
@@ -55,6 +56,8 @@ export class GeminiAIService {
         },
       };
 
+      console.log('Making request to Gemini AI with URL:', `${this.baseUrl}?key=${this.apiKey}`);
+      
       const response = await fetch(`${this.baseUrl}?key=${this.apiKey}`, {
         method: 'POST',
         headers: {
@@ -65,10 +68,12 @@ export class GeminiAIService {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Gemini API error:', errorData);
         throw new Error(errorData.error?.message || 'Failed to generate insights');
       }
 
       const data: GeminiAIResponse = await response.json();
+      console.log('Gemini API response:', data);
       return data.candidates[0]?.content.parts[0].text || 'No insights generated';
     } catch (error) {
       console.error('Error generating insights:', error);
