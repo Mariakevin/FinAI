@@ -1,7 +1,7 @@
+
 import React, { useState, useCallback, memo } from 'react';
 import TransactionList from './TransactionList';
 import TransactionForm from './TransactionForm';
-import TransactionAnalytics from './TransactionAnalytics';
 import TransactionTable from './TransactionTable';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useAuth } from '@/hooks/useAuth';
@@ -212,14 +212,6 @@ const TransactionPage = () => {
         viewMode={viewMode}
         isAuthenticated={isAuthenticated}
       />
-      
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Analytics</h2>
-        <TransactionAnalytics 
-          transactions={transactions}
-          isLoading={isLoading}
-        />
-      </div>
     </div>
   );
 };

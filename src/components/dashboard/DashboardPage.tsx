@@ -12,7 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   LineChart, 
   BarChartBig, 
-  PieChart, 
   TrendingUp, 
   Wallet, 
   LayoutDashboard, 
@@ -263,10 +262,6 @@ const DashboardPage = () => {
                 <BarChartBig className="w-4 h-4 mr-1" />
                 Monthly
               </TabsTrigger>
-              <TabsTrigger value="category" className="data-[state=active]:bg-white data-[state=active]:shadow-sm text-sm">
-                <PieChart className="w-4 h-4 mr-1" />
-                Categories
-              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -281,9 +276,8 @@ const DashboardPage = () => {
         </div>
       </motion.div>
       
-      <div className={`grid ${isMobile ? 'grid-cols-1 gap-6' : 'grid-cols-7 gap-6'}`}>
+      <div className="grid grid-cols-1 gap-6">
         <motion.div 
-          className={`${isMobile ? '' : 'col-span-4'}`}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
@@ -296,7 +290,6 @@ const DashboardPage = () => {
           />
         </motion.div>
         <motion.div 
-          className={`${isMobile ? '' : 'col-span-3'}`}
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
