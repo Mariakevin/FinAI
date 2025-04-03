@@ -270,7 +270,7 @@ const EnhancedAIInsights = () => {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Brain className="h-6 w-6 text-indigo-600" />
-              AI Financial Analysis for 2025
+              AI Financial Analysis
             </CardTitle>
             <CardDescription>Our AI is analyzing your financial data patterns</CardDescription>
           </CardHeader>
@@ -352,7 +352,7 @@ const EnhancedAIInsights = () => {
         <div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center gap-2">
             <Brain className="h-8 w-8 text-indigo-600" />
-            Financial AI Insights for 2025
+            AI Insights
           </h1>
           <p className="text-gray-500 mt-1">
             AI-powered analysis of your financial behavior and trends
@@ -505,105 +505,6 @@ const EnhancedAIInsights = () => {
         </TabsContent>
       </Tabs>
       
-      <Card className="border-none shadow-md mb-8 overflow-hidden bg-white">
-        <CardHeader className="pb-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Lightbulb className="h-5 w-5 text-amber-500" />
-            <CardTitle className="text-lg">AI Recommendations for 2025</CardTitle>
-          </div>
-          <CardDescription>Smart actions based on your financial behavior</CardDescription>
-        </CardHeader>
-        
-        <CardContent className="pt-0">
-          <div className="space-y-4 mt-2">
-            {activeTab === 'current' ? (
-              <>
-                <div className="p-4 rounded-lg border border-indigo-100 bg-indigo-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-indigo-100 text-indigo-600 h-fit">
-                      <Target className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Set a clear savings goal for 2025</h4>
-                      <p className="text-gray-600 text-sm mb-2">Based on your current spending patterns, aim for a 25% savings rate by reducing discretionary expenses.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        Create Budget Plan
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-4 rounded-lg border border-green-100 bg-green-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-green-100 text-green-600 h-fit">
-                      <BadgePercent className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Optimize your largest expense category</h4>
-                      <p className="text-gray-600 text-sm mb-2">Reducing your {insights[1]?.value || 'largest'} expenses by 15% could increase your savings rate significantly.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        View Category Details
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="p-4 rounded-lg border border-amber-100 bg-amber-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-amber-100 text-amber-600 h-fit">
-                      <Clock className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Plan for future expenses in 2025</h4>
-                      <p className="text-gray-600 text-sm mb-2">Our AI forecasts a potential increase in your expenses during Q3 2025. Start building a buffer now.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        Create Emergency Fund
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-4 rounded-lg border border-blue-100 bg-blue-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-blue-100 text-blue-600 h-fit">
-                      <TrendingUp className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Increase your investment rate in 2025</h4>
-                      <p className="text-gray-600 text-sm mb-2">With your current savings, consider allocating 10% more toward investments for better long-term growth.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        Explore Investment Options
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </CardContent>
-        
-        <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
-          <div>
-            {lastUpdated && `Analysis updated: ${lastUpdated} | AI model v5.0 (2025 Edition)`}
-          </div>
-          <div className="flex gap-2">
-            <Button variant="ghost" size="sm" className="text-gray-500 flex items-center gap-1 h-7">
-              <Share2 className="h-3.5 w-3.5" />
-              Share
-            </Button>
-            <Button variant="ghost" size="sm" className="text-gray-500 flex items-center gap-1 h-7">
-              <FileDown className="h-3.5 w-3.5" />
-              Export
-            </Button>
-          </div>
-        </div>
-      </Card>
       
       <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg p-6 border border-indigo-100 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start gap-5">
@@ -611,9 +512,9 @@ const EnhancedAIInsights = () => {
             <Brain className="h-8 w-8" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">About FinAI's 2025 Intelligent Analysis</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-3">About FinAI's Intelligent Analysis</h3>
             <p className="text-gray-600 text-sm mb-4">
-              Our proprietary AI financial analysis engine uses advanced machine learning to detect patterns in your financial data and provide you with actionable insights. By analyzing your spending habits, income patterns, and financial behaviors, our AI can identify opportunities for improvement and predict future trends for 2025 and beyond.
+              Our proprietary AI financial analysis engine uses advanced machine learning to detect patterns in your financial data and provide you with actionable insights. By analyzing your spending habits, income patterns, and financial behaviors, our AI can identify opportunities for improvement and predict future trends and beyond.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.3 }} className="bg-white rounded-lg p-3 shadow-sm">
