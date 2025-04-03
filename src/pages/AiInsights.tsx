@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 
 const AiInsights = () => {
   return (
-    <div className="w-full mx-auto">
+    <div className="w-full mx-auto mt-6">
       <Helmet>
         <title>AI Insights | FinAI</title>
         <meta name="description" content="Get AI-powered insights about your financial habits" />
