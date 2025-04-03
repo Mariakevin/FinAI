@@ -5,9 +5,9 @@ import { Helmet } from 'react-helmet-async';
 
 const Profile = () => {
   return (
-    <div className="w-full pt-16">
+    <div className="w-full">
       <Helmet>
-        <title>Profile | FinWise</title>
+        <title>Profile | FinAI</title>
         <meta name="description" content="Manage your profile settings and account information" />
       </Helmet>
       <ProfilePage />

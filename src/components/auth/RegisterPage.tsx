@@ -87,7 +87,7 @@ const RegisterPage = () => {
     try {
       const success = await register(email, password, name);
       if (success) {
-        toast.success('Account created successfully! Welcome to FinWise.');
+        toast.success('Account created successfully! Welcome to FinAI.');
         navigate('/dashboard');
       } else {
         setGeneralError('Failed to create account. The email may already be registered.');
