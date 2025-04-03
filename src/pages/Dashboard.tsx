@@ -5,9 +5,9 @@ import { Helmet } from 'react-helmet-async';
 
 const Dashboard = () => {
   return (
-    <div className="w-full">
+    <div className="w-full mt-2">
       <Helmet>
-        <title>Dashboard | FinWise</title>
+        <title>Dashboard | FinAI</title>
         <meta name="description" content="Your financial overview dashboard" />
       </Helmet>
       <DashboardPage />
