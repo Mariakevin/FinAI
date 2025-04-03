@@ -44,7 +44,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           
           <div className="relative z-10 flex flex-col h-full justify-between text-white">
             <div>
-              <h1 className="text-4xl font-bold mb-6">FinAI</h1>
+              <h1 className="text-4xl font-bold mb-6">FinWise</h1>
               <p className="text-xl font-light mb-8">
                 The smart way to manage your finances with AI-powered insights
               </p>
@@ -66,7 +66,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
               </div>
               
               <div className="text-sm text-white/70">
-                &copy; 2023 FinAI. All rights reserved.
+                &copy; 2023 FinWise. All rights reserved.
               </div>
             </div>
           </div>
@@ -83,7 +83,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 <span>Back</span>
               </Link>
-              <div className="text-xl font-bold text-indigo-600">FinAI</div>
+              <div className="text-xl font-bold text-indigo-600">FinWise</div>
             </div>
             
             {children}

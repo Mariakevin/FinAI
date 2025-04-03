@@ -57,7 +57,6 @@ const EnhancedAIInsights = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>('current');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -184,17 +183,6 @@ const EnhancedAIInsights = () => {
           value: 'MoM',
           change: spendingChange,
           changeDirection: spendingDirection
-        },
-        {
-          id: '4',
-          title: '2025 Outlook',
-          description: 'Based on current trends and financial behaviors.',
-          impact: savingsRate > 15 ? 'positive' : 'negative',
-          category: 'forecast',
-          icon: <Target />,
-          value: savingsRate > 15 ? 'On Track' : 'Needs Attention',
-          change: savingsRate > 15 ? '+3.2% projected growth' : '-2.1% projected decline',
-          changeDirection: savingsRate > 15 ? 'up' : 'down'
         }
       ];
       
@@ -224,7 +212,7 @@ const EnhancedAIInsights = () => {
         },
         {
           id: '7',
-          title: 'Q3 2025 Projection',
+          title: 'Q3 2024 Projection',
           description: `Expense trend indicates ${isSpendingIncreasing ? 'continued growth' : 'potential reduction'} in Q3.`,
           impact: isSpendingIncreasing ? 'negative' : 'positive',
           category: 'spending',
@@ -270,7 +258,7 @@ const EnhancedAIInsights = () => {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-2xl">
               <Brain className="h-6 w-6 text-indigo-600" />
-              AI Financial Analysis for 2025
+              AI Financial Analysis
             </CardTitle>
             <CardDescription>Our AI is analyzing your financial data patterns</CardDescription>
           </CardHeader>
@@ -329,7 +317,7 @@ const EnhancedAIInsights = () => {
               <AlertTriangle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
               <h3 className="text-2xl font-medium mb-3">No data to analyze</h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Our AI needs your financial transactions to provide personalized insights for 2025. Add some transactions to get started.
+                Our AI needs your financial transactions to provide personalized insights. Add some transactions to get started.
               </p>
               <Button 
                 onClick={() => navigate('/transactions')} 
@@ -348,11 +336,11 @@ const EnhancedAIInsights = () => {
   
   return (
     <div className="w-full max-w-6xl mx-auto bg-gradient-to-br from-white to-blue-50 p-6 rounded-xl">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-600 flex items-center gap-2">
             <Brain className="h-8 w-8 text-indigo-600" />
-            Financial AI Insights for 2025
+            Financial AI Insights
           </h1>
           <p className="text-gray-500 mt-1">
             AI-powered analysis of your financial behavior and trends
@@ -375,74 +363,71 @@ const EnhancedAIInsights = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="current" className="mb-6" onValueChange={setActiveTab}>
-        <TabsList className="mb-4 bg-white p-1 border border-indigo-100 rounded-lg">
-          <TabsTrigger value="current" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
-            Current Insights
-          </TabsTrigger>
-          <TabsTrigger value="future" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
-            Future Predictions
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="current" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {insights.map((insight) => (
-              <motion.div
-                key={insight.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card className={cn(
-                  "h-full hover:shadow-md transition-all", 
-                  insight.impact === 'positive' ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100' :
-                  insight.impact === 'negative' ? 'bg-gradient-to-br from-red-50 to-orange-50 border-red-100' : 
-                  'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'
-                )}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <span className={cn(
-                          "p-2 rounded-lg",
-                          insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
-                          insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
-                          'bg-blue-100 text-blue-600'
-                        )}>
-                          {insight.icon}
-                        </span>
-                        {insight.title}
-                      </CardTitle>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {insights.map((insight) => (
+          <motion.div
+            key={insight.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className={cn(
+              "h-full hover:shadow-md transition-all", 
+              insight.impact === 'positive' ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-100' :
+              insight.impact === 'negative' ? 'bg-gradient-to-br from-red-50 to-orange-50 border-red-100' : 
+              'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100'
+            )}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <span className={cn(
+                      "p-2 rounded-lg",
+                      insight.impact === 'positive' ? 'bg-green-100 text-green-600' :
+                      insight.impact === 'negative' ? 'bg-red-100 text-red-600' :
+                      'bg-blue-100 text-blue-600'
+                    )}>
+                      {insight.icon}
+                    </span>
+                    {insight.title}
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-3xl font-bold text-gray-800">
+                    {insight.value}
+                  </div>
+                  {insight.change && (
+                    <div className={cn(
+                      "flex items-center gap-1 text-sm font-medium",
+                      insight.changeDirection === 'up' ? 'text-green-600' :
+                      insight.changeDirection === 'down' ? 'text-red-600' :
+                      'text-blue-600'
+                    )}>
+                      {insight.changeDirection === 'up' && <ArrowUp className="h-4 w-4" />}
+                      {insight.changeDirection === 'down' && <ArrowDown className="h-4 w-4" />}
+                      {insight.change}
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="text-3xl font-bold text-gray-800">
-                        {insight.value}
-                      </div>
-                      {insight.change && (
-                        <div className={cn(
-                          "flex items-center gap-1 text-sm font-medium px-2 py-0.5 rounded-full",
-                          insight.changeDirection === 'up' ? 'bg-green-50 text-green-600' :
-                          insight.changeDirection === 'down' ? 'bg-red-50 text-red-600' :
-                          'bg-blue-50 text-blue-600'
-                        )}>
-                          {insight.changeDirection === 'up' && <ArrowUp className="h-4 w-4" />}
-                          {insight.changeDirection === 'down' && <ArrowDown className="h-4 w-4" />}
-                          {insight.change}
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-gray-600 text-sm">{insight.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                  )}
+                </div>
+                <p className="text-gray-600 text-sm">{insight.description}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+      
+      <Card className="border-none shadow-md mb-8 overflow-hidden bg-white">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp className="h-5 w-5 text-indigo-600" />
+            <CardTitle className="text-lg">AI Financial Forecasts</CardTitle>
           </div>
-        </TabsContent>
+          <CardDescription>Forward-looking projections based on your transaction patterns</CardDescription>
+        </CardHeader>
         
-        <TabsContent value="future" className="mt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
             {predictions.map((prediction) => (
               <motion.div
                 key={prediction.id}
@@ -469,13 +454,6 @@ const EnhancedAIInsights = () => {
                         </span>
                         {prediction.title}
                       </div>
-                      <Badge variant={prediction.impact === 'positive' ? 'outline' : 'destructive'} className={
-                        prediction.impact === 'positive' ? 'bg-green-50 text-green-700 border-green-200' :
-                        prediction.impact === 'negative' ? 'bg-red-50 text-red-700 border-red-200' :
-                        'bg-blue-50 text-blue-700 border-blue-200'
-                      }>
-                        {prediction.impact === 'positive' ? 'Positive' : prediction.impact === 'negative' ? 'Attention Needed' : 'Neutral'}
-                      </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="pt-0">
@@ -502,95 +480,11 @@ const EnhancedAIInsights = () => {
               </motion.div>
             ))}
           </div>
-        </TabsContent>
-      </Tabs>
-      
-      <Card className="border-none shadow-md mb-8 overflow-hidden bg-white">
-        <CardHeader className="pb-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Lightbulb className="h-5 w-5 text-amber-500" />
-            <CardTitle className="text-lg">AI Recommendations for 2025</CardTitle>
-          </div>
-          <CardDescription>Smart actions based on your financial behavior</CardDescription>
-        </CardHeader>
-        
-        <CardContent className="pt-0">
-          <div className="space-y-4 mt-2">
-            {activeTab === 'current' ? (
-              <>
-                <div className="p-4 rounded-lg border border-indigo-100 bg-indigo-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-indigo-100 text-indigo-600 h-fit">
-                      <Target className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Set a clear savings goal for 2025</h4>
-                      <p className="text-gray-600 text-sm mb-2">Based on your current spending patterns, aim for a 25% savings rate by reducing discretionary expenses.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        Create Budget Plan
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-4 rounded-lg border border-green-100 bg-green-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-green-100 text-green-600 h-fit">
-                      <BadgePercent className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Optimize your largest expense category</h4>
-                      <p className="text-gray-600 text-sm mb-2">Reducing your {insights[1]?.value || 'largest'} expenses by 15% could increase your savings rate significantly.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        View Category Details
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="p-4 rounded-lg border border-amber-100 bg-amber-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-amber-100 text-amber-600 h-fit">
-                      <Clock className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Plan for future expenses in 2025</h4>
-                      <p className="text-gray-600 text-sm mb-2">Our AI forecasts a potential increase in your expenses during Q3 2025. Start building a buffer now.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        Create Emergency Fund
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-4 rounded-lg border border-blue-100 bg-blue-50">
-                  <div className="flex gap-3">
-                    <div className="p-2 rounded-full bg-blue-100 text-blue-600 h-fit">
-                      <TrendingUp className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-1">Increase your investment rate in 2025</h4>
-                      <p className="text-gray-600 text-sm mb-2">With your current savings, consider allocating 10% more toward investments for better long-term growth.</p>
-                      <Button variant="outline" size="sm" className="text-xs h-8">
-                        Explore Investment Options
-                        <ChevronRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
         </CardContent>
         
         <div className="px-6 py-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
           <div>
-            {lastUpdated && `Analysis updated: ${lastUpdated} | AI model v5.0 (2025 Edition)`}
+            {lastUpdated && `Analysis updated: ${lastUpdated} | AI model v4.0`}
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" size="sm" className="text-gray-500 flex items-center gap-1 h-7">
@@ -611,32 +505,32 @@ const EnhancedAIInsights = () => {
             <Brain className="h-8 w-8" />
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">About FinAI's 2025 Intelligent Analysis</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-3">About FinAI's Intelligent Analysis</h3>
             <p className="text-gray-600 text-sm mb-4">
-              Our proprietary AI financial analysis engine uses advanced machine learning to detect patterns in your financial data and provide you with actionable insights. By analyzing your spending habits, income patterns, and financial behaviors, our AI can identify opportunities for improvement and predict future trends for 2025 and beyond.
+              Our proprietary AI financial analysis engine uses advanced machine learning to detect patterns in your financial data and provide you with actionable insights. By analyzing your spending habits, income patterns, and financial behaviors, our AI can identify opportunities for improvement and predict future trends.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.3 }} className="bg-white rounded-lg p-3 shadow-sm">
+              <div className="bg-white rounded-lg p-3 shadow-sm">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
                   <Brain className="h-4 w-4 text-indigo-500" />
                   Pattern Recognition
                 </div>
                 <p className="text-xs text-gray-500">Identifies financial behaviors and spending patterns using neural networks</p>
-              </motion.div>
-              <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.3 }} className="bg-white rounded-lg p-3 shadow-sm">
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-sm">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
                   <LineChart className="h-4 w-4 text-blue-500" />
                   Financial Modeling
                 </div>
                 <p className="text-xs text-gray-500">Builds predictive models to forecast financial trends with 94% accuracy</p>
-              </motion.div>
-              <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.3 }} className="bg-white rounded-lg p-3 shadow-sm">
+              </div>
+              <div className="bg-white rounded-lg p-3 shadow-sm">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-2">
                   <Zap className="h-4 w-4 text-amber-500" />
                   Opportunity Detection
                 </div>
                 <p className="text-xs text-gray-500">Identifies optimization opportunities tailored to your specific financial situation</p>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>

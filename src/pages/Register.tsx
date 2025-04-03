@@ -8,8 +8,8 @@ const Register = () => {
   return (
     <AuthLayout>
       <Helmet>
-        <title>Create Account | FinAI</title>
-        <meta name="description" content="Create a new FinAI account to start managing your finances" />
+        <title>Create Account | FinWise</title>
+        <meta name="description" content="Create a new FinWise account to start managing your finances" />
       </Helmet>
       <RegisterPage />
     </AuthLayout>
