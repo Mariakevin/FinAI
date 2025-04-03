@@ -1,3 +1,4 @@
+ 
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -262,7 +263,7 @@ const EnhancedAIInsights = () => {
               </div>
               <h3 className="text-xl font-medium mb-3 text-indigo-700">Processing your financial data</h3>
               <p className="text-gray-600 mb-8 text-center max-w-md">
-                Our advanced AI model is analyzing your transactions to generate personalized insights and opportunities
+                AI is analyzing your transactions to generate personalized insights and opportunities
               </p>
               
               <div className="w-full max-w-md space-y-2">
