@@ -33,7 +33,7 @@ const AccountSettings = ({
     fetch(projectDocumentation)
       .then(response => response.text())
       .then(text => {
-        downloadTextFile(text, 'FinWise_Project_Documentation.txt');
+        downloadTextFile(text, 'FinAI_Project_Documentation.txt');
         toast.success('Documentation downloaded successfully');
       })
       .catch(error => {
@@ -113,14 +113,14 @@ const AccountSettings = ({
             <div className="p-5 bg-teal-50 rounded-lg border border-teal-100">
               <h4 className="font-medium text-teal-800 mb-2 flex items-center gap-2 text-base">
                 <Info className="h-4 w-4 text-teal-700" />
-                About FinWise
+                About FinAI
               </h4>
               <p className="text-teal-700 text-sm">
-                FinWise - AI-Powered Personal Finance Tracker<br />
+                FinAI - AI-Powered Personal Finance Tracker<br />
                 Version 1.0.0
               </p>
               <p className="text-xs text-teal-600 mt-2">
-                © 2023 FinWise. All rights reserved.
+                © 2025 FinAI. All rights reserved.
               </p>
             </div>
           </TabsContent>
@@ -154,7 +154,7 @@ const AccountSettings = ({
                 Project Documentation
               </h4>
               <p className="text-blue-700 text-sm mb-4">
-                This document contains detailed information about the FinWise project including its abstract, 
+                This document contains detailed information about the FinAI project including its abstract, 
                 architecture, functionality, and technical specifications.
               </p>
               <Button 
@@ -170,13 +170,13 @@ const AccountSettings = ({
             <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 max-h-80 overflow-y-auto">
               <h5 className="font-medium text-gray-800 mb-3">Documentation Preview</h5>
               <pre className="text-xs text-gray-700 whitespace-pre-wrap">
-                # FinWise - AI-Powered Personal Finance Management System
+                # FinAI - AI-Powered Personal Finance Management System
 
                 ## ABSTRACT
-                FinWise is an intelligent personal finance management application designed to help users track, analyze, and optimize their financial activities. Leveraging artificial intelligence and advanced data analytics, FinWise provides personalized insights and recommendations to improve users' financial health.
+                FinAI is an intelligent personal finance management application designed to help users track, analyze, and optimize their financial activities. Leveraging artificial intelligence and advanced data analytics, FinAI provides personalized insights and recommendations to improve users' financial health.
 
                 ## PROJECT DESCRIPTION
-                FinWise addresses the growing need for sophisticated yet user-friendly personal finance management tools in an increasingly complex financial landscape. The application combines transaction tracking, budgeting, financial analytics, and AI-powered insights in a cohesive platform accessible through web browsers.
+                FinAI addresses the growing need for sophisticated yet user-friendly personal finance management tools in an increasingly complex financial landscape. The application combines transaction tracking, budgeting, financial analytics, and AI-powered insights in a cohesive platform accessible through web browsers.
 
                 [... Download the full documentation for more details ...]
               </pre>
