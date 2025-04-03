@@ -6,9 +6,16 @@ import { TransactionsProvider } from '@/hooks/useTransactions';
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/';
+  const isIndexPage = location.pathname === '/';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+  if (isIndexPage) {
+    // The index page has its own full-screen layout without padding
+    return <>{children}</>;
+  }
 
   if (isAuthPage) {
+    // Auth pages have their own layout
     return <>{children}</>;
   }
 

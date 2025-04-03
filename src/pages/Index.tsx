@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, LogIn, User, CreditCard, Sparkles, Shield, BarChart3, BrainCircuit } from 'lucide-react';
+import { ArrowRight, LogIn, User, Sparkles, BrainCircuit } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from '@/components/ui/animated';
 import PiggyBank from '@/components/ui/PiggyBank';
@@ -18,7 +18,8 @@ const Index = () => {
         <meta name="description" content="Visualize, analyze, and optimize your financial journey with intelligent AI insights and beautiful analytics." />
       </Helmet>
       
-      <section className="relative min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center overflow-hidden w-full">
+      {/* Hero section with full viewport height */}
+      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden w-full">
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-teal-50 to-blue-100 overflow-hidden">
           <div className="absolute top-1/4 left-1/3 w-64 h-64 rounded-full bg-teal-300/20 animate-pulse-light"></div>
           <div className="absolute top-1/2 right-1/4 w-80 h-80 rounded-full bg-blue-300/20 animate-pulse-light" style={{ animationDelay: '1s' }}></div>
@@ -29,7 +30,7 @@ const Index = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center max-w-4xl mx-auto px-6 z-10 py-20"
+          className="text-center max-w-4xl mx-auto px-6 z-10"
         >
           <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-teal-500/10 to-blue-500/10 text-teal-600 mb-6 backdrop-blur-sm border border-teal-200/20">
             <BrainCircuit className="mr-2 h-4 w-4" />
@@ -68,8 +69,16 @@ const Index = () => {
             </Link>
           )}
         </motion.div>
+        
+        {/* Scroll indicator for features section */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+            <ArrowRight className="h-6 w-6 text-gray-500 transform rotate-90" />
+          </div>
+        </div>
       </section>
 
+      {/* Features section - responsive grid */}
       <section className="py-20 bg-white w-full">
         <div className="container px-4 sm:px-8 mx-auto">
           <div className="text-center mb-16">
@@ -92,7 +101,7 @@ const Index = () => {
                 description: "AI algorithms predict your future expenses and help set optimal savings goals."
               },
               {
-                icon: <BarChart3 className="h-8 w-8 text-primary-600" />,
+                icon: <Sparkles className="h-8 w-8 text-primary-600" />,
                 title: "Intelligent Insights",
                 description: "Get personalized financial advice based on your unique spending habits and goals."
               }
@@ -118,6 +127,7 @@ const Index = () => {
         </div>
       </section>
       
+      {/* CTA section - full width */}
       <section className="py-24 bg-gradient-to-r from-teal-600 to-blue-600 text-white w-full">
         <div className="container px-4 sm:px-8 mx-auto text-center">
           <motion.div
