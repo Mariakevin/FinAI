@@ -8,8 +8,8 @@ const Login = () => {
   return (
     <AuthLayout>
       <Helmet>
-        <title>Sign In | FinWise</title>
-        <meta name="description" content="Sign in to your FinWise account to manage your finances" />
+        <title>Sign In | FinAI</title>
+        <meta name="description" content="Sign in to your FinAI account to manage your finances" />
       </Helmet>
       <LoginPage />
     </AuthLayout>
