@@ -8,13 +8,15 @@ import { HelmetProvider } from 'react-helmet-async';
 import { useEffect, lazy, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
 
-// Use lazy loading for better performance
+// Import Profile directly instead of lazily loading it
+import Profile from '@/pages/Profile';
+
+// Continue to use lazy loading for other components
 const Index = lazy(() => import('@/pages/Index'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Transactions = lazy(() => import('@/pages/Transactions'));
 const Budget = lazy(() => import('@/pages/Budget'));
 const AiInsights = lazy(() => import('@/pages/AiInsights'));
-const Profile = lazy(() => import('@/pages/Profile'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const Login = lazy(() => import('@/pages/Login'));
