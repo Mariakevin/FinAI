@@ -2,31 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Sparkles, 
-  TrendingUp, 
-  TrendingDown, 
-  AlertTriangle, 
-  Lightbulb, 
-  RefreshCw, 
-  Brain, 
-  LineChart,
-  BarChart, 
-  Calculator, 
-  ArrowUp,
-  ArrowDown,
-  ChevronRight,
-  PieChart,
-  Share2,
-  FileDown,
-  Zap,
-  Target,
-  BadgePercent,
-  Clock,
-  CreditCard,
-  Wallet,
-  CalendarDays
-} from 'lucide-react';
+import { Sparkles, TrendingUp,TrendingDown, AlertTriangle, Lightbulb, RefreshCw, Brain, LineChart, BarChart, Calculator, ArrowUp, ArrowDown, ChevronRight, PieChart, 
+  Share2, FileDown, Zap, Target, BadgePercent, Clock, CreditCard, Wallet, CalendarDays} from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -300,7 +277,7 @@ const EnhancedAIInsights = () => {
                 {[
                   { label: 'Pattern Analysis', icon: <LineChart className="h-4 w-4 text-indigo-500" /> },
                   { label: 'Financial Modeling', icon: <Calculator className="h-4 w-4 text-indigo-500" /> }, 
-                  { label: 'Recommendation Engine', icon: <Zap className="h-4 w-4 text-indigo-500" /> }
+                  { label: 'AI Engine', icon: <Zap className="h-4 w-4 text-indigo-500" /> }
                 ].map((step, i) => (
                   <div key={step.label} className={`px-4 py-3 rounded-lg border flex items-center gap-3 ${analysisProgress > i * 33 ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-gray-200'}`}>
                     <div className={`p-1.5 rounded-full ${analysisProgress > i * 33 ? 'bg-indigo-100' : 'bg-gray-100'}`}>
@@ -329,7 +306,7 @@ const EnhancedAIInsights = () => {
               <AlertTriangle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
               <h3 className="text-2xl font-medium mb-3">No data to analyze</h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Our AI needs your financial transactions to provide personalized insights for 2025. Add some transactions to get started.
+                Add some transactions to provide AI personalized insights. 
               </p>
               <Button 
                 onClick={() => navigate('/transactions')} 
@@ -359,10 +336,6 @@ const EnhancedAIInsights = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 px-3 py-1">
-            <Sparkles className="h-3.5 w-3.5 mr-1" />
-            AI Powered
-          </Badge>
           <Button 
             variant="outline" 
             size="sm" 
@@ -381,7 +354,6 @@ const EnhancedAIInsights = () => {
             Current Insights
           </TabsTrigger>
           <TabsTrigger value="future" className="data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
-            Future Predictions
           </TabsTrigger>
         </TabsList>
         
@@ -545,5 +517,4 @@ const EnhancedAIInsights = () => {
     </div>
   );
 };
-
 export default EnhancedAIInsights;
