@@ -19,62 +19,57 @@ const Index = () => {
       </Helmet>
       
       {/* Hero section with full viewport height */}
-      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden w-full">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-teal-50 to-blue-100 overflow-hidden">
+      <section className="relative min-h-screen flex flex-col items-center justify-center w-full overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-50 to-teal-100 overflow-hidden">
           <div className="absolute top-1/4 left-1/3 w-64 h-64 rounded-full bg-teal-300/20 animate-pulse-light"></div>
           <div className="absolute top-1/2 right-1/4 w-80 h-80 rounded-full bg-blue-300/20 animate-pulse-light" style={{ animationDelay: '1s' }}></div>
           <div className="absolute bottom-1/4 left-1/4 w-48 h-48 rounded-full bg-orange-300/20 animate-pulse-light" style={{ animationDelay: '2s' }}></div>
         </div>
         
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center max-w-4xl mx-auto px-6 z-10"
-        >
-          <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-teal-500/10 to-blue-500/10 text-teal-600 mb-6 backdrop-blur-sm border border-teal-200/20">
-            <BrainCircuit className="mr-2 h-4 w-4" />
-            <span className="text-sm font-medium">AI-Powered Financial Intelligence</span>
-          </div>
-          
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-primary-600 bg-clip-text text-transparent mb-8 tracking-tight leading-tight">
-            Smart Finance with AI
-          </h1>
-          
-          <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
-            Leverage artificial intelligence to analyze your spending, optimize savings, and reach your financial goals faster in 2025.
-          </p>
-          
-          {!isAuthenticated ? (
-            <div className="flex flex-col sm:flex-row justify-center gap-5">
-              <Link to="/login">
-                <Button size="lg" className="group w-full sm:w-auto bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
-                  <LogIn className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
-                  <span>Sign In</span>
-                </Button>
-              </Link>
-              <Link to="/register">
-                <Button size="lg" variant="outline" className="group w-full sm:w-auto border-2 border-teal-200 hover:border-teal-500 hover:bg-teal-50/30 transition-all duration-300">
-                  <User className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
-                  <span>Create Account</span>
-                </Button>
-              </Link>
+        <div className="container mx-auto px-6 py-16 z-10">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center max-w-4xl mx-auto"
+          >
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-teal-500/10 to-blue-500/10 text-teal-600 mb-8 backdrop-blur-sm border border-teal-200/20">
+              <BrainCircuit className="mr-2 h-4 w-4" />
+              <span className="text-sm font-medium">AI-Powered Financial Intelligence</span>
             </div>
-          ) : (
-            <Link to="/dashboard">
-              <Button size="lg" className="bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 shadow-lg hover:shadow-blue-500/20 transition-all duration-300 group">
-                <span>Go to Dashboard</span>
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          )}
-        </motion.div>
-        
-        {/* Scroll indicator for features section */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
-            <ArrowRight className="h-6 w-6 text-gray-500 transform rotate-90" />
-          </div>
+            
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold bg-gradient-to-r from-teal-600 via-blue-600 to-primary-600 bg-clip-text text-transparent mb-8 tracking-tight leading-tight">
+              Smart Finance with AI
+            </h1>
+            
+            <p className="text-lg sm:text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+              Leverage artificial intelligence to analyze your spending, optimize savings, and reach your financial goals faster in 2025.
+            </p>
+            
+            {!isAuthenticated ? (
+              <div className="flex flex-col sm:flex-row justify-center gap-5">
+                <Link to="/login">
+                  <Button size="lg" className="group w-full sm:w-auto bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 shadow-lg hover:shadow-blue-500/20 transition-all duration-300">
+                    <LogIn className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" />
+                    <span>Sign In</span>
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="lg" variant="outline" className="group w-full sm:w-auto border-2 border-teal-200 hover:border-teal-500 hover:bg-teal-50/30 transition-all duration-300">
+                    <User className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
+                    <span>Create Account</span>
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <Link to="/dashboard">
+                <Button size="lg" className="bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 shadow-lg hover:shadow-blue-500/20 transition-all duration-300 group">
+                  <span>Go to Dashboard</span>
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            )}
+          </motion.div>
         </div>
       </section>
 

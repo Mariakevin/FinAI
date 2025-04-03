@@ -10,8 +10,12 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   if (isIndexPage) {
-    // The index page has its own full-screen layout without padding
-    return <>{children}</>;
+    // The index page has its own full-screen layout
+    return (
+      <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
+        {children}
+      </div>
+    );
   }
 
   if (isAuthPage) {
