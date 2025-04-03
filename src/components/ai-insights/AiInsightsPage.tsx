@@ -1,27 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Bot, 
-  TrendingUp, 
-  Lightbulb, 
-  Loader2, 
-  Brain, 
-  BrainCircuit, 
-  ArrowDownCircle, 
-  BarChart3, 
-  Sparkles, 
-  AlertTriangle,
-  ChevronRight,
-  Zap,
-  Gauge,
-  Share2,
-  FileDown,
-  DownloadCloud
-} from 'lucide-react';
+import { Bot, TrendingUp, Lightbulb, Loader2, Brain, BrainCircuit, ArrowDownCircle, BarChart3, Sparkles, AlertTriangle, ChevronRight, Zap, Gauge, Share2, FileDown, DownloadCloud} from 'lucide-react';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/finance';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -30,7 +12,6 @@ import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-
 const AiInsightsPage = () => {
   const { transactions } = useTransactions();
   const [activeTab, setActiveTab] = useState('insights');
@@ -42,13 +23,11 @@ const AiInsightsPage = () => {
   const [confidenceScore, setConfidenceScore] = useState<number>(0);
   const [accuracy, setAccuracy] = useState<number>(0);
   const navigate = useNavigate();
-  
   useEffect(() => {
     if (transactions.length > 0 && !insights && !loading) {
       generateContent('insights');
     }
   }, [transactions]);
-  
   const simulateAiProcessing = async () => {
     // Simulate AI processing with progress
     setConfidenceScore(0);
@@ -448,10 +427,6 @@ const AiInsightsPage = () => {
             <Sparkles className="h-3 w-3 mr-1 text-purple-600" />
             AI Powered
           </Badge>
-          <Badge className="bg-green-100 text-green-800 border-green-200 hover:bg-green-200">
-            <Brain className="h-3 w-3 mr-1 text-green-600" />
-            97% Accuracy
-          </Badge>
         </motion.div>
       </div>
       
@@ -541,8 +516,7 @@ const AiInsightsPage = () => {
                     <p className="text-sm text-gray-500">Custom recommendations based on your unique financial profile</p>
                   </div>
                 </motion.div>
-              </div>
-              
+              </div>              
               {transactions.length < 5 && (
                 <div className="mt-6 flex items-start gap-3 bg-amber-50 p-4 rounded-lg border border-amber-100">
                   <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
@@ -570,5 +544,4 @@ const AiInsightsPage = () => {
     </div>
   );
 };
-
 export default AiInsightsPage;
