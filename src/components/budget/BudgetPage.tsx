@@ -10,18 +10,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-
-// Type definitions
 interface Budget {
   id: string;
   category: string;
   limit: number;
-  color: string;
-}
-
+  color: string;}
 const STORAGE_KEY = 'finwise_budgets';
-
-// Sample initial budget data
 const INITIAL_BUDGETS: Budget[] = [
   { id: '1', category: 'Food & Dining', limit: 15000, color: '#4CAF50' },
   { id: '2', category: 'Transportation', limit: 5000, color: '#FF9800' },
@@ -29,21 +23,18 @@ const INITIAL_BUDGETS: Budget[] = [
   { id: '4', category: 'Shopping', limit: 8000, color: '#2196F3' },
   { id: '5', category: 'Bills & Utilities', limit: 10000, color: '#9C27B0' },
 ];
-
 const BudgetPage = () => {
   const { transactions } = useTransactions();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
-  const [activeView, setActiveView] = useState<'list' | 'chart'>('list');
+  const [activeView, setActiveView] = useState('list');
   const [newBudget, setNewBudget] = useState<{ category: string; limit: number; color: string; }>({
     category: '',
     limit: 0,
     color: '#' + Math.floor(Math.random()*16777215).toString(16) // Generate random color
   });
   const [isAddingNew, setIsAddingNew] = useState(false);
-  
-  // Load budgets from localStorage on mount
   useEffect(() => {
     const savedBudgets = localStorage.getItem(STORAGE_KEY);
     if (savedBudgets) {
@@ -53,51 +44,37 @@ const BudgetPage = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_BUDGETS));
     }
   }, []);
-  
-  // Save budgets to localStorage when they change
   useEffect(() => {
     if (budgets.length > 0) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(budgets));
     }
   }, [budgets]);
-  
-  // Calculate spending by category for the current month
   const getCurrentMonthSpending = () => {
     const now = new Date();
     const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    
+    const currentYear = now.getFullYear(); 
     const monthlyTransactions = transactions.filter(t => {
       const date = new Date(t.date);
       return date.getMonth() === currentMonth && 
              date.getFullYear() === currentYear &&
              t.type === 'expense';
     });
-    
     const categorySpending: Record<string, number> = {};
-    
     monthlyTransactions.forEach(t => {
       categorySpending[t.category] = (categorySpending[t.category] || 0) + t.amount;
     });
-    
     return categorySpending;
   };
-  
   const categorySpending = getCurrentMonthSpending();
-  
-  // Handle edit of budget amount
   const handleEdit = (id: string, currentLimit: number) => {
     setEditingId(id);
     setEditValue(currentLimit);
   };
-  
-  // Save edited budget amount
   const handleSave = (id: string) => {
     if (editValue <= 0) {
       toast.error('Budget amount must be greater than zero');
       return;
     }
-    
     setBudgets(prev => 
       prev.map(budget => 
         budget.id === id ? { ...budget, limit: editValue } : budget
@@ -106,19 +83,14 @@ const BudgetPage = () => {
     setEditingId(null);
     toast.success('Budget updated successfully');
   };
-  
-  // Cancel edit
   const handleCancel = () => {
     setEditingId(null);
-  };
-  
-  // Handle adding new budget
+  };  
   const handleAddBudget = () => {
     if (!newBudget.category) {
       toast.error('Please enter a category name');
       return;
     }
-    
     if (newBudget.limit <= 0) {
       toast.error('Budget amount must be greater than zero');
       return;
@@ -156,40 +128,16 @@ const BudgetPage = () => {
         color: budget.color
       };
     });
-  };
-  
-  const chartData = getChartData();
-  
+  };  
+  const chartData = getChartData();  
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Budget</h1>
-          <p className="text-gray-500 mt-1">Track your spending against budget limits</p>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <div className="bg-gray-100 rounded-md p-1 flex">
-            <Button 
-              variant={activeView === 'list' ? 'default' : 'ghost'} 
-              size="sm" 
-              onClick={() => setActiveView('list')}
-              className="rounded-r-none"
-            >
-              <BarChart3 className="h-4 w-4 mr-1" />
-              <span className="hidden sm:inline">List</span>
-            </Button>
-            <Button 
-              variant={activeView === 'chart' ? 'default' : 'ghost'} 
-              size="sm" 
-              onClick={() => setActiveView('chart')}
-              className="rounded-l-none"
-            >
-              <PieChartIcon className="h-4 w-4 mr-1" />
-              <span className="hidden sm:inline">Chart</span>
-            </Button>
-          </div>
-          
+          <p className="text-gray-500 mt-1">Track your spending with a budget limit</p>
+        </div>        
+        <div className="flex items-center gap-3">          
           <Button 
             onClick={() => setIsAddingNew(!isAddingNew)} 
             className="flex items-center gap-2"
@@ -198,8 +146,7 @@ const BudgetPage = () => {
             <span>{isAddingNew ? 'Cancel' : 'Set New Budget'}</span>
           </Button>
         </div>
-      </div>
-      
+      </div>      
       {isAddingNew && (
         <GlassCard className="animate-scale-in">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Create New Budget</h3>
@@ -246,15 +193,13 @@ const BudgetPage = () => {
             </Button>
           </div>
         </GlassCard>
-      )}
-      
+      )}      
       <Card className="overflow-hidden">
         <Tabs defaultValue="all">
           <TabsList className="w-full justify-start p-2 bg-muted/20">
             <TabsTrigger value="all">All Categories</TabsTrigger>
             <TabsTrigger value="alert">Alert (≥90%)</TabsTrigger>
-          </TabsList>
-          
+          </TabsList>          
           <TabsContent value="all" className="m-0">
             {activeView === 'list' ? (
               <CardContent className="p-6">
@@ -262,8 +207,7 @@ const BudgetPage = () => {
                   {budgets.map(budget => {
                     const spent = categorySpending[budget.category] || 0;
                     const percentage = Math.min(100, (spent / budget.limit) * 100);
-                    const remaining = Math.max(0, budget.limit - spent);
-                    
+                    const remaining = Math.max(0, budget.limit - spent);                    
                     return (
                       <div key={budget.id} className="space-y-2">
                         <div className="flex justify-between items-center">
@@ -335,73 +279,18 @@ const BudgetPage = () => {
                 <div className="h-96">
                   {budgets.length > 0 ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
-                      <GlassCard className="flex flex-col">
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                          <PieChartIcon className="h-5 w-5 text-blue-600 mr-2" />
-                          Budget vs. Spending
-                        </h3>
-                        <div className="flex-1 flex items-center justify-center">
-                          <ResponsiveContainer width="100%" height={300}>
-                            <PieChart>
-                              <Pie
-                                data={chartData}
-                                cx="50%"
-                                cy="50%"
-                                labelLine={false}
-                                outerRadius={100}
-                                fill="#8884d8"
-                                dataKey="spent"
-                                nameKey="name"
-                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                              >
-                                {chartData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                              </Pie>
-                              <Tooltip 
-                                formatter={(value) => formatCurrency(Number(value))}
-                                labelFormatter={(name) => `Category: ${name}`}
-                              />
-                            </PieChart>
-                          </ResponsiveContainer>
-                        </div>
-                      </GlassCard>
+                                            
                       
-                      <GlassCard className="flex flex-col">
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
-                          <BarChart3 className="h-5 w-5 text-blue-600 mr-2" />
-                          Budget Utilization
-                        </h3>
-                        <div className="flex-1 flex items-center justify-center">
-                          <ResponsiveContainer width="100%" height={300}>
-                            <BarChart
-                              data={chartData}
-                              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                            >
-                              <XAxis dataKey="name" />
-                              <YAxis />
-                              <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                              <Bar dataKey="spent" name="Spent" fill="#8884d8">
-                                {chartData.map((entry, index) => (
-                                  <Cell key={`cell-${index}`} fill={entry.color} />
-                                ))}
-                              </Bar>
-                              <Bar dataKey="remaining" name="Remaining" fill="#82ca9d" />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
-                      </GlassCard>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center h-full">
                       <p className="text-gray-500">No budgets set yet. Add your first budget to see charts.</p>
                     </div>
                   )}
-                </div>
-              </CardContent>
+                </div> 
+              </CardContent> 
             )}
-          </TabsContent>
-          
+          </TabsContent>          
           <TabsContent value="alert" className="m-0">
             <CardContent className="p-6">
               <div className="space-y-6">
@@ -414,8 +303,7 @@ const BudgetPage = () => {
                   .map(budget => {
                     const spent = categorySpending[budget.category] || 0;
                     const percentage = Math.min(100, (spent / budget.limit) * 100);
-                    const remaining = Math.max(0, budget.limit - spent);
-                    
+                    const remaining = Math.max(0, budget.limit - spent);                    
                     return (
                       <div key={budget.id} className="space-y-2">
                         <div className="flex justify-between items-center">
@@ -473,8 +361,7 @@ const BudgetPage = () => {
                         />
                       </div>
                     );
-                  })}
-                
+                  })}                
                 {budgets.filter(budget => {
                   const spent = categorySpending[budget.category] || 0;
                   const percentage = (spent / budget.limit) * 100;
@@ -492,5 +379,4 @@ const BudgetPage = () => {
     </div>
   );
 };
-
 export default BudgetPage;
