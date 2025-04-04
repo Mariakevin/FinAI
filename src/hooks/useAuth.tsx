@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +11,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   canEdit: (resourceOwnerId?: string) => boolean;
+  getUserDisplayName: () => string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -153,6 +153,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  // Helper function to get user's display name from metadata
+  const getUserDisplayName = useCallback((): string => {
+    if (!user) return '';
+    
+    // Check for name in user_metadata
+    if (user.user_metadata && user.user_metadata.name) {
+      return user.user_metadata.name;
+    }
+    
+    // Fallback to email if no name is set
+    return user.email?.split('@')[0] || '';
+  }, [user]);
+
   // Memoize this function to prevent unnecessary re-renders
   const canEdit = useCallback((resourceOwnerId?: string): boolean => {
     if (!user) return false;
@@ -168,8 +181,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     register,
     logout,
     isAuthenticated: !!user,
-    canEdit
-  }), [user, isLoading, login, register, logout, canEdit]);
+    canEdit,
+    getUserDisplayName
+  }), [user, isLoading, login, register, logout, canEdit, getUserDisplayName]);
 
   return (
     <AuthContext.Provider value={contextValue}>

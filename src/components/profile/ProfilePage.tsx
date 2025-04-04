@@ -12,13 +12,13 @@ import PersonalInfoForm from './PersonalInfoForm';
 import AccountSettings from './AccountSettings';
 
 const ProfilePage = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, getUserDisplayName } = useAuth();
   const { clearAllTransactions } = useTransactions();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [profileData, setProfileData] = useState({
-    name: user?.name || '',
+    name: '',
     email: user?.email || '',
     phone: localStorage.getItem('profile_phone') || '',
     occupation: localStorage.getItem('profile_occupation') || '',
@@ -36,11 +36,11 @@ const ProfilePage = () => {
     if (user) {
       setProfileData(prev => ({
         ...prev,
-        name: user.name || prev.name,
+        name: getUserDisplayName(),
         email: user.email || prev.email
       }));
     }
-  }, [user]);
+  }, [user, getUserDisplayName]);
 
   useEffect(() => {
     if (!isAuthenticated) {
