@@ -12,7 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
-import { useSupabaseClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
 const AiInsightsPage = () => {
   const { transactions } = useTransactions();
@@ -25,7 +25,6 @@ const AiInsightsPage = () => {
   const [confidenceScore, setConfidenceScore] = useState<number>(0);
   const [accuracy, setAccuracy] = useState<number>(0);
   const navigate = useNavigate();
-  const supabaseClient = useSupabaseClient();
   
   useEffect(() => {
     if (transactions.length > 0 && !insights && !loading) {
@@ -94,7 +93,7 @@ const AiInsightsPage = () => {
       let response = '';
       
       try {
-        const { data, error } = await supabaseClient.functions.invoke('gemini-insights', {
+        const { data, error } = await supabase.functions.invoke('gemini-insights', {
           body: { 
             transactions, 
             type 
