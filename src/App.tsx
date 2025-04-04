@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -7,8 +8,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import { useEffect, lazy, Suspense } from 'react';
 import { Layout } from '@/components/layout/Layout';
 
-// Import Profile directly instead of lazily loading it
+// Import components that need direct loading to prevent fetch errors
 import Profile from '@/pages/Profile';
+import Register from '@/pages/Register';
 
 // Continue to use lazy loading for other components
 const Index = lazy(() => import('@/pages/index'));
@@ -19,7 +21,6 @@ const AiInsights = lazy(() => import('@/pages/AiInsights'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const Login = lazy(() => import('@/pages/Login'));
-const Register = lazy(() => import('@/pages/Register'));
 
 import './App.css';
 
