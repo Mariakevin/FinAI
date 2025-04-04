@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -23,6 +22,8 @@ const NotFound = lazy(() => import('@/pages/NotFound'));
 const Login = lazy(() => import('@/pages/Login'));
 
 import './App.css';
+import { testSupabaseConnection } from '@/lib/supabase-utils';
+import { toast } from 'sonner';
 
 // Create the query client with optimized settings
 const queryClient = new QueryClient({
@@ -87,6 +88,17 @@ function AppRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    const checkDatabaseConnection = async () => {
+      const isConnected = await testSupabaseConnection();
+      if (!isConnected) {
+        toast.error('Unable to connect to the database. Please check your configuration.');
+      }
+    };
+
+    checkDatabaseConnection();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
