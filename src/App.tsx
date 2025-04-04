@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -12,7 +11,7 @@ import { Layout } from '@/components/layout/Layout';
 import Profile from '@/pages/Profile';
 
 // Continue to use lazy loading for other components
-const Index = lazy(() => import('@/pages/Index'));
+const Index = lazy(() => import('@/pages/index'));
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Transactions = lazy(() => import('@/pages/Transactions'));
 const Budget = lazy(() => import('@/pages/Budget'));
