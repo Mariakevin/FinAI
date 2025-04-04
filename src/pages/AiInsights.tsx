@@ -8,7 +8,7 @@ const AiInsights = () => {
     <div className="w-full">
       <Helmet>
         <title>AI Insights | FinAI</title>
-        <meta name="description" content="Get AI-powered insights about your financial habits" />
+        <meta name="description" content="Get Gemini-powered AI insights about your financial habits" />
       </Helmet>
       <EnhancedAIInsights />
     </div>

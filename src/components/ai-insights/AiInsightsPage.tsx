@@ -12,6 +12,8 @@ import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
+import { useSupabaseClient } from '@supabase/supabase-js';
+
 const AiInsightsPage = () => {
   const { transactions } = useTransactions();
   const [activeTab, setActiveTab] = useState('insights');
@@ -23,13 +25,15 @@ const AiInsightsPage = () => {
   const [confidenceScore, setConfidenceScore] = useState<number>(0);
   const [accuracy, setAccuracy] = useState<number>(0);
   const navigate = useNavigate();
+  const supabaseClient = useSupabaseClient();
+  
   useEffect(() => {
     if (transactions.length > 0 && !insights && !loading) {
       generateContent('insights');
     }
   }, [transactions]);
+  
   const simulateAiProcessing = async () => {
-    // Simulate AI processing with progress
     setConfidenceScore(0);
     setAccuracy(0);
     const interval = setInterval(() => {
@@ -66,7 +70,7 @@ const AiInsightsPage = () => {
     
     try {
       await simulateAiProcessing();
-      
+
       const totalIncome = transactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
@@ -86,48 +90,66 @@ const AiInsightsPage = () => {
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5)
         .map(([category, amount]) => ({ category, amount }));
-        
-      const financialSummary = {
-        totalIncome: formatCurrency(totalIncome),
-        totalExpenses: formatCurrency(totalExpenses),
-        balance: formatCurrency(totalIncome - totalExpenses),
-        topExpenseCategories: topCategories.map(
-          c => `${c.category}: ${formatCurrency(c.amount)}`
-        ),
-        transactionCount: transactions.length,
-        savingsRate: totalIncome > 0 ? (totalIncome - totalExpenses) / totalIncome * 100 : 0
-      };
-      
+
       let response = '';
       
-      if (type === 'insights') {
-        response = `
+      try {
+        const { data, error } = await supabaseClient.functions.invoke('gemini-insights', {
+          body: { 
+            transactions, 
+            type 
+          }
+        });
+        
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        if (data && data.content) {
+          response = data.content;
+        } else {
+          throw new Error('Invalid response from AI service');
+        }
+      } catch (error) {
+        console.error('Error calling Gemini API:', error);
+        
+        const financialSummary = {
+          totalIncome: formatCurrency(totalIncome),
+          totalExpenses: formatCurrency(totalExpenses),
+          balance: formatCurrency(totalIncome - totalExpenses),
+          topExpenseCategories: topCategories.map(
+            c => `${c.category}: ${formatCurrency(c.amount)}`
+          ),
+          transactionCount: transactions.length,
+          savingsRate: totalIncome > 0 ? (totalIncome - totalExpenses) / totalIncome * 100 : 0
+        };
+        
+        if (type === 'insights') {
+          response = `
 • Your largest expense category is ${topCategories[0]?.category || 'unknown'}, accounting for ${((topCategories[0]?.amount || 0) / totalExpenses * 100).toFixed(1)}% of your total spending.
 • Your spending to income ratio is ${(totalExpenses / totalIncome * 100).toFixed(1)}%, which is ${totalExpenses / totalIncome < 0.7 ? 'healthy' : 'higher than recommended'}.
 • You have ${transactions.filter(t => t.type === 'income').length} income sources and ${transactions.filter(t => t.type === 'expense').length} expense transactions.
 • Your average transaction size is ${formatCurrency(transactions.reduce((sum, t) => sum + t.amount, 0) / transactions.length)}.
 • ${totalIncome > totalExpenses ? `You're saving ${formatCurrency(totalIncome - totalExpenses)}, which is positive!` : `You're spending more than you earn by ${formatCurrency(totalExpenses - totalIncome)}, which is concerning.`}
 • Based on AI analysis of similar financial profiles, your spending patterns are ${totalExpenses / totalIncome < 0.6 ? 'more conservative than 75% of users' : totalExpenses / totalIncome < 0.8 ? 'typical' : 'more aggressive than 70% of users'}.
-        `;
-        setInsights(response.trim());
-      } else if (type === 'predictions') {
-        const monthlyAverage = totalExpenses / 3; // Assuming data for 3 months
-        const seasonalFactor = new Date().getMonth() >= 9 && new Date().getMonth() <= 11 ? 1.2 : 1.0; // Higher spending in holiday season
-        
-        response = `
+          `;
+        } else if (type === 'predictions') {
+          const monthlyAverage = totalExpenses / 3; // Assuming data for 3 months
+          const seasonalFactor = new Date().getMonth() >= 9 && new Date().getMonth() <= 11 ? 1.2 : 1.0; // Higher spending in holiday season
+          
+          response = `
 • Based on advanced AI trend analysis, you're projected to ${totalIncome > totalExpenses ? `save approximately ${formatCurrency((totalIncome - totalExpenses) * 3)} over the next three months.` : `have a deficit of approximately ${formatCurrency((totalExpenses - totalIncome) * 3)} over the next three months.`}
 • Your ${topCategories[0]?.category || 'top category'} expenses are likely to ${totalExpenses / totalIncome > 0.8 ? 'continue growing' : 'remain stable'} with ${(97).toFixed(0)}% confidence.
 • If seasonal patterns continue, you may see ${seasonalFactor > 1 ? 'increased' : 'stable'} expenses in the next quarter with economic indicators suggesting ${Math.random() > 0.5 ? 'rising' : 'stable'} costs.
 • Your current savings rate is ${(100 - (totalExpenses / totalIncome * 100)).toFixed(1)}%, which ${(100 - (totalExpenses / totalIncome * 100)) > 20 ? 'will build a good emergency fund' : 'may need improvement to build adequate savings'}.
 • Without changes to income or spending, your financial trajectory appears to be ${totalIncome > totalExpenses * 1.1 ? 'positive and sustainable' : totalIncome > totalExpenses ? 'stable but with limited growth' : 'unsustainable and requires attention'}.
 • AI predictive models suggest a ${Math.floor(Math.random() * 5) + 3}% chance of unexpected large expenses in the next quarter based on your past patterns.
-        `;
-        setPredictions(response.trim());
-      } else {
-        const safeSpendingThreshold = totalIncome * 0.6;
-        const spendingReduction = Math.max(0, totalExpenses - safeSpendingThreshold);
-        
-        response = `
+          `;
+        } else {
+          const safeSpendingThreshold = totalIncome * 0.6;
+          const spendingReduction = Math.max(0, totalExpenses - safeSpendingThreshold);
+          
+          response = `
 • Consider setting a budget for ${topCategories[0]?.category || 'your top expense category'} to reduce spending by ${Math.min(20, Math.round(spendingReduction / totalExpenses * 100))}%.
 • Track your daily expenses for two weeks to identify non-essential spending that can be eliminated.
 • ${totalIncome <= totalExpenses ? 'Focus on increasing your income sources or reducing major expenses immediately.' : 'Allocate at least 20% of your income to savings or investments.'}
@@ -135,7 +157,15 @@ const AiInsightsPage = () => {
 • For ${topCategories[1]?.category || 'your second highest category'}, consider ${Math.random() > 0.5 ? 'bulk purchases' : 'timing purchases during sale periods'} to reduce costs by up to 15%.
 • Set up automatic transfers to a savings account of ${formatCurrency(totalIncome * 0.1)} on payday to build an emergency fund faster.
 • Based on AI analysis of similar profiles, you could optimize tax benefits by ${Math.random() > 0.5 ? 'increasing retirement contributions' : 'exploring available tax credits'}.
-        `;
+          `;
+        }
+      }
+      
+      if (type === 'insights') {
+        setInsights(response.trim());
+      } else if (type === 'predictions') {
+        setPredictions(response.trim());
+      } else {
         setTips(response.trim());
       }
       
