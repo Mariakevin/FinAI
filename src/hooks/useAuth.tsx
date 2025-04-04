@@ -1,27 +1,18 @@
 
 import { useState, useEffect, createContext, useContext, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  photoUrl?: string;
-  provider?: 'email' | 'google';
-}
+import { supabase } from '@/integrations/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (email: string, password: string, name?: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
   canEdit: (resourceOwnerId?: string) => boolean;
 }
-
-const STORAGE_KEY = 'finwise_user';
-const USERS_STORAGE_KEY = 'finwise_users';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -29,37 +20,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load user on initial mount only
+  // Set up authentication state listener
   useEffect(() => {
-    const loadUser = () => {
-      try {
-        const storedUser = localStorage.getItem(STORAGE_KEY);
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (error) {
-        console.error('Error loading user:', error);
-        localStorage.removeItem(STORAGE_KEY);
-      } finally {
+    // First set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user || null);
         setIsLoading(false);
       }
-    };
+    );
 
-    loadUser();
-  }, []);
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user || null);
+      setIsLoading(false);
+    });
 
-  // Memoize this function to prevent unnecessary re-renders
-  const checkEmailExists = useCallback((email: string): boolean => {
-    try {
-      const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
-      const users = storedUsers ? JSON.parse(storedUsers) : [];
-      if (!Array.isArray(users)) return false;
-      
-      return users.some((u: any) => u.email.toLowerCase() === email.toLowerCase());
-    } catch (e) {
-      console.error('Error checking email:', e);
-      return false;
-    }
+    // Cleanup subscription on unmount
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = useCallback(async (email: string, password: string): Promise<boolean> => {
@@ -78,30 +56,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return false;
       }
       
-      // Simulating a login delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
       
-      // Check if user exists (in local storage)
-      const users = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY) || '[]');
-      const foundUser = users.find((u: any) => 
-        u.email.toLowerCase() === email.toLowerCase()
-      );
+      if (error) {
+        console.error('Login error:', error);
+        toast.error(error.message || 'Invalid email or password');
+        return false;
+      }
       
-      if (foundUser && foundUser.password === password) {
-        // Create user session without password
-        const userSession: User = {
-          id: foundUser.id,
-          email: foundUser.email,
-          name: foundUser.name,
-          provider: 'email' as const
-        };
-        
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(userSession));
-        setUser(userSession);
+      if (data.user) {
         toast.success('Login successful!');
         return true;
       } else {
-        toast.error('Invalid email or password');
+        toast.error('Login failed. Please try again.');
         return false;
       }
     } catch (error) {
@@ -135,56 +105,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return false;
       }
       
-      // Simulating a register delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Register with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name || email.split('@')[0], // Use name if provided, or generate from email
+          }
+        }
+      });
       
-      // Get existing users
-      let users = [];
-      try {
-        const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
-        users = storedUsers ? JSON.parse(storedUsers) : [];
-        if (!Array.isArray(users)) users = [];
-      } catch (e) {
-        console.error('Error parsing stored users, resetting:', e);
-        users = [];
-      }
-      
-      // Check if email already exists (case insensitive)
-      if (users.some((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
-        toast.error('Email already registered');
+      if (error) {
+        console.error('Registration error:', error);
+        toast.error(error.message || 'Registration failed');
         return false;
       }
       
-      // Use provided name or generate from email
-      const userName = name ? name.trim() : email.split('@')[0];
-      
-      // Create new user
-      const newUser = {
-        id: Math.random().toString(36).substring(2, 9),
-        name: userName,
-        email,
-        password,
-        provider: 'email' as const,
-        createdAt: new Date().toISOString()
-      };
-      
-      // Save to "database"
-      users.push(newUser);
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-      
-      // Create user session without password
-      const userSession: User = {
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        provider: 'email' as const
-      };
-      
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(userSession));
-      setUser(userSession);
-      
-      toast.success('Registration successful!');
-      return true;
+      if (data.user) {
+        toast.success('Registration successful!');
+        return true;
+      } else {
+        toast.error('Registration failed. Please try again.');
+        return false;
+      }
     } catch (error) {
       console.error('Registration error:', error);
       toast.error('Registration failed. Please try again.');
@@ -194,10 +138,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
-    setUser(null);
-    toast.success('Logged out successfully');
+  const logout = useCallback(async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+        toast.error('Logout failed. Please try again.');
+      } else {
+        toast.success('Logged out successfully');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Logout failed. Please try again.');
+    }
   }, []);
 
   // Memoize this function to prevent unnecessary re-renders

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 export async function testSupabaseConnection() {
   try {
-    // Test connection by using the health endpoint
+    // Test connection by using the auth endpoint
     const { data, error } = await supabase.auth.getSession();
 
     if (error) {
