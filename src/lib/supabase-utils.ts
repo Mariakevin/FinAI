@@ -4,10 +4,15 @@ import { useEffect, useState } from 'react';
 
 export async function testSupabaseConnection() {
   try {
-    // Use a simple health check query instead of trying to query a specific table
-    const { error } = await supabase.rpc('pg_stat_database_info');
+    // Use a simple health check query instead of trying to query a specific table or RPC
+    const { error } = await supabase.from('_non_existent_table_')
+      .select('*')
+      .limit(1)
+      .single();
 
-    if (error) {
+    // If we get here, it means the connection was established even if the query failed
+    // We specifically want to catch table-not-found errors but not connection errors
+    if (error && !error.message.includes('does not exist')) {
       console.error('Supabase connection test failed:', error);
       return false;
     }
